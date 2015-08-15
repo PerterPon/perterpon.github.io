@@ -1,0 +1,421 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head>
+  <meta charset="utf-8">
+  
+  <title>node cover | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="node cover的使用">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="node cover"/>
+  <meta property="og:site_name" content="PerterPon"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans"/>
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+    
+  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle" />
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>node cover</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2015-01-29T12:30:00.000Z">2015-01-29</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2015/01/29/node-cover/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <h2 id="nodejs_的三大特色:">nodejs 的三大特色:</h2><p><img src="/image/image.jpg" alt="nodejs"></p>
+<h2 id="异步解决方案历史变迁">异步解决方案历史变迁</h2><p>回调嵌套 -&gt;  event-pipe, async -&gt; co -&gt; fibjs</p>
+<h2 id="koa">koa</h2><p>基于co, 使用generator来使得异步代码使用起来同步化。</p>
+<h2 id="需求来了">需求来了</h2><ol>
+<li><p><code>koa</code>封装了大量逻辑, 只想使用类似<code>connect</code>的提供原始<code>IncomingMessage</code>和<code>ServerResponse</code>对象.</p>
+</li>
+<li><p>很多中间件都是采用connect中间件方式写的, 如果切换到koa, 必定要对原先的代码做修改.</p>
+</li>
+</ol>
+<h3 id="node-cover">node-cover</h3><ol>
+<li><p>只提供基础的http server服务.</p>
+</li>
+<li><p>兼容connect中间件, 不兼容koa中间件, 但是可以使用ES6写的各种模块.</p>
+</li>
+<li><p>无缝切换现有项目, 同时使用co写同步代码.</p>
+</li>
+</ol>
+<h4 id="使用方法"><a href="https://www.npmjs.com/package/node-cover" target="_blank" rel="external">使用方法</a></h4><h2 id="coffee-script_v1-8">coffee-script v1.8</h2><p>一. coffee-script的github master分支已经是1.8版本, 对es6很多语法都做了支持, 其中就包括generator.</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Function&#10;( test ) -&#62;&#10;  ....&#10;&#10;# GeneratorFuntion&#10;( test ) -&#62;&#10;  yield -&#62;</span><br></pre></td></tr></table></figure>
+<p>二. 使用git地址安装npm包</p>
+<p>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  .......&#10;  dependencies : &#123;&#10;    &#34;coffee-script&#34; : &#34;git+ssh://git@github.com:jashkenas/coffeescript.git&#34;&#10;  &#125;&#10;&#125;&#10;&#10;//git://github.com/user/project.git#commit-ish&#10;//git+ssh://user@hostname:project.git#commit-ish&#10;//git+ssh://user@hostname/project.git#commit-ish&#10;//git+http://user@hostname/project/blah.git#commit-ish&#10;//git+https://user@hostname/project/blah.git#commit-ish</span><br></pre></td></tr></table></figure></p>
+<p>三. 同时, 1.8的coffee修正了一些逻辑, 偷懒的同学注意了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( @server ) -&#62;</span><br></pre></td></tr></table></figure>
+<p>对于如上代码，1.8 版本以前的coffee会编译成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">  fucntion( server )&#123;&#10;  @server = server&#10;.....&#10;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是对于1.8版本coffee会编译成:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function( _at_server )&#123;&#10;  @server = _at_server&#10;  .....&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果直接在函数中使用server变量的话，1.8版本之前是可以的，但是在1.8版本之后就会报错了。</p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/id2/">id2</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/co/">co</a>, <a href="/tags/cover/">cover</a>, <a href="/tags/node/">node</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+ <div class="article-prev" >
+ <a href="/2015/07/05/coffee-script-json/" title="coffee在编写过程中的一些坑">
+  <i class="fa fa-long-arrow-left"></i>
+  <span>
+  coffee在编写过程中的一些坑</span>
+</a>
+</div>
+
+
+<div class="article-next">
+<a href="/2014/12/25/how-to-use-hexo/"  title="如何使用hexo搭建一个个人博客">
+ <span>如何使用hexo搭建一个个人博客
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">留言</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2015/01/29/node-cover/" data-title="node cover" data-url="http://yoursite.com2015/01/29/node-cover/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2015/07/05/hello-world/">Hello World</a>
+      </li>
+    
+      <li>
+        <a href="/2015/07/05/coffee-script-json/">coffee在编写过程中的一些坑</a>
+      </li>
+    
+      <li>
+        <a href="/2015/01/29/node-cover/">node cover</a>
+      </li>
+    
+      <li>
+        <a href="/2014/12/25/how-to-use-hexo/">如何使用hexo搭建一个个人博客</a>
+      </li>
+    
+      <li>
+        <a href="/2014/11/21/get-uuid-and-mac-addr/">OSX 中获取UID和MAC地址的方法</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">分類</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">標籤</h3>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>1</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>2</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2015 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

@@ -118,6 +118,79 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2015/08/15/reptcha-spider/">如何爬带有reCAPTCHA的页面</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2015-08-15T07:16:00.000Z">2015-08-15</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2015/08/15/reptcha-spider/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/08/15/reptcha-spider/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="reCAPTCHA简介">reCAPTCHA简介</h2><p><a href="https://zh.wikipedia.org/wiki/ReCAPTCHA" target="_blank" rel="external">reCAPTCHA</a>项目是由卡内基梅隆大学所发展的系统，主要目的是利用CAPTCHA技术来帮助典籍数字化的进行，这个项目将由书本扫描下来无法准确的被光学文字辨识技术（OCR, Optical Character Recognition）识别的文字显示在CAPTCHA问题中，让人类在回答CAPTCHA问题时用人脑加以识别[1]。reCAPTCHA正数字化《纽约时报》（New York Times）的扫描存文件，目前已经完成20年份的数据，并希望在2010年完成110年份的数据。2009年9月17日，Google宣布收购reCAPTCHA。这是一个伟大的项目，在发挥验证码作用的同时，使得输入验证码的人对全人类做出了贡献。</p>
+<h2 id="项目初衷">项目初衷</h2><p>有江湖的地方就有爬虫，为什么我会去爬一个带有验证码的网站呢？前段时间刚买了车，但是运到店里面需要一些时间，从销售那问了车架号就一直想蠢蠢欲动，看到车托之家有人可以用车架号查询车辆生产以及配置信息，那也是一个别人开发的系统，但是不知道为什么最近一直处于瘫痪状态，好在还有英文网站可以查询。但是因为英文网站带有reCAPTCHA，而天朝又因为某些不可抗力因素导致reCAPTCHA无法使用，除非挂VPN，一般人查不了配置，那么，为什么不自己开发一个呢？</p>
+<h2 id="实现过程">实现过程</h2><p>其他爬页面的细节就不说了，主要还是说说<code>reCAPTCHA</code>如何爬，验证码也没想着自动识别，那太复杂了，就把验证码爬下来让用户自己输入吧，reCAPTCHA使用很简单，在页面上嵌入一段JS，然后去问谷歌这个验证码的输入正确与否就OK了，所有遇到的问题如下：</p>
+<ul>
+<li><p>script标签发出的请求带有<code>referer</code>头，显然申请<code>reCAPTCHA</code>服务的时候会生成一个唯一性的token，带着token才能请求到验证码，而发送请求的时候会验证<code>`referer</code>头，如果不是<code>127.0.0.1</code>或者<code>localhost</code>或者申请时候填写的网址，那么谷歌就拒绝提供服务。解决办法：本身因为天朝地址无法访问谷歌服务，就准备在服务端对这些请求做一次转发，转发时候不要带上<code>referer</code>头即可。</p>
+</li>
+<li><p><code>reCAPTCHA</code>的运行原理很简单，首先页面加载一个谷歌JS文件：<code>http://www.google.com/recaptcha/api/challenge?k=6Ldlev8SAAAAAF4fPVvI5c4IPSfhuDZp6_HR-APV</code>，这个<code>k</code>参数就是上面提到申请<code>reCAPTCHA</code>服务的时候给你一个唯一性的token，当然要经过服务器转发，不然天朝子民无法获得这个请求，这个JS的返回格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;var RecaptchaState = &#123;&#10;    challenge : &#39;03AHJ_VutQSbh3e1Zy9JyHmt_Zmt83Gl7r0UpTa7Hq8KHlT7XGb1zxpMDyON6W70ZB3K2rY1kxWj31xkzVCJEy4SI-KsxOac-Rvh32JMoIT2-IX6gbAgj24p-SiYSYhHyYu00OAcePod4nf5QZuFdOWNRwZfcCkemd55F6dfJOqDTmPp-i2ySI2lId8Eo5d557NGZvpYYBmLLwFtyewzBfhpEwYJgR2L0lSA&#39;,&#10;    timeout : 1800,&#10;    lang : &#39;zh-CN&#39;,&#10;    server : &#39;https://www.google.com&#39;,&#10;    site : &#39;6Ldlev8SAAAAAF4fPVvI5c4IPSfhuDZp6_HR-APV&#39;,&#10;    error_message : &#39;&#39;,&#10;    programming_error : &#39;&#39;,&#10;    is_incorrect : false,&#10;    rtl : false,&#10;    t1 : &#39;Ly93d3cuZ29vZ2xlLmNvbS9qcy90aC9TMFJ2cEhDbHY2a29udUt6cUtXYkxMUnY0WHM0bEVSblphTGlucDNfelo4Lmpz&#39;,&#10;    t2 : &#39;&#39;,&#10;    t3 : &#39;OXVBWHdpOTZlcEp....&#65288;&#36825;&#37324;&#26159;&#19968;&#22823;&#20018;&#31867;&#20284;&#23494;&#25991;&#30340;&#19996;&#35199;&#65289;&#39;&#10;&#125;;&#10;&#10;document.write(&#39;&#60;scr&#39;+&#39;ipt type=&#34;text/javascript&#34; s&#39;+&#39;rc=&#34;&#39; + RecaptchaState.server + &#39;js/recaptcha.js&#34;&#62;&#60;/scr&#39;+&#39;ipt&#62;&#39;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>注意这个地方有个<code>server</code>属性，谷歌还是挺良心的，后续发的所有请求，比如获取验证码图片或者语音的请求，<code>host</code>都是这个server属性所带的值，同样，这些请求需要转发，不然请求不到，在服务端获取这个JS文件时，直接把server属性替换掉，替换你自己服务器转发地址，后续的请求就都往你自己服务器上发了，既能让天朝子民访问<code>reCAPTCHA</code>，又能在自己的域名上爬到别人域名的<code>reCAPTCHA</code>验证码。</p>
+<ul>
+<li>谷歌毕竟是谷歌，即使爬到了验证码，他也不会让你好用，谷歌的识别能力还是挺强的，原本想带上一些随机<code>agent</code>，<code>x-forwarded-for</code>之类的头来模拟我是一个代理而已，但是无一例外，都被识别为了爬虫而拒绝服务，最后采用的还是没有带上任何头，直接请求，至少服务能用，但是等到用的人多了之后，验证码就会变得非常复杂，好在还有语音验证码可以用。</li>
+</ul>
+<h2 id="总结">总结</h2><p>这次爬得不算完美，当PV超过2 300的时候，验证码就变得非常恶心了，常人一般难以识别，这块还在想办法。最后贴出这个应用实例吧：<a href="http://bmwvin.chegai.club" target="_blank" rel="external">宝马中文车架号查询系统</a>。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2015/08/15/reptcha-spider/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2015/07/05/hello-world/">Hello World</a></h1>
     
   
@@ -489,6 +562,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2015/08/15/reptcha-spider/">如何爬带有reCAPTCHA的页面</a>
+      </li>
+    
+      <li>
         <a href="/2015/07/05/hello-world/">Hello World</a>
       </li>
     
@@ -502,10 +579,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2014/12/25/how-to-use-hexo/">如何使用hexo搭建一个个人博客</a>
-      </li>
-    
-      <li>
-        <a href="/2014/11/21/get-uuid-and-mac-addr/">OSX 中获取UID和MAC地址的方法</a>
       </li>
     
   </ul>
@@ -523,6 +596,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/id2/">id2</a><small>2</small></li>
   
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
   </ul>
 </div>
 
@@ -530,6 +605,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  
 <div class="widget tag">
   <h3 class="title">標籤</h3>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
   
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
@@ -541,6 +618,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/cover/">cover<small>1</small></a>
   
+    <a href="/tags/google/">google<small>0</small></a>
+  
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
@@ -550,6 +629,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/node/">node<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   

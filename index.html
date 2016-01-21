@@ -118,6 +118,69 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2016/01/21/trap-in-uploadify/">uplodify中的大坑</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2016-01-21T09:30:00.000Z">2016-01-21</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2016/01/21/trap-in-uploadify/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/01/21/trap-in-uploadify/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>项目中有使用到需要上传图片的地方, 项目本身之前是由别的同事开发的, 上传使用了uploadify来上传图片, 我们这次准备重构, 因为时间较紧, 所以也就沿用的之间的上传方法, 第一次使用uploadify, 觉得用的人还挺多, 不会有什么问题, 但是问题接踵而来。</p>
+<h2 id="自动发起的http请求-">自动发起的http请求.</h2><p>因为没有影响功能, 一开始没有特别关注, 后来看控制台, 发现老是会多发出去一个请求, URL是当前域名, 因为URL有问题, 所以老是404, 查遍了所有代码都没有找到发送这个请求的地方, 后来把目光锁定到uploadify上面去, 注释了uploadify, 就发现没有这个请求了, 搜了一下, 遇到这个问题的还挺多, 网上随便找个解决办法就行了, 下面有个大坑。</p>
+<h2 id="flash版本不会带上二级域名的cookie-">flash版本不会带上二级域名的cookie.</h2><p>说先说下业务场景, 我们使用oauth的方式登录, 域名是: <code>a.test.com</code>, 登录后, 登录系统会将<code>cookie</code>写入到<code>test.com</code>域名下去, 子系统访问的时候拿到<code>test.com</code>下的<code>cookie</code>, 到登录系统中获取用户信息, 完成用户认证流程, 一个很常规的登录流程. </p>
+<p>那么问题来了, 我们子系统的域名是<code>a.test.com</code>, 上传功能我们并不想开放给所有用户使用, 会有一些acl鉴权, 所以需要检测登陆态, 在<code>chrome</code>和<code>ie</code>下一切正常, 当使用<code>safari</code>和<code>firefox</code>的时候, 后端会提示无法获取用户信息的错, 打印了一下后端拿到的headers, 发现只有<code>a.test.com</code>域名下的<code>cookie</code>, <code>test.com</code>域名下的<code>cookie</code>全都没有获取到, 导致拿不到用户信息. 到这里就很清晰了, 一开始我以为是<code>flash</code>的问题, 对<code>flash</code>也不是很熟, 但是想想<code>flash</code>应该不会这么坑, 就下载了一下编译器自己写了一个测试了一下, 果然在所有浏览器下都是正常的, 那么就只能确定是<code>uploadify</code>的问题了, 找了个反编译工具看了下<code>uploadify</code>的代码, 有点多, 反编译后也不大好看, 没有找到具体原因.</p>
+<p>最后的解决办法是, 先将上传的鉴权去掉了, 赶项目时间点, 回头马上迁移到html5去.</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2016/01/21/trap-in-uploadify/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2015/10/19/quantum/">初识量子力学</a></h1>
     
   
@@ -679,7 +742,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="search" name="q" results="0" placeholder="搜尋">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
@@ -688,6 +751,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget recent-post">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/01/21/trap-in-uploadify/">uplodify中的大坑</a>
+      </li>
     
       <li>
         <a href="/2015/10/19/quantum/">初识量子力学</a>
@@ -705,24 +772,22 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2015/07/05/coffee-script-json/">coffee在编写过程中的一些坑</a>
       </li>
     
-      <li>
-        <a href="/2015/07/05/async/">nodejs异步回调向yield同步的转变</a>
-      </li>
-    
   </ul>
 </div>
 
 	
 	  
 <div class="widget category">
-  <h3 class="title">分类</h3>
+  <h3 class="title">分類</h3>
   <ul class="entry">
   
     <li><a href="/categories/Objective-C/">Objective-C</a><small>1</small></li>
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
   
-    <li><a href="/categories/id2/">id2</a><small>2</small></li>
+    <li><a href="/categories/i/">i</a><small>0</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>3</small></li>
   
     <li><a href="/categories/physical/">physical</a><small>1</small></li>
   
@@ -736,7 +801,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  
 <div class="widget tag">
-  <h3 class="title">标签</h3>
+  <h3 class="title">標籤</h3>
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
@@ -756,6 +821,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/id2/">id2<small>1</small></a>
   
+    <a href="/tags/javascript/">javascript<small>1</small></a>
+  
     <a href="/tags/json/">json<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
@@ -772,6 +839,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/sync/">sync<small>1</small></a>
   
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/uploady/">uploady<small>0</small></a>
+  
     <a href="/tags/yield/">yield<small>1</small></a>
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
@@ -785,7 +858,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2015 PerterPon
+	  &copy; 2016 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

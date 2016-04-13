@@ -118,6 +118,80 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2014/12/25/how-to-use-hexo/">如何使用hexo搭建一个个人博客</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2014-12-25T13:01:00.000Z">2014-12-25</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2014/12/25/how-to-use-hexo/#ds-thread"><span class="ds-thread-count" data-thread-key="2014/12/25/how-to-use-hexo/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>如何快速搭建一个hexo博客。</p>
+<p>一. 安装hexo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g</span><br></pre></td></tr></table></figure>
+<p>二. 初始化hexo目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir hexo&#10;cd hexo &#10;hexo init&#10;npm install</span><br></pre></td></tr></table></figure>
+<p>三. 所有的博客文章都在<code>source-&gt;_posts</code>文件夹下面, 一个markdown文件就是一篇博客, 执行一下命令, 就能够在本地起一个服务预览一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># &#23558;markdown&#25991;&#20214;&#32534;&#35793;&#25104;html&#10;hexo generate&#10;# &#21551;&#21160;&#26381;&#21153;&#10;hexo server</span><br></pre></td></tr></table></figure>
+<p>然后访问: <code>http://127.0.0.1:4000</code>, 就可以查看博客预览了。</p>
+<p>四. 注册一个github账号, 创建一个一下名字的项目:#{github name}.github.io, 例如<code>perterpon.github.io</code>.</p>
+<p>五. 修改hexo配置文件, 配置文件位于<code>/_config.yml</code></p>
+<p>e.g</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deploy: &#10;  # type &#36873;&#25321;github&#10;  type: github&#10;  # &#22635;&#20889;github&#22320;&#22336;&#10;  repository: https://github.com/zippera/zippera.github.io.git&#10;  # &#36873;&#25321;&#30456;&#24212;&#20998;&#25903;, &#20351;&#29992;github pages&#30340;&#26102;&#20505;&#19968;&#33324;&#40664;&#35748;&#26159;&#20351;&#29992;gh-pages&#20998;&#25903;&#20316;&#20026;&#20351;&#29992;&#30340;&#20998;&#25903;, &#21487;&#20197;&#22312;github&#19978;&#35774;&#32622;.&#10;  branch: master</span><br></pre></td></tr></table></figure>
+<p>六. 创建github pages, 在之前创建好<code>perterpon.github.io</code>项目中, 点击<code>settings-
+  Automatic page generator</code>按钮, 跟着提示一路确定就能完成创建了。</p>
+<p>七. 在hexo文件夹中, 执行<code>hexo deploy</code>, 提示成功后等待几分钟访问<a href="http://perterpon.github.io" target="_blank" rel="external">http://perterpon.github.io</a>, 就能访问自己的博客了。</p>
+<p>八. 大量主题样式等等, 评论系统: 多说.</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2014/12/25/how-to-use-hexo/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2014/11/21/get-uuid-and-mac-addr/">OSX 中获取UID和MAC地址的方法</a></h1>
     
   
@@ -197,6 +271,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
+      </li>
+    
+      <li>
         <a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a>
       </li>
     
@@ -212,10 +290,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2015/10/19/quantum/">初识量子力学</a>
       </li>
     
-      <li>
-        <a href="/2015/08/15/reptcha-spider/">如何爬带有reCAPTCHA的页面</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -229,7 +303,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
   
-    <li><a href="/categories/id2/">id2</a><small>3</small></li>
+    <li><a href="/categories/id2/">id2</a><small>4</small></li>
   
     <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
   
@@ -253,6 +327,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
     <a href="/tags/blog/">blog<small>1</small></a>
   
     <a href="/tags/co/">co<small>2</small></a>
@@ -267,9 +343,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
+    <a href="/tags/http/">http<small>1</small></a>
+  
     <a href="/tags/id2/">id2<small>1</small></a>
   
     <a href="/tags/javascript/">javascript<small>1</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
   
     <a href="/tags/json/">json<small>1</small></a>
   

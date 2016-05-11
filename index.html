@@ -118,6 +118,83 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2016/05/11/tcp-package-stick/">TCP的粘包和半包</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2016-05-11T12:53:00.000Z">2016-05-11</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2016/05/11/tcp-package-stick/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/05/11/tcp-package-stick/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="什么是粘包">什么是粘包</h2><p>首先请执行以下以下<code>nodejs</code>代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>你看到的输出一定是 <code>Hi, server!Hi, server!</code>，并且<code>data</code>事件的回调函数只执行了一次，WTF.</p>
+<p>将代码稍作修改, 客户端write的时候加一个间隔时间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  setTimeout( () =&#62; &#123;&#10;    client.write( &#39;Hi, server!&#39; );&#10;  &#125;, 1000 );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>你会看到输出分了两次执行，回调函数也执行了两次，符合了我们的预期，但是，总不能我们的所有代码都加一个延时吧？</p>
+<h2 id="为什么会出现粘包？">为什么会出现粘包？</h2><p>网上的解释已经很明确，这里引用一段，出处已经无法考证了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP&#26159;&#20010;&#34;&#27969;&#34;&#21327;&#35758;,&#25152;&#35859;&#27969;,&#23601;&#26159;&#27809;&#26377;&#30028;&#38480;&#30340;&#19968;&#20018;&#25968;&#25454;.&#22823;&#23478;&#21487;&#20197;&#24819;&#24819;&#27827;&#37324;&#30340;&#27969;&#27700;,&#26159;&#36830;&#25104;&#19968;&#29255;&#30340;,&#20854;&#38388;&#26159;&#27809;&#26377;&#20998;&#30028;&#32447;&#30340;.&#20294;&#19968;&#33324;&#36890;&#35759;&#31243;&#24207;&#24320;&#21457;&#26159;&#38656;&#35201;&#23450;&#20041;&#19968;&#20010;&#20010;&#30456;&#20114;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;&#30340;,&#27604;&#22914;&#29992;&#20110;&#30331;&#38470;&#30340;&#25968;&#25454;&#21253;,&#29992;&#20110;&#27880;&#38144;&#30340;&#25968;&#25454;&#21253;.&#30001;&#20110;TCP&#34;&#27969;&#34;&#30340;&#29305;&#24615;&#20197;&#21450;&#32593;&#32476;&#29366;&#20917;,&#22312;&#36827;&#34892;&#25968;&#25454;&#20256;&#36755;&#26102;&#20250;&#20986;&#29616;&#20197;&#19979;&#20960;&#31181;&#24773;&#20917;.&#10;&#20551;&#35774;&#25105;&#20204;&#36830;&#32493;&#35843;&#29992;&#20004;&#27425;send&#20998;&#21035;&#21457;&#36865;&#20004;&#27573;&#25968;&#25454;data1&#21644;data2,&#22312;&#25509;&#25910;&#31471;&#26377;&#20197;&#19979;&#20960;&#31181;&#25509;&#25910;&#24773;&#20917;(&#24403;&#28982;&#19981;&#27490;&#36825;&#20960;&#31181;&#24773;&#20917;,&#36825;&#37324;&#21482;&#21015;&#20986;&#20102;&#26377;&#20195;&#34920;&#24615;&#30340;&#24773;&#20917;).&#10;A.&#20808;&#25509;&#25910;&#21040;data1,&#28982;&#21518;&#25509;&#25910;&#21040;data2.&#10;B.&#20808;&#25509;&#25910;&#21040;data1&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;data1&#20313;&#19979;&#30340;&#37096;&#20998;&#20197;&#21450;data2&#30340;&#20840;&#37096;.&#10;C.&#20808;&#25509;&#25910;&#21040;&#20102;data1&#30340;&#20840;&#37096;&#25968;&#25454;&#21644;data2&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;&#20102;data2&#30340;&#20313;&#19979;&#30340;&#25968;&#25454;.&#10;D.&#19968;&#27425;&#24615;&#25509;&#25910;&#21040;&#20102;data1&#21644;data2&#30340;&#20840;&#37096;&#25968;&#25454;.&#10;&#10;&#23545;&#20110;A&#36825;&#31181;&#24773;&#20917;&#27491;&#26159;&#25105;&#20204;&#38656;&#35201;&#30340;,&#19981;&#20877;&#20570;&#35752;&#35770;.&#23545;&#20110;B,C,D&#30340;&#24773;&#20917;&#23601;&#26159;&#22823;&#23478;&#32463;&#24120;&#35828;&#30340;&#34;&#31896;&#21253;&#34;,&#23601;&#38656;&#35201;&#25105;&#20204;&#25226;&#25509;&#25910;&#21040;&#30340;&#25968;&#25454;&#36827;&#34892;&#25286;&#21253;,&#25286;&#25104;&#19968;&#20010;&#20010;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;.&#20026;&#20102;&#25286;&#21253;&#23601;&#24517;&#39035;&#22312;&#21457;&#36865;&#31471;&#36827;&#34892;&#23553;&#21253;.&#10;&#10;&#21478;:&#23545;&#20110;UDP&#26469;&#35828;&#23601;&#19981;&#23384;&#22312;&#25286;&#21253;&#30340;&#38382;&#39064;,&#22240;&#20026;UDP&#26159;&#20010;&#34;&#25968;&#25454;&#21253;&#34;&#21327;&#35758;,&#20063;&#23601;&#26159;&#20004;&#27573;&#25968;&#25454;&#38388;&#26159;&#26377;&#30028;&#38480;&#30340;,&#22312;&#25509;&#25910;&#31471;&#35201;&#20040;&#25509;&#25910;&#19981;&#21040;&#25968;&#25454;&#35201;&#20040;&#23601;&#26159;&#25509;&#25910;&#19968;&#20010;&#23436;&#25972;&#30340;&#19968;&#27573;&#25968;&#25454;,&#19981;&#20250;&#23569;&#25509;&#25910;&#20063;&#19981;&#20250;&#22810;&#25509;&#25910;.</span><br></pre></td></tr></table></figure>
+<h2 id="如何处理粘包或者半包的情况？">如何处理粘包或者半包的情况？</h2><p>这里采用了一个类似HTTP的方法，定义一个HTTP头:<code>Content-Length: 100</code>，然后这个数据包的大小就是100，我只需要在读到头数据之后，再读100，就是我这个数据包的带下了，如果数据还有剩下，那么就是下一个包的内容，如果数据不足100，那就说明这里只传了半个包，等待下次<code>data</code>事件触发，后半部分的数据就是这个包里面。</p>
+<h3 id="举个例子">举个例子</h3><p>假设我要传送一个数据: <code>hello world!</code>，首先我需要进行封包，一个数据包由头部和身体组成，其中，头部组成如下: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">||||00000012</span><br></pre></td></tr></table></figure>
+<p><code>||||</code>这个是头部开始的标示，由服务端和客户端互相约定，<code>00000012</code>，这个是数据体的大小，前面的<code>0</code>为了补全大小位，这里采用了8位，因为默认情况下，TCP的缓冲区大小是8K，8K换成byte就是: 8388608。</p>
+<p>所以我们的头部其实固定为12位，那么接下来的就都是数据体，<code>hello world!</code>组成一个数据包之后的样子就是: <code>||||00000012hello world!</code>，服务端的解包就不说了，就是自己维护一个缓冲区，从头开始解就行了。</p>
+<h2 id="better-packet">better-packet</h2><p><code>better-packet</code>，提供了一个封包的解包的方法，专门为了用来解决粘包问题，看看使用了<code>better-package</code>之后会怎么样.</p>
+<p>server.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const app = net.createServer( ( connect ) =&#62; &#123;&#10;  &#10;  let unpackager = new betterPacket.UnPackager();&#10;&#10;  connect.on( &#39;data&#39;, unpackager.addBuffer.bind( unpackager ) );&#10;&#10;  connect.on( &#39;error&#39;, () =&#62; &#123;&#125; );&#10;&#10;  unpackager.on( &#39;package&#39;, function ( data ) &#123;&#10;&#10;    // Hi, server!&#10;    // Hi, server!&#10;    console.log( data.toString() );&#10;&#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( &#39;8080&#39;, &#39;0.0.0.0&#39; );</span><br></pre></td></tr></table></figure>
+<p>client.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;const packager = new betterPacket.Packager();&#10;&#10;let sendData = packager.packageData( &#39;Hi, server!&#39; );&#10;&#10;client.write( sendData );&#10;&#10;client.write( sendData );</span><br></pre></td></tr></table></figure>
+<p>这里服务端的数据就变得正常了，而且<code>data</code>事件的回调函数也被调了两次。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2016/05/11/tcp-package-stick/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a></h1>
     
   
@@ -732,91 +809,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2015/01/29/node-cover/">node cover</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2015-01-29T12:30:00.000Z">2015-01-29</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2015/01/29/node-cover/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/01/29/node-cover/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="nodejs_的三大特色:">nodejs 的三大特色:</h2><p><img src="/image/image.jpg" alt="nodejs"></p>
-<h2 id="异步解决方案历史变迁">异步解决方案历史变迁</h2><p>回调嵌套 -&gt;  event-pipe, async -&gt; co -&gt; fibjs</p>
-<h2 id="koa">koa</h2><p>基于co, 使用generator来使得异步代码使用起来同步化。</p>
-<h2 id="需求来了">需求来了</h2><ol>
-<li><p><code>koa</code>封装了大量逻辑, 只想使用类似<code>connect</code>的提供原始<code>IncomingMessage</code>和<code>ServerResponse</code>对象.</p>
-</li>
-<li><p>很多中间件都是采用connect中间件方式写的, 如果切换到koa, 必定要对原先的代码做修改.</p>
-</li>
-</ol>
-<h3 id="node-cover">node-cover</h3><ol>
-<li><p>只提供基础的http server服务.</p>
-</li>
-<li><p>兼容connect中间件, 不兼容koa中间件, 但是可以使用ES6写的各种模块.</p>
-</li>
-<li><p>无缝切换现有项目, 同时使用co写同步代码.</p>
-</li>
-</ol>
-<h4 id="使用方法"><a href="https://www.npmjs.com/package/node-cover" target="_blank" rel="external">使用方法</a></h4><h2 id="coffee-script_v1-8">coffee-script v1.8</h2><p>一. coffee-script的github master分支已经是1.8版本, 对es6很多语法都做了支持, 其中就包括generator.</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Function&#10;( test ) -&#62;&#10;  ....&#10;&#10;# GeneratorFuntion&#10;( test ) -&#62;&#10;  yield -&#62;</span><br></pre></td></tr></table></figure>
-<p>二. 使用git地址安装npm包</p>
-<p>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  .......&#10;  dependencies : &#123;&#10;    &#34;coffee-script&#34; : &#34;git+ssh://git@github.com:jashkenas/coffeescript.git&#34;&#10;  &#125;&#10;&#125;&#10;&#10;//git://github.com/user/project.git#commit-ish&#10;//git+ssh://user@hostname:project.git#commit-ish&#10;//git+ssh://user@hostname/project.git#commit-ish&#10;//git+http://user@hostname/project/blah.git#commit-ish&#10;//git+https://user@hostname/project/blah.git#commit-ish</span><br></pre></td></tr></table></figure></p>
-<p>三. 同时, 1.8的coffee修正了一些逻辑, 偷懒的同学注意了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( @server ) -&#62;</span><br></pre></td></tr></table></figure>
-<p>对于如上代码，1.8 版本以前的coffee会编译成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">  fucntion( server )&#123;&#10;  @server = server&#10;.....&#10;&#125;</span><br></pre></td></tr></table></figure></p>
-<p>但是对于1.8版本coffee会编译成:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function( _at_server )&#123;&#10;  @server = _at_server&#10;  .....&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>如果直接在函数中使用server变量的话，1.8版本之前是可以的，但是在1.8版本之后就会报错了。</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2015/01/29/node-cover/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -840,6 +832,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2016/05/11/tcp-package-stick/">TCP的粘包和半包</a>
+      </li>
+    
+      <li>
         <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
       </li>
     
@@ -855,10 +851,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2016/01/21/trap-in-uploadify/">uplodify中的大坑</a>
       </li>
     
-      <li>
-        <a href="/2015/10/19/quantum/">初识量子力学</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -872,7 +864,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
   
-    <li><a href="/categories/id2/">id2</a><small>4</small></li>
+    <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
     <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
   
@@ -897,6 +889,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
   
     <a href="/tags/blog/">blog<small>1</small></a>
   
@@ -932,6 +926,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/objective-c/">objective-c<small>1</small></a>
   
+    <a href="/tags/package/">package<small>1</small></a>
+  
     <a href="/tags/physical/">physical<small>1</small></a>
   
     <a href="/tags/quantum/">quantum<small>1</small></a>
@@ -941,6 +937,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/spider/">spider<small>1</small></a>
   
     <a href="/tags/sync/">sync<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
   
     <a href="/tags/upload/">upload<small>1</small></a>
   

@@ -118,6 +118,155 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2016-11-16T06:46:00.000Z">2016-11-16</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2016/11/16/ios-basic/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/11/16/ios-basic/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>写了一段时间的iOS，把iOS和javascript在各方面做一下对比，记录一些比较基础的东西。</p>
+<h2 id="iOS开发包含哪些东西？"><a href="#iOS开发包含哪些东西？" class="headerlink" title="iOS开发包含哪些东西？"></a>iOS开发包含哪些东西？</h2><ul>
+<li>二门语言：Objective-C，Swift</li>
+<li>一个基础框架：Cocoa Touch</li>
+<li>一个IDE：XCode</li>
+</ul>
+<h2 id="我需要准备哪些东西？"><a href="#我需要准备哪些东西？" class="headerlink" title="我需要准备哪些东西？"></a>我需要准备哪些东西？</h2><ul>
+<li>Mac电脑，身残志坚的朋友可以选择黑苹果。</li>
+<li>最好有一台iPhone，身残志坚的朋友没得选了，通常在模拟器里面没问题的东西在真机里面会有一些诡异的问题，特别是涉及到摄像头以及麦克风等等硬件的时候。</li>
+</ul>
+<h2 id="新建一个iOS应用"><a href="#新建一个iOS应用" class="headerlink" title="新建一个iOS应用"></a>新建一个iOS应用</h2><p>打开xcode，选择红框中的项目。</p>
+<p><img src="/image/create_project.png" alt="创建项目"></p>
+<p>然后选择<code>Single View Application</code>，顾名思义：单页应用。</p>
+<p>取个名字：<code>IOS-dev-demo</code>，然后选择保存的地方，一个新的iOS应用就创建好了。</p>
+<p><img src="/image/create_folder.png" alt="创建文件夹"></p>
+<p>xcode会自动帮我们创建四个group，分别是<code>IOS-dev-demo</code>，<code>IOS-dev-demoTests</code>，<code>IOS-dev-demoUITests</code>，<code>products</code>，作用如下：</p>
+<ul>
+<li>IOS-dev-demo 项目的主目录，所有的项目业务代码都保存在这个group下。</li>
+<li>IOS-dev-demoTests 单元测试目录。</li>
+<li>IOS-dev-demoUITests UI测试目录。</li>
+<li>Products 相关编译文件保存目录。</li>
+</ul>
+<p>基本我们用到最多的就是我们的项目主目录了。</p>
+<h2 id="运行我们的项目"><a href="#运行我们的项目" class="headerlink" title="运行我们的项目"></a>运行我们的项目</h2><p><img src="/image/run.png" alt="运行按钮"></p>
+<p><code>CMD+R</code> 或者点击左上方三角形的运行按钮，即可在模拟器上运行，刚创建好只是一个空的应用。</p>
+<h2 id="搭建我们的应用"><a href="#搭建我们的应用" class="headerlink" title="搭建我们的应用"></a>搭建我们的应用</h2><p>为什么用<code>搭建</code>这个词呢，因为<code>Cocoa Touch</code>已经帮助我们封装好了很多内部组件，和安卓不同，<code>Cocoa Touch</code>的内部组件通常都有一个比较好的交互和外观，典型应用是<code>微信</code>，微信基本都使用了内部组件，内部组件也最符合用户使用习惯。</p>
+<p>搭建界面有两种方式：</p>
+<ol>
+<li>storyboard，可视化组件拖拉，类似于Dreamweaver，这种方式不做介绍了，快速搭建应用首选，也存在些许弊端，有兴趣的可以看看<a href="http://www.jianshu.com/p/aaa4b89dbba1" target="_blank" rel="external">这篇文章</a>。</li>
+<li>纯代码，类似于手写HTML代码。</li>
+</ol>
+<h2 id="如何添加组件？"><a href="#如何添加组件？" class="headerlink" title="如何添加组件？"></a>如何添加组件？</h2><p>拿一个<code>button</code>组件来说，在<code>ViewController</code>类中的<code>viewDidLoad</code>方法中添加如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIButton *button = [[UIButton alloc] init];&#10;button.frame     = CGRectMake(100, 100, 100, 50);&#10;[button setTitle:@&#34;&#25353;&#38062;&#27979;&#35797;&#34; forState:UIControlStateNormal];&#10;[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];&#10;&#10;[self.view addSubview:button];</span><br></pre></td></tr></table></figure>
+<p>重新编译运行一下我们的代码，就可以看到一个黑色的按钮在界面上了，那么这一段代码是如何工作的呢？我又如何为何一定要在这个函数里面添加这段代码？</p>
+<p>下面用浏览器的方式展示如何添加一个按钮，相信大家一定都非常熟悉了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let button = document.createElement( &#39;button&#39; );&#10;button.textContent  = &#39;&#25353;&#38062;&#27979;&#35797;&#39;&#10;button.style.width  = &#39;100px&#39;;&#10;button.style.height = &#39;50px&#39;;&#10;button.style.margin-left   = &#39;100px&#39;;&#10;button.style.margin-top    = &#39;100px&#39;;&#10;button.style.color  = &#39;rgb(0, 0, 0)&#39;&#10;&#10;document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
+<p>对比一下两段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#21019;&#24314;&#19968;&#20010;&#32452;&#20214;&#10;UIButton *button = [[UIButton alloc] init];                                ||| let button = document.createElement( &#39;button&#39; );&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#30340;left, top, width, height&#23646;&#24615;&#10;button.frame     = CGRectMake(100, 100, 100, 50);                          ||| button.style.width  = &#39;100px&#39;;&#10;                                                                           ||| button.style.height = &#39;50px&#39;;&#10;                                                                           ||| button.style.margin-left   = &#39;100px&#39;;&#10;                                                                           ||| button.style.margin-top    = &#39;100px&#39;;&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#30340;&#39;&#26631;&#39064;&#39;&#23646;&#24615;&#10;[button setTitle:@&#34;&#25353;&#38062;&#27979;&#35797;&#34; forState:UIControlStateNormal];                 ||| button.textContent  = &#39;&#25353;&#38062;&#27979;&#35797;&#39;&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#26631;&#39064;&#30340;&#39068;&#33394;&#10;[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal]; ||| button.style.color  = &#39;rgb(0, 0, 0)&#39;&#10;&#10;// &#23558;&#32452;&#20214;&#28155;&#21152;&#21040;&#24403;&#21069;&#30011;&#24067;&#19978;&#10;[self.view addSubview:button];                                             ||| document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
+<p>其实从逻辑上来看两段代码非常相似，唯一不同的仅仅是语法而已。</p>
+<h3 id="那么从系统层面看，两者如何？"><a href="#那么从系统层面看，两者如何？" class="headerlink" title="那么从系统层面看，两者如何？"></a>那么从系统层面看，两者如何？</h3><p>首先来看看html</p>
+<p><img src="/image/html-c.png" alt="htmlc"></p>
+<p>再看看iOS</p>
+<p><img src="/image/cocoa-c.png" alt="cocoac"></p>
+<p>依然非常地相似，那么这两段代码唯一不同的就是语言了，让我们看看<code>Objective-c</code>的特性</p>
+<h2 id="Objective-c"><a href="#Objective-c" class="headerlink" title="Objective-c"></a>Objective-c</h2><p>从名字上可以见，<code>Objective-c</code>就是对象化的C语言，所以支持C语言，同时扩展了一些面向对象的内容，比如：<code>Class</code>。</p>
+<p><code>Objective-c</code>与类C类的语言的一个比较大的区别是，<code>Objective-c</code>使用消息传递模型，从如下代码可以看出：</p>
+<p>假设我要调用<code>car</code>实例的<code>move</code>方法，</p>
+<p>C++</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">car.move();</span><br></pre></td></tr></table></figure>
+<p>Objective-c</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[car move];</span><br></pre></td></tr></table></figure>
+<p>从语法上可以看出一二，C++中确实是调用了<code>car</code>实例的<code>move</code>方法，如果<code>car</code>实例没有这个方法，那么编译期间就会报错，但是<code>Objective-c</code>仅仅是向<code>car</code>实例发送了一个<code>move</code>消息，代码只会在运行时去检查<code>car</code>实例到底有没有能力对<code>move</code>消息进行回应，从中可以看出<code>Objective-c</code>是一门动态语言。</p>
+<h2 id="响应UI事件"><a href="#响应UI事件" class="headerlink" title="响应UI事件"></a>响应UI事件</h2><p>通常在页面上放置了一个按钮并不是为了展示信息，而是为了能让用户进行交互，那么来看看两者如何进行UI响应。</p>
+<p><code>Javascript</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">button.addEventListener( &#39;click&#39;, function( event ) &#123;&#10;  alert( &#39;clicked&#39; );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>拿到<code>button</code>对象，然后给这个button注册一个名字叫<code>click</code>的事件，再给这个注册方法一个回调函数，然后用户在这个按钮上单击的话，就能够触发这个回调函数了。</p>
+<p><code>Objective-c</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[button addTarget:self action:@selector(clickHandler:) forControlEvents:UIControlEventTouchUpInside];</span><br></pre></td></tr></table></figure>
+<p>调用<code>button</code>对象的<code>addTarget</code>方法，为<code>UIControlEventTouchUpInside</code>事件，也就是单击事件添加<code>self</code>也就是当前实例下的<code>clickHandler</code>作为事件处理函数。这里也可以选择别的类的方法，只要<code>selector</code>中的方法名能在<code>addTarget</code>对象中找到就行。<br><code>iOS</code>中只能使用类的方法作为事件处理函数，没法使用类似匿名函数的<code>block</code>来进行事件处理。</p>
+<h2 id="回调"><a href="#回调" class="headerlink" title="回调"></a>回调</h2><p><code>Javascript</code>中发送一个http请求</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let xhr = new XMLHttpRequest();&#10;xhr.open( &#39;GET&#39;, &#39;http://xxxx.com&#39; );&#10;xhr.send();&#10;&#10;xhr.onreadystatechange = function()&#123;&#10;  // do something&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Javascript</code>基于事件驱动，通常使用一个匿名函数来作为请求结束时候的回调函数。</p>
+<p><code>Objective-c</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSURL *url = [NSURL URLWithString:@&#34;http://xxx.com&#34;];&#10;NSURLRequest *request = [NSURLRequest requestWithUrl:url];&#10;&#10;NSURLSession *session = [NSURLSession sharedSession];&#10;NSURLSessionDataTask *task = [session dataTaskWithRequest: request completionHandler: ^(NSData *data, NSURLResponse *response, NSError *error) &#123;&#10;         // ...&#10;     &#125;];</span><br></pre></td></tr></table></figure>
+<p><code>Objective-c</code> 相对来说发送一个请求的方式稍微有一些复杂，看到<code>completionHandler</code>这个参数，这在<code>Objective-c</code>中被称为<code>block</code>，是一种类似于<code>Javascript</code>中的回调函数，当然也可以使用<code>typedef</code>声明一个<code>block</code>在多个场景下使用。</p>
+<p>关于<code>block</code>更多的使用奥秘，可以<a href="http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html" target="_blank" rel="external">点击查看这篇文章</a>。</p>
+<h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><p>数据请求回来了，那么就要开始渲染页面了，<code>iOS</code>有良好的动画运行机制，可以比安卓更流畅地运行动画，良好的动画效果可以带来更好的用户体验。</p>
+<p><code>Javascript</code></p>
+<p>JS中动画效果大致有如下几种：</p>
+<p>纯粹的JS实现的动画效果应该就只有如下一种了</p>
+<ul>
+<li><code>setTimeout</code>，定时更新形变达到每秒24次即可实现基本的动画效果。</li>
+</ul>
+<p>示例代码: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const width = 100;&#10;setTimeout( function() &#123;&#10;  width++;&#10;  button.style.width = `$&#123;width&#125;px`;&#10;&#125;, 16 );</span><br></pre></td></tr></table></figure>
+<p>更多更高效的动画效果可以借助<code>HTML5</code>和<code>CSS3</code>来实现</p>
+<ul>
+<li><code>requestAnimationFrame</code>，保持和系统相同的刷新率，得到更好体验的同时，有更高的效率。</li>
+<li>css中的<code>transition-duration</code>，效率非常高，可以直接调用GPU来进行渲染。</li>
+</ul>
+<p><code>Objective-c</code></p>
+<p><code>iOS</code>中的动画主要是指<code>Core Animation</code>框架，<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html" target="_blank" rel="external">这里是官方的文档</a>。</p>
+<p>调用方式主要有以下三种：</p>
+<ol>
+<li>UIView 代码块调用</li>
+<li>UIView [begin commit]模式</li>
+<li>CoreAnimation中的类</li>
+</ol>
+<p>简单贴一下最简单也最常用的 UIView 代码块调用的方式，其他方式的详细调用可以<a href="http://blog.csdn.net/yixiangboy/article/details/47016829" target="_blank" rel="external">参考这里</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CGRect newFrame = button.frame;&#10;newFrame.size.width = 200;&#10;[UIView animateWithDuration:1 animations:^&#123;&#10;  button.frame = newFrame;        &#10;&#125;];</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了以上这些东西，你能已经能把一个小功能呢给串起来了，但是<code>iOS</code>还有更加强大实用的各种组件，<code>UINavigationController</code>，<code>UITableViewController</code>，<code>NSUrlSession</code>，还有各种全局事件派发，多线程GCD，以及处理音视频的<code>AVFoundation</code>，更多功能，请看进阶篇。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2016/11/16/ios-basic/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a></h1>
     
   
@@ -148,11 +297,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h2 id="数加pai">数加pai</h2><p>数加pai是一个机器学习平台，提供可视化界面来操作算法，无需自己编写任何代码即可计算自己的数据。<br>如果你没有那么多数据也没有这种场景，那么选择一个外部算法平台也是一个不错的选择。</p>
-<h2 id="kaggle">kaggle</h2><p>一个类似阿里云天池的算法开发大赛平台，会定时发布各种任务，前几名有奖金，第一名$10W。</p>
+            <h2 id="数加pai"><a href="#数加pai" class="headerlink" title="数加pai"></a>数加pai</h2><p>数加pai是一个机器学习平台，提供可视化界面来操作算法，无需自己编写任何代码即可计算自己的数据。<br>如果你没有那么多数据也没有这种场景，那么选择一个外部算法平台也是一个不错的选择。</p>
+<h2 id="kaggle"><a href="#kaggle" class="headerlink" title="kaggle"></a>kaggle</h2><p>一个类似阿里云天池的算法开发大赛平台，会定时发布各种任务，前几名有奖金，第一名$10W。</p>
 <p>我们用这个平台上练手的项目来体验一下PAI。</p>
 <p>找到首页中标着101的那一组，这些题目都是给你练手的，相对来说会比较简单一点，就选第一个，<code>Digit Recognizer</code>。</p>
-<h3 id="题目分析">题目分析</h3><p>这个题目的主要任务的数字识别，很多手写的数字，左边导航栏<code>home</code>-<code>data</code>，进去可以下载本次的训练数据: <code>train.csv</code>和测试数据: <code>test.csv</code>。</p>
+<h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><p>这个题目的主要任务的数字识别，很多手写的数字，左边导航栏<code>home</code>-<code>data</code>，进去可以下载本次的训练数据: <code>train.csv</code>和测试数据: <code>test.csv</code>。</p>
 <p>打开<code>train.csv</code>文件，主办方已经把需要识别的图片提取成像素值，直接训练就行了。</p>
 <p>其中，一行代表一个数字的图片，第一列<code>lable</code>代表的是已经识别出来的具体的数字。</p>
 <table>
@@ -185,12 +334,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </tr>
 </tbody>
 </table>
-<h3 id="寻找合适算法">寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
+<h3 id="寻找合适算法"><a href="#寻找合适算法" class="headerlink" title="寻找合适算法"></a>寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
 <p>选择<code>kNN</code>是因为<code>kNN</code>算法比较好理解，对于我这种新手也比较容易看懂，缺点是<code>kNN</code>算法是惰性算法，计算时间会比较长。</p>
-<h3 id="开始解题">开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
-<h3 id="上传数据">上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
+<h3 id="开始解题"><a href="#开始解题" class="headerlink" title="开始解题"></a>开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
+<h3 id="上传数据"><a href="#上传数据" class="headerlink" title="上传数据"></a>上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
 <p>首先下载<a href="https://help.aliyun.com/document_detail/27991.html?spm=5176.product27797.6.217.2hjJzR" target="_blank" rel="external">MaxCompute CMD</a>，这里点击<code>新版客户端下载</code>，下载完成后，配置AK以及运行CMD，关于如何建表，请查看帮助文档，注意要把所有字段也建了，和<code>CSV</code>文件相对应，这里字段有段多，可以用一个脚本生成sql. 然后使用 <code>MaxCompute CMD</code>的<code>tunnel</code>命令上传CSV文件建表<code>odps@ my_test_project&gt; tunnel upload train.csv pai_test_train;</code>，还有测试数据表<code>odps@ my_test_project&gt; tunnel upload test.csv pai_test_data;</code></p>
-<h3 id="使用pai来解题">使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
+<h3 id="使用pai来解题"><a href="#使用pai来解题" class="headerlink" title="使用pai来解题"></a>使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
 <ol>
 <li>新建一个实验，取名pai_test，这时候我们会得到一个空的实验，接下来就是往实验上拖组件。</li>
 <li>首先选择数据源，在左侧表列表中选择刚刚新建的<code>pai_test_train</code>，<code>pai_test_data</code>，分别拖到右侧的实验图上。这里表同步机制有延迟，如果在所有表中找不到新建的表，可以尝试一下搜索。</li>
@@ -200,7 +349,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li>在<code>选择训练表的标签列</code>中选择<code>label</code>字段，下面两个选项都是可选项，可以选择预测表的哪些特征别参与计算，还有产出表选择产出哪些字段，这些都可以选择默认，同理还有<code>参数设置</code>tab，如果对算法没什么研究，选择默认就可以了。</li>
 <li>全部选择好了，点击下方的<code>运行</code>来进行计算。</li>
 </ol>
-<h3 id="产出数据">产出数据</h3><p>运行成功后，会产出一张新表，名字带有随机性，通常格式是<code>pai_temp_5052_75767_1</code>，因为<code>kaggle</code>没有和阿里云的产品进行打通，这里我们需要把数据下载成CSV文件，然后进行上传。</p>
+<h3 id="产出数据"><a href="#产出数据" class="headerlink" title="产出数据"></a>产出数据</h3><p>运行成功后，会产出一张新表，名字带有随机性，通常格式是<code>pai_temp_5052_75767_1</code>，因为<code>kaggle</code>没有和阿里云的产品进行打通，这里我们需要把数据下载成CSV文件，然后进行上传。</p>
 <ol>
 <li>首先依然是通过<code>tunnel</code>命令进行下载: <code>odps@ my_test_project&gt; tunnel download pai_temp_5052_75767_1 -h true result.csv;</code>,<code>-h true</code>命令表示带上表头。</li>
 <li>打开CSV文件，找到<code>prediction</code>字段，这个就是我们的预测结果了，然后就是上传<code>kaggle</code>了。</li>
@@ -267,13 +416,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           
             <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
 <p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 <p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
 
           
@@ -333,20 +482,20 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h2 id="什么是粘包">什么是粘包</h2><p>首先请执行以下以下<code>nodejs</code>代码</p>
+            <h2 id="什么是粘包"><a href="#什么是粘包" class="headerlink" title="什么是粘包"></a>什么是粘包</h2><p>首先请执行以下以下<code>nodejs</code>代码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
 <p>你看到的输出一定是 <code>Hi, server!Hi, server!</code>，并且<code>data</code>事件的回调函数只执行了一次，WTF.</p>
 <p>将代码稍作修改, 客户端write的时候加一个间隔时间</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  setTimeout( () =&#62; &#123;&#10;    client.write( &#39;Hi, server!&#39; );&#10;  &#125;, 1000 );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
 <p>你会看到输出分了两次执行，回调函数也执行了两次，符合了我们的预期，但是，总不能我们的所有代码都加一个延时吧？</p>
-<h2 id="为什么会出现粘包？">为什么会出现粘包？</h2><p>网上的解释已经很明确，这里引用一段，出处已经无法考证了</p>
+<h2 id="为什么会出现粘包？"><a href="#为什么会出现粘包？" class="headerlink" title="为什么会出现粘包？"></a>为什么会出现粘包？</h2><p>网上的解释已经很明确，这里引用一段，出处已经无法考证了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP&#26159;&#20010;&#34;&#27969;&#34;&#21327;&#35758;,&#25152;&#35859;&#27969;,&#23601;&#26159;&#27809;&#26377;&#30028;&#38480;&#30340;&#19968;&#20018;&#25968;&#25454;.&#22823;&#23478;&#21487;&#20197;&#24819;&#24819;&#27827;&#37324;&#30340;&#27969;&#27700;,&#26159;&#36830;&#25104;&#19968;&#29255;&#30340;,&#20854;&#38388;&#26159;&#27809;&#26377;&#20998;&#30028;&#32447;&#30340;.&#20294;&#19968;&#33324;&#36890;&#35759;&#31243;&#24207;&#24320;&#21457;&#26159;&#38656;&#35201;&#23450;&#20041;&#19968;&#20010;&#20010;&#30456;&#20114;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;&#30340;,&#27604;&#22914;&#29992;&#20110;&#30331;&#38470;&#30340;&#25968;&#25454;&#21253;,&#29992;&#20110;&#27880;&#38144;&#30340;&#25968;&#25454;&#21253;.&#30001;&#20110;TCP&#34;&#27969;&#34;&#30340;&#29305;&#24615;&#20197;&#21450;&#32593;&#32476;&#29366;&#20917;,&#22312;&#36827;&#34892;&#25968;&#25454;&#20256;&#36755;&#26102;&#20250;&#20986;&#29616;&#20197;&#19979;&#20960;&#31181;&#24773;&#20917;.&#10;&#20551;&#35774;&#25105;&#20204;&#36830;&#32493;&#35843;&#29992;&#20004;&#27425;send&#20998;&#21035;&#21457;&#36865;&#20004;&#27573;&#25968;&#25454;data1&#21644;data2,&#22312;&#25509;&#25910;&#31471;&#26377;&#20197;&#19979;&#20960;&#31181;&#25509;&#25910;&#24773;&#20917;(&#24403;&#28982;&#19981;&#27490;&#36825;&#20960;&#31181;&#24773;&#20917;,&#36825;&#37324;&#21482;&#21015;&#20986;&#20102;&#26377;&#20195;&#34920;&#24615;&#30340;&#24773;&#20917;).&#10;A.&#20808;&#25509;&#25910;&#21040;data1,&#28982;&#21518;&#25509;&#25910;&#21040;data2.&#10;B.&#20808;&#25509;&#25910;&#21040;data1&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;data1&#20313;&#19979;&#30340;&#37096;&#20998;&#20197;&#21450;data2&#30340;&#20840;&#37096;.&#10;C.&#20808;&#25509;&#25910;&#21040;&#20102;data1&#30340;&#20840;&#37096;&#25968;&#25454;&#21644;data2&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;&#20102;data2&#30340;&#20313;&#19979;&#30340;&#25968;&#25454;.&#10;D.&#19968;&#27425;&#24615;&#25509;&#25910;&#21040;&#20102;data1&#21644;data2&#30340;&#20840;&#37096;&#25968;&#25454;.&#10;&#10;&#23545;&#20110;A&#36825;&#31181;&#24773;&#20917;&#27491;&#26159;&#25105;&#20204;&#38656;&#35201;&#30340;,&#19981;&#20877;&#20570;&#35752;&#35770;.&#23545;&#20110;B,C,D&#30340;&#24773;&#20917;&#23601;&#26159;&#22823;&#23478;&#32463;&#24120;&#35828;&#30340;&#34;&#31896;&#21253;&#34;,&#23601;&#38656;&#35201;&#25105;&#20204;&#25226;&#25509;&#25910;&#21040;&#30340;&#25968;&#25454;&#36827;&#34892;&#25286;&#21253;,&#25286;&#25104;&#19968;&#20010;&#20010;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;.&#20026;&#20102;&#25286;&#21253;&#23601;&#24517;&#39035;&#22312;&#21457;&#36865;&#31471;&#36827;&#34892;&#23553;&#21253;.&#10;&#10;&#21478;:&#23545;&#20110;UDP&#26469;&#35828;&#23601;&#19981;&#23384;&#22312;&#25286;&#21253;&#30340;&#38382;&#39064;,&#22240;&#20026;UDP&#26159;&#20010;&#34;&#25968;&#25454;&#21253;&#34;&#21327;&#35758;,&#20063;&#23601;&#26159;&#20004;&#27573;&#25968;&#25454;&#38388;&#26159;&#26377;&#30028;&#38480;&#30340;,&#22312;&#25509;&#25910;&#31471;&#35201;&#20040;&#25509;&#25910;&#19981;&#21040;&#25968;&#25454;&#35201;&#20040;&#23601;&#26159;&#25509;&#25910;&#19968;&#20010;&#23436;&#25972;&#30340;&#19968;&#27573;&#25968;&#25454;,&#19981;&#20250;&#23569;&#25509;&#25910;&#20063;&#19981;&#20250;&#22810;&#25509;&#25910;.</span><br></pre></td></tr></table></figure>
-<h2 id="如何处理粘包或者半包的情况？">如何处理粘包或者半包的情况？</h2><p>这里采用了一个类似HTTP的方法，定义一个HTTP头:<code>Content-Length: 100</code>，然后这个数据包的大小就是100，我只需要在读到头数据之后，再读100，就是我这个数据包的带下了，如果数据还有剩下，那么就是下一个包的内容，如果数据不足100，那就说明这里只传了半个包，等待下次<code>data</code>事件触发，后半部分的数据就是这个包里面。</p>
-<h3 id="举个例子">举个例子</h3><p>假设我要传送一个数据: <code>hello world!</code>，首先我需要进行封包，一个数据包由头部和身体组成，其中，头部组成如下: </p>
+<h2 id="如何处理粘包或者半包的情况？"><a href="#如何处理粘包或者半包的情况？" class="headerlink" title="如何处理粘包或者半包的情况？"></a>如何处理粘包或者半包的情况？</h2><p>这里采用了一个类似HTTP的方法，定义一个HTTP头:<code>Content-Length: 100</code>，然后这个数据包的大小就是100，我只需要在读到头数据之后，再读100，就是我这个数据包的带下了，如果数据还有剩下，那么就是下一个包的内容，如果数据不足100，那就说明这里只传了半个包，等待下次<code>data</code>事件触发，后半部分的数据就是这个包里面。</p>
+<h3 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h3><p>假设我要传送一个数据: <code>hello world!</code>，首先我需要进行封包，一个数据包由头部和身体组成，其中，头部组成如下: </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">||||00000012</span><br></pre></td></tr></table></figure>
 <p><code>||||</code>这个是头部开始的标示，由服务端和客户端互相约定，<code>00000012</code>，这个是数据体的大小，前面的<code>0</code>为了补全大小位，这里采用了8位，因为默认情况下，TCP的缓冲区大小是8K，8K换成byte就是: 8388608。</p>
 <p>所以我们的头部其实固定为12位，那么接下来的就都是数据体，<code>hello world!</code>组成一个数据包之后的样子就是: <code>||||00000012hello world!</code>，服务端的解包就不说了，就是自己维护一个缓冲区，从头开始解就行了。</p>
-<h2 id="better-packet">better-packet</h2><p><code>better-packet</code>，提供了一个封包的解包的方法，专门为了用来解决粘包问题，看看使用了<code>better-package</code>之后会怎么样.</p>
+<h2 id="better-packet"><a href="#better-packet" class="headerlink" title="better-packet"></a>better-packet</h2><p><code>better-packet</code>，提供了一个封包的解包的方法，专门为了用来解决粘包问题，看看使用了<code>better-package</code>之后会怎么样.</p>
 <p>server.js</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const app = net.createServer( ( connect ) =&#62; &#123;&#10;  &#10;  let unpackager = new betterPacket.UnPackager();&#10;&#10;  connect.on( &#39;data&#39;, unpackager.addBuffer.bind( unpackager ) );&#10;&#10;  connect.on( &#39;error&#39;, () =&#62; &#123;&#125; );&#10;&#10;  unpackager.on( &#39;package&#39;, function ( data ) &#123;&#10;&#10;    // Hi, server!&#10;    // Hi, server!&#10;    console.log( data.toString() );&#10;&#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( &#39;8080&#39;, &#39;0.0.0.0&#39; );</span><br></pre></td></tr></table></figure>
 <p>client.js</p>
@@ -410,7 +559,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h4 id="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse_data_service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net::ERR_BLOCKED_BY_CLIENT。">有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是<code>analyse data service</code>，分析型数据服务，图片名字就取了一个<code>ads.png</code>，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示<code>net::ERR_BLOCKED_BY_CLIENT</code>。</h4><h4 id="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。">一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。</h4><h4 id="于是就把问题放到这个报错信息上net::ERR_BLOCKED_BY_CLIENT，blocked_by_client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。">于是就把问题放到这个报错信息上<code>net::ERR_BLOCKED_BY_CLIENT</code>，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。</h4><h4 id="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。">为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。</h4><h4 id="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。">各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。</h4><h4 id="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶:_adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。">回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名<code>ads</code>，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: <code>adblock</code>，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。</h4>
+            <h4 id="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse-data-service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net-ERR-BLOCKED-BY-CLIENT。"><a href="#有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse-data-service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net-ERR-BLOCKED-BY-CLIENT。" class="headerlink" title="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse data service，分析型数据服务，图片名字就取了一个ads.png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net::ERR_BLOCKED_BY_CLIENT。"></a>有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是<code>analyse data service</code>，分析型数据服务，图片名字就取了一个<code>ads.png</code>，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示<code>net::ERR_BLOCKED_BY_CLIENT</code>。</h4><h4 id="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。"><a href="#一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。" class="headerlink" title="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。"></a>一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。</h4><h4 id="于是就把问题放到这个报错信息上net-ERR-BLOCKED-BY-CLIENT，blocked-by-client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。"><a href="#于是就把问题放到这个报错信息上net-ERR-BLOCKED-BY-CLIENT，blocked-by-client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。" class="headerlink" title="于是就把问题放到这个报错信息上net::ERR_BLOCKED_BY_CLIENT，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。"></a>于是就把问题放到这个报错信息上<code>net::ERR_BLOCKED_BY_CLIENT</code>，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。</h4><h4 id="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。"><a href="#为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。" class="headerlink" title="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。"></a>为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。</h4><h4 id="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。"><a href="#各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。" class="headerlink" title="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。"></a>各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。</h4><h4 id="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶-adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。"><a href="#回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶-adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。" class="headerlink" title="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。"></a>回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名<code>ads</code>，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: <code>adblock</code>，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。</h4>
           
         
       </div>
@@ -468,20 +617,20 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h2 id="paypal">paypal</h2><p>实现相同的功能，2个人用nodejs干了5个人以前用java干的活，性能提高一倍，代码量减少33%，文件减少了40%。</p>
+            <h2 id="paypal"><a href="#paypal" class="headerlink" title="paypal"></a>paypal</h2><p>实现相同的功能，2个人用nodejs干了5个人以前用java干的活，性能提高一倍，代码量减少33%，文件减少了40%。</p>
 <p>nodejs 基金会主席：Danese Cooper，2014年加入paypal。</p>
-<h2 id="Microsoft">Microsoft</h2><p>微软自家研发的JS引擎：<a href="https://github.com/nodejs/node-chakracore" target="_blank" rel="external">chakra</a>，主要用来解决在跑在ARM上的windows系统不支持nodejs的问题，微软已经有意向提PR到nodejs主分支上去。</p>
-<h2 id="Uber">Uber</h2><p>整个Uber的分布式调度系统都是基于nodejs和redis开发。</p>
+<h2 id="Microsoft"><a href="#Microsoft" class="headerlink" title="Microsoft"></a>Microsoft</h2><p>微软自家研发的JS引擎：<a href="https://github.com/nodejs/node-chakracore" target="_blank" rel="external">chakra</a>，主要用来解决在跑在ARM上的windows系统不支持nodejs的问题，微软已经有意向提PR到nodejs主分支上去。</p>
+<h2 id="Uber"><a href="#Uber" class="headerlink" title="Uber"></a>Uber</h2><p>整个Uber的分布式调度系统都是基于nodejs和redis开发。</p>
 <p>API层的业务逻辑基于python，mysql和mongo。</p>
-<h2 id="Groupon">Groupon</h2><p>原先使用Ruby on Rails，有一次大家PK完之后，发现了nodejs的带来的好处，所以转换成nodejs开发，2013年宣布成功从ROR迁移至nodejs。</p>
+<h2 id="Groupon"><a href="#Groupon" class="headerlink" title="Groupon"></a>Groupon</h2><p>原先使用Ruby on Rails，有一次大家PK完之后，发现了nodejs的带来的好处，所以转换成nodejs开发，2013年宣布成功从ROR迁移至nodejs。</p>
 <p>目前现在Groupon的技术架构：web front-end mvc / mobile client &lt;–&gt; json &lt;–&gt; nodejs &lt;–&gt; service server</p>
 <p>service server可能也是nodejs。</p>
-<h2 id="New_York_Times">New York Times</h2><p>移动端核心业务使用nodejs, Express作为web框架，使用dust.js作为模板渲染，所有node代码用coffeeScript，同时使用redis作为node层和核心业务层之间的缓存。</p>
-<h2 id="GitHub">GitHub</h2><p>找到的资料不多，只找到一条Twitter，是GitHub官网账号在2010年12月20日发布的.</p>
+<h2 id="New-York-Times"><a href="#New-York-Times" class="headerlink" title="New York Times"></a>New York Times</h2><p>移动端核心业务使用nodejs, Express作为web框架，使用dust.js作为模板渲染，所有node代码用coffeeScript，同时使用redis作为node层和核心业务层之间的缓存。</p>
+<h2 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h2><p>找到的资料不多，只找到一条Twitter，是GitHub官网账号在2010年12月20日发布的.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Git tag/branch downloads aren&#39;t working current.  We&#39;re upgrading Node.js.</span><br></pre></td></tr></table></figure>
-<h2 id="NASA">NASA</h2><p>因为其背景，找到的资料也不多，2008年5月份的时候，<code>nodesource.com</code>的CEO发布了一条Twitter</p>
+<h2 id="NASA"><a href="#NASA" class="headerlink" title="NASA"></a>NASA</h2><p>因为其背景，找到的资料也不多，2008年5月份的时候，<code>nodesource.com</code>的CEO发布了一条Twitter</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to #Nodejs at NASA&#12290;</span><br></pre></td></tr></table></figure>
-<h2 id="沃尔玛">沃尔玛</h2><p>沃尔玛实验室，在Github上有自己的主页，发布了很多项目，大部分都跟nodejs还有javascript有关，有自己的nodejs框架：<code>hapi</code>，提供restful的API服务，以配置为核心，提供鉴权需求、输入验证、数据缓存和预加载等功能。<br>另外还有<code>hoek</code>、<code>flod</code>、<code>lout</code>、<code>MUPD8</code>、<code>Lumbar</code>等很多服务于nodejs的工具。</p>
+<h2 id="沃尔玛"><a href="#沃尔玛" class="headerlink" title="沃尔玛"></a>沃尔玛</h2><p>沃尔玛实验室，在Github上有自己的主页，发布了很多项目，大部分都跟nodejs还有javascript有关，有自己的nodejs框架：<code>hapi</code>，提供restful的API服务，以配置为核心，提供鉴权需求、输入验证、数据缓存和预加载等功能。<br>另外还有<code>hoek</code>、<code>flod</code>、<code>lout</code>、<code>MUPD8</code>、<code>Lumbar</code>等很多服务于nodejs的工具。</p>
 
           
         
@@ -540,7 +689,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h3 id="背景">背景</h3><p>有如下一张用户表</p>
+            <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>有如下一张用户表</p>
 <table>
 <thead>
 <tr>
@@ -567,13 +716,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </table>
 <p>为了更好地做记录，同时保证安全，代码不做物理删除，只做逻辑删除，将<code>is_deleted</code>字段置为<code>1</code>，即表示删除。</p>
 <p>登陆依赖别人的SSO，如果登陆了之后访问过我的网站的话，那么我就会把这个人记录到自己的系统里面，同时做一些别的操作，<code>uid</code>字段是由SSO系统生成的，每个人唯一。</p>
-<h3 id="问题">问题</h3><p>当两个请求同时访问我的系统时，同时去查询数据库，两次查询都没有查到当前用户，于是这两个请求的逻辑就都走到插入新用户逻辑，同时，因为增加了<code>is_deleted</code>字段，我无法对<code>uid</code>字段加唯一索引，一个用户可以被删除多次，也无法对<code>uid</code>和<code>is_deleted</code>两个字段做复合唯一索引，所以这两个请求的插入动作都能成功执行。这时，表里面就有了两条完全相同的用户记录了，问题发生。</p>
-<h3 id="问题原因">问题原因</h3><p>如果没有<code>is_deleted</code>字段，那么其实不存在这个问题，给<code>uid</code>字段加一个唯一索引，第二次插入的时候必然会报错，所以究其原因，我们需要一把锁，一把在这张表之外的锁。</p>
-<h3 id="解决办法">解决办法</h3><ol>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>当两个请求同时访问我的系统时，同时去查询数据库，两次查询都没有查到当前用户，于是这两个请求的逻辑就都走到插入新用户逻辑，同时，因为增加了<code>is_deleted</code>字段，我无法对<code>uid</code>字段加唯一索引，一个用户可以被删除多次，也无法对<code>uid</code>和<code>is_deleted</code>两个字段做复合唯一索引，所以这两个请求的插入动作都能成功执行。这时，表里面就有了两条完全相同的用户记录了，问题发生。</p>
+<h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>如果没有<code>is_deleted</code>字段，那么其实不存在这个问题，给<code>uid</code>字段加一个唯一索引，第二次插入的时候必然会报错，所以究其原因，我们需要一把锁，一把在这张表之外的锁。</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
 <li>新建一张表，以<code>uid</code>为主键或者唯一索引，在需要插入用户表之前，先插入这张新建的表，如果插入成功了，那么再往业务表里面插入用户信息。</li>
 <li>使用<code>tair``redis</code>等，在准备插入用户表前，先使用<code>uid</code>作为<code>key</code>插一条记录并加上锁，就能够保证只有一个请求能够抢到锁，抢到后再进行用户信息的插入。</li>
 </ol>
-<h3 id="缺陷">缺陷</h3><ol>
+<h3 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h3><ol>
 <li>几种方法都比较重，都需要新建一张表，甚至引入一种新的存储。</li>
 <li>假设同时两个请求抢锁，没抢到锁的请求处理会比较麻烦，可能需要定时隔一段时间去检测用户信息是否已经插入，逻辑较重。</li>
 </ol>
@@ -636,8 +785,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           
             <p>项目中有使用到需要上传图片的地方, 项目本身之前是由别的同事开发的, 上传使用了uploadify来上传图片, 我们这次准备重构, 因为时间较紧, 所以也就沿用的之间的上传方法, 第一次使用uploadify, 觉得用的人还挺多, 不会有什么问题, 但是问题接踵而来。</p>
-<h2 id="自动发起的http请求-">自动发起的http请求.</h2><p>因为没有影响功能, 一开始没有特别关注, 后来看控制台, 发现老是会多发出去一个请求, URL是当前域名, 因为URL有问题, 所以老是404, 查遍了所有代码都没有找到发送这个请求的地方, 后来把目光锁定到uploadify上面去, 注释了uploadify, 就发现没有这个请求了, 搜了一下, 遇到这个问题的还挺多, 网上随便找个解决办法就行了, 具体就是当你没有设置<code>image_url</code>的时候, 也会发送一个请求去拿这张图片, 下面有个大坑。</p>
-<h2 id="flash版本不会带上二级域名的cookie-">flash版本不会带上二级域名的cookie.</h2><p>说先说下业务场景, 我们使用oauth的方式登录, 域名是: <code>a.test.com</code>, 登录后, 登录系统会将<code>cookie</code>写入到<code>test.com</code>域名下去, 子系统访问的时候拿到<code>test.com</code>下的<code>cookie</code>, 到登录系统中获取用户信息, 完成用户认证流程, 一个很常规的登录流程. </p>
+<h2 id="自动发起的http请求"><a href="#自动发起的http请求" class="headerlink" title="自动发起的http请求."></a>自动发起的http请求.</h2><p>因为没有影响功能, 一开始没有特别关注, 后来看控制台, 发现老是会多发出去一个请求, URL是当前域名, 因为URL有问题, 所以老是404, 查遍了所有代码都没有找到发送这个请求的地方, 后来把目光锁定到uploadify上面去, 注释了uploadify, 就发现没有这个请求了, 搜了一下, 遇到这个问题的还挺多, 网上随便找个解决办法就行了, 具体就是当你没有设置<code>image_url</code>的时候, 也会发送一个请求去拿这张图片, 下面有个大坑。</p>
+<h2 id="flash版本不会带上二级域名的cookie"><a href="#flash版本不会带上二级域名的cookie" class="headerlink" title="flash版本不会带上二级域名的cookie."></a>flash版本不会带上二级域名的cookie.</h2><p>说先说下业务场景, 我们使用oauth的方式登录, 域名是: <code>a.test.com</code>, 登录后, 登录系统会将<code>cookie</code>写入到<code>test.com</code>域名下去, 子系统访问的时候拿到<code>test.com</code>下的<code>cookie</code>, 到登录系统中获取用户信息, 完成用户认证流程, 一个很常规的登录流程. </p>
 <p>那么问题来了, 我们子系统的域名是<code>a.test.com</code>, 上传功能我们并不想开放给所有用户使用, 会有一些acl鉴权, 所以需要检测登陆态, 在<code>chrome</code>和<code>ie</code>下一切正常, 当使用<code>safari</code>和<code>firefox</code>的时候, 后端会提示无法获取用户信息的错, 打印了一下后端拿到的headers, 发现只有<code>a.test.com</code>域名下的<code>cookie</code>, <code>test.com</code>域名下的<code>cookie</code>全都没有获取到, 导致拿不到用户信息. 到这里就很清晰了, 一开始我以为是<code>flash</code>的问题, 对<code>flash</code>也不是很熟, 但是想想<code>flash</code>应该不会这么坑, 就下载了一下编译器自己写了一个测试了一下, 果然在所有浏览器下都是正常的, 那么就只能确定是<code>uploadify</code>的问题了, 找了个反编译工具看了下<code>uploadify</code>的代码, 有点多, 反编译后也不大好看, 没有找到具体原因.</p>
 <p>最后的解决办法是, 先将上传的鉴权去掉了, 赶项目时间点, 回头马上迁移到html5去.</p>
 
@@ -757,9 +906,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h2 id="reCAPTCHA简介">reCAPTCHA简介</h2><p><a href="https://zh.wikipedia.org/wiki/ReCAPTCHA" target="_blank" rel="external">reCAPTCHA</a>项目是由卡内基梅隆大学所发展的系统，主要目的是利用CAPTCHA技术来帮助典籍数字化的进行，这个项目将由书本扫描下来无法准确的被光学文字辨识技术（OCR, Optical Character Recognition）识别的文字显示在CAPTCHA问题中，让人类在回答CAPTCHA问题时用人脑加以识别[1]。reCAPTCHA正数字化《纽约时报》（New York Times）的扫描存文件，目前已经完成20年份的数据，并希望在2010年完成110年份的数据。2009年9月17日，Google宣布收购reCAPTCHA。这是一个伟大的项目，在发挥验证码作用的同时，使得输入验证码的人对全人类做出了贡献。</p>
-<h2 id="项目初衷">项目初衷</h2><p>有江湖的地方就有爬虫，为什么我会去爬一个带有验证码的网站呢？前段时间刚买了车，但是运到店里面需要一些时间，从销售那问了车架号就一直想蠢蠢欲动，看到车托之家有人可以用车架号查询车辆生产以及配置信息，那也是一个别人开发的系统，但是不知道为什么最近一直处于瘫痪状态，好在还有英文网站可以查询。但是因为英文网站带有reCAPTCHA，而天朝又因为某些不可抗力因素导致reCAPTCHA无法使用，除非挂VPN，一般人查不了配置，那么，为什么不自己开发一个呢？</p>
-<h2 id="实现过程">实现过程</h2><p>其他爬页面的细节就不说了，主要还是说说<code>reCAPTCHA</code>如何爬，验证码也没想着自动识别，那太复杂了，就把验证码爬下来让用户自己输入吧，reCAPTCHA使用很简单，在页面上嵌入一段JS，然后去问谷歌这个验证码的输入正确与否就OK了，所有遇到的问题如下：</p>
+            <h2 id="reCAPTCHA简介"><a href="#reCAPTCHA简介" class="headerlink" title="reCAPTCHA简介"></a>reCAPTCHA简介</h2><p><a href="https://zh.wikipedia.org/wiki/ReCAPTCHA" target="_blank" rel="external">reCAPTCHA</a>项目是由卡内基梅隆大学所发展的系统，主要目的是利用CAPTCHA技术来帮助典籍数字化的进行，这个项目将由书本扫描下来无法准确的被光学文字辨识技术（OCR, Optical Character Recognition）识别的文字显示在CAPTCHA问题中，让人类在回答CAPTCHA问题时用人脑加以识别[1]。reCAPTCHA正数字化《纽约时报》（New York Times）的扫描存文件，目前已经完成20年份的数据，并希望在2010年完成110年份的数据。2009年9月17日，Google宣布收购reCAPTCHA。这是一个伟大的项目，在发挥验证码作用的同时，使得输入验证码的人对全人类做出了贡献。</p>
+<h2 id="项目初衷"><a href="#项目初衷" class="headerlink" title="项目初衷"></a>项目初衷</h2><p>有江湖的地方就有爬虫，为什么我会去爬一个带有验证码的网站呢？前段时间刚买了车，但是运到店里面需要一些时间，从销售那问了车架号就一直想蠢蠢欲动，看到车托之家有人可以用车架号查询车辆生产以及配置信息，那也是一个别人开发的系统，但是不知道为什么最近一直处于瘫痪状态，好在还有英文网站可以查询。但是因为英文网站带有reCAPTCHA，而天朝又因为某些不可抗力因素导致reCAPTCHA无法使用，除非挂VPN，一般人查不了配置，那么，为什么不自己开发一个呢？</p>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><p>其他爬页面的细节就不说了，主要还是说说<code>reCAPTCHA</code>如何爬，验证码也没想着自动识别，那太复杂了，就把验证码爬下来让用户自己输入吧，reCAPTCHA使用很简单，在页面上嵌入一段JS，然后去问谷歌这个验证码的输入正确与否就OK了，所有遇到的问题如下：</p>
 <ul>
 <li><p>script标签发出的请求带有<code>referer</code>头，显然申请<code>reCAPTCHA</code>服务的时候会生成一个唯一性的token，带着token才能请求到验证码，而发送请求的时候会验证<code>`referer</code>头，如果不是<code>127.0.0.1</code>或者<code>localhost</code>或者申请时候填写的网址，那么谷歌就拒绝提供服务。解决办法：本身因为天朝地址无法访问谷歌服务，就准备在服务端对这些请求做一次转发，转发时候不要带上<code>referer</code>头即可。</p>
 </li>
@@ -771,7 +920,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <ul>
 <li>谷歌毕竟是谷歌，即使爬到了验证码，他也不会让你好用，谷歌的识别能力还是挺强的，原本想带上一些随机<code>agent</code>，<code>x-forwarded-for</code>之类的头来模拟我是一个代理而已，但是无一例外，都被识别为了爬虫而拒绝服务，最后采用的还是没有带上任何头，直接请求，至少服务能用，但是等到用的人多了之后，验证码就会变得非常复杂，好在还有语音验证码可以用。</li>
 </ul>
-<h2 id="总结">总结</h2><p>这次爬得不算完美，当PV超过2 300的时候，验证码就变得非常恶心了，常人一般难以识别，这块还在想办法。最后贴出这个应用实例吧：<a href="http://bmwvin.chegai.club" target="_blank" rel="external">宝马中文车架号查询系统</a>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次爬得不算完美，当PV超过2 300的时候，验证码就变得非常恶心了，常人一般难以识别，这块还在想办法。最后贴出这个应用实例吧：<a href="http://bmwvin.chegai.club" target="_blank" rel="external">宝马中文车架号查询系统</a>。</p>
 
           
         
@@ -780,74 +929,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <div class="alignright">
             <a href="/2015/08/15/reptcha-spider/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2015/07/05/coffee-script-json/">coffee在编写过程中的一些坑</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2015-07-05T07:20:00.000Z">2015-07-05</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2015/07/05/coffee-script-json/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/07/05/coffee-script-json/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>CoffeeScript在编写过程之中，相对于JS可以带来很多便利性，但是同时也会引入一些问题，JS相对于Coffee来说有一些繁琐，但是相对严谨。</p>
-<p>这里会列出coffee诸多的坑，其实也不能算是坑，只是在还没有灵活运用时，很难排查的一些小问题，也要注意一下自己平时的编写习惯。</p>
-<ul>
-<li>在生产过程中的一个案例。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode,&#10;  base_cdn, &#10;  # data : encodeURIComponent JSON.stringify &#123; formData : body, type &#125;,&#10;  web_config: JSON.stringify web_config,&#10;  user : locals.user&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>这个JSON原来的代码是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode,&#10;  base_cdn, &#10;  # data : encodeURIComponent JSON.stringify &#123; formData : body, type &#125;,&#10;  web_config: JSON.stringify web_config,&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p>因为Coffee在描述JSON时候无需添加逗号，然后写这段代码的同事恰好将每一行后面都加上了逗号，然后我一看，没啥问题，紧接着加了一个属性”user”，乍一看，基于coffee松散的语法，毫无任何问题。然后，发现后面，这个JSON的user属性始终是undefined，因为后面有很长一段逻辑，一直以为是后面的逻辑出了问题，经过一个下午的调试后，才开始怀疑是JSON的问题，编译一看，顿时内牛满面：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode: mode,&#10;  base_cdn: base_cdn,&#10;  web_config: JSON.stringify(web_config, &#123;&#10;    user: locals.user&#10;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2015/07/05/coffee-script-json/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
           </div>
         
         <div class="clearfix"></div>
@@ -881,6 +962,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
+      </li>
+    
+      <li>
         <a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a>
       </li>
     
@@ -896,10 +981,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
       </li>
     
-      <li>
-        <a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -912,6 +993,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -935,9 +1018,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
   
     <a href="/tags/better-package/">better package<small>1</small></a>
   
@@ -958,6 +1045,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>1</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   

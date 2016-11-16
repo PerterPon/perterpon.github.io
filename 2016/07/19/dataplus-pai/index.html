@@ -140,11 +140,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
       
       <div class="entry">
         
-          <h2 id="数加pai">数加pai</h2><p>数加pai是一个机器学习平台，提供可视化界面来操作算法，无需自己编写任何代码即可计算自己的数据。<br>如果你没有那么多数据也没有这种场景，那么选择一个外部算法平台也是一个不错的选择。</p>
-<h2 id="kaggle">kaggle</h2><p>一个类似阿里云天池的算法开发大赛平台，会定时发布各种任务，前几名有奖金，第一名$10W。</p>
+          <h2 id="数加pai"><a href="#数加pai" class="headerlink" title="数加pai"></a>数加pai</h2><p>数加pai是一个机器学习平台，提供可视化界面来操作算法，无需自己编写任何代码即可计算自己的数据。<br>如果你没有那么多数据也没有这种场景，那么选择一个外部算法平台也是一个不错的选择。</p>
+<h2 id="kaggle"><a href="#kaggle" class="headerlink" title="kaggle"></a>kaggle</h2><p>一个类似阿里云天池的算法开发大赛平台，会定时发布各种任务，前几名有奖金，第一名$10W。</p>
 <p>我们用这个平台上练手的项目来体验一下PAI。</p>
 <p>找到首页中标着101的那一组，这些题目都是给你练手的，相对来说会比较简单一点，就选第一个，<code>Digit Recognizer</code>。</p>
-<h3 id="题目分析">题目分析</h3><p>这个题目的主要任务的数字识别，很多手写的数字，左边导航栏<code>home</code>-<code>data</code>，进去可以下载本次的训练数据: <code>train.csv</code>和测试数据: <code>test.csv</code>。</p>
+<h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><p>这个题目的主要任务的数字识别，很多手写的数字，左边导航栏<code>home</code>-<code>data</code>，进去可以下载本次的训练数据: <code>train.csv</code>和测试数据: <code>test.csv</code>。</p>
 <p>打开<code>train.csv</code>文件，主办方已经把需要识别的图片提取成像素值，直接训练就行了。</p>
 <p>其中，一行代表一个数字的图片，第一列<code>lable</code>代表的是已经识别出来的具体的数字。</p>
 <table>
@@ -177,12 +177,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </tr>
 </tbody>
 </table>
-<h3 id="寻找合适算法">寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
+<h3 id="寻找合适算法"><a href="#寻找合适算法" class="headerlink" title="寻找合适算法"></a>寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
 <p>选择<code>kNN</code>是因为<code>kNN</code>算法比较好理解，对于我这种新手也比较容易看懂，缺点是<code>kNN</code>算法是惰性算法，计算时间会比较长。</p>
-<h3 id="开始解题">开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
-<h3 id="上传数据">上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
+<h3 id="开始解题"><a href="#开始解题" class="headerlink" title="开始解题"></a>开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
+<h3 id="上传数据"><a href="#上传数据" class="headerlink" title="上传数据"></a>上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
 <p>首先下载<a href="https://help.aliyun.com/document_detail/27991.html?spm=5176.product27797.6.217.2hjJzR" target="_blank" rel="external">MaxCompute CMD</a>，这里点击<code>新版客户端下载</code>，下载完成后，配置AK以及运行CMD，关于如何建表，请查看帮助文档，注意要把所有字段也建了，和<code>CSV</code>文件相对应，这里字段有段多，可以用一个脚本生成sql. 然后使用 <code>MaxCompute CMD</code>的<code>tunnel</code>命令上传CSV文件建表<code>odps@ my_test_project&gt; tunnel upload train.csv pai_test_train;</code>，还有测试数据表<code>odps@ my_test_project&gt; tunnel upload test.csv pai_test_data;</code></p>
-<h3 id="使用pai来解题">使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
+<h3 id="使用pai来解题"><a href="#使用pai来解题" class="headerlink" title="使用pai来解题"></a>使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
 <ol>
 <li>新建一个实验，取名pai_test，这时候我们会得到一个空的实验，接下来就是往实验上拖组件。</li>
 <li>首先选择数据源，在左侧表列表中选择刚刚新建的<code>pai_test_train</code>，<code>pai_test_data</code>，分别拖到右侧的实验图上。这里表同步机制有延迟，如果在所有表中找不到新建的表，可以尝试一下搜索。</li>
@@ -192,7 +192,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li>在<code>选择训练表的标签列</code>中选择<code>label</code>字段，下面两个选项都是可选项，可以选择预测表的哪些特征别参与计算，还有产出表选择产出哪些字段，这些都可以选择默认，同理还有<code>参数设置</code>tab，如果对算法没什么研究，选择默认就可以了。</li>
 <li>全部选择好了，点击下方的<code>运行</code>来进行计算。</li>
 </ol>
-<h3 id="产出数据">产出数据</h3><p>运行成功后，会产出一张新表，名字带有随机性，通常格式是<code>pai_temp_5052_75767_1</code>，因为<code>kaggle</code>没有和阿里云的产品进行打通，这里我们需要把数据下载成CSV文件，然后进行上传。</p>
+<h3 id="产出数据"><a href="#产出数据" class="headerlink" title="产出数据"></a>产出数据</h3><p>运行成功后，会产出一张新表，名字带有随机性，通常格式是<code>pai_temp_5052_75767_1</code>，因为<code>kaggle</code>没有和阿里云的产品进行打通，这里我们需要把数据下载成CSV文件，然后进行上传。</p>
 <ol>
 <li>首先依然是通过<code>tunnel</code>命令进行下载: <code>odps@ my_test_project&gt; tunnel download pai_temp_5052_75767_1 -h true result.csv;</code>,<code>-h true</code>命令表示带上表头。</li>
 <li>打开CSV文件，找到<code>prediction</code>字段，这个就是我们的预测结果了，然后就是上传<code>kaggle</code>了。</li>
@@ -245,6 +245,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
+ <div class="article-prev" >
+ <a href="/2016/11/16/ios-basic/" title="iOS开发--1天从入门到放弃--基础">
+  <i class="fa fa-long-arrow-left"></i>
+  <span>
+  iOS开发--1天从入门到放弃--基础</span>
+</a>
+</div>
+
 
 <div class="article-next">
 <a href="/2016/06/06/hello-world/"  title="Hello World">
@@ -304,6 +312,10 @@ var duoshuoQuery = {short_name:"perterpon"};
   <ul class="entry">
     
       <li>
+        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
+      </li>
+    
+      <li>
         <a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a>
       </li>
     
@@ -319,10 +331,6 @@ var duoshuoQuery = {short_name:"perterpon"};
         <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
       </li>
     
-      <li>
-        <a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -335,6 +343,8 @@ var duoshuoQuery = {short_name:"perterpon"};
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -358,9 +368,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
   
     <a href="/tags/better-package/">better package<small>1</small></a>
   
@@ -381,6 +395,8 @@ var duoshuoQuery = {short_name:"perterpon"};
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>1</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   

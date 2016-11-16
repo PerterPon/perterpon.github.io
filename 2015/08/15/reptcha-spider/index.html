@@ -140,9 +140,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
       
       <div class="entry">
         
-          <h2 id="reCAPTCHA简介">reCAPTCHA简介</h2><p><a href="https://zh.wikipedia.org/wiki/ReCAPTCHA" target="_blank" rel="external">reCAPTCHA</a>项目是由卡内基梅隆大学所发展的系统，主要目的是利用CAPTCHA技术来帮助典籍数字化的进行，这个项目将由书本扫描下来无法准确的被光学文字辨识技术（OCR, Optical Character Recognition）识别的文字显示在CAPTCHA问题中，让人类在回答CAPTCHA问题时用人脑加以识别[1]。reCAPTCHA正数字化《纽约时报》（New York Times）的扫描存文件，目前已经完成20年份的数据，并希望在2010年完成110年份的数据。2009年9月17日，Google宣布收购reCAPTCHA。这是一个伟大的项目，在发挥验证码作用的同时，使得输入验证码的人对全人类做出了贡献。</p>
-<h2 id="项目初衷">项目初衷</h2><p>有江湖的地方就有爬虫，为什么我会去爬一个带有验证码的网站呢？前段时间刚买了车，但是运到店里面需要一些时间，从销售那问了车架号就一直想蠢蠢欲动，看到车托之家有人可以用车架号查询车辆生产以及配置信息，那也是一个别人开发的系统，但是不知道为什么最近一直处于瘫痪状态，好在还有英文网站可以查询。但是因为英文网站带有reCAPTCHA，而天朝又因为某些不可抗力因素导致reCAPTCHA无法使用，除非挂VPN，一般人查不了配置，那么，为什么不自己开发一个呢？</p>
-<h2 id="实现过程">实现过程</h2><p>其他爬页面的细节就不说了，主要还是说说<code>reCAPTCHA</code>如何爬，验证码也没想着自动识别，那太复杂了，就把验证码爬下来让用户自己输入吧，reCAPTCHA使用很简单，在页面上嵌入一段JS，然后去问谷歌这个验证码的输入正确与否就OK了，所有遇到的问题如下：</p>
+          <h2 id="reCAPTCHA简介"><a href="#reCAPTCHA简介" class="headerlink" title="reCAPTCHA简介"></a>reCAPTCHA简介</h2><p><a href="https://zh.wikipedia.org/wiki/ReCAPTCHA" target="_blank" rel="external">reCAPTCHA</a>项目是由卡内基梅隆大学所发展的系统，主要目的是利用CAPTCHA技术来帮助典籍数字化的进行，这个项目将由书本扫描下来无法准确的被光学文字辨识技术（OCR, Optical Character Recognition）识别的文字显示在CAPTCHA问题中，让人类在回答CAPTCHA问题时用人脑加以识别[1]。reCAPTCHA正数字化《纽约时报》（New York Times）的扫描存文件，目前已经完成20年份的数据，并希望在2010年完成110年份的数据。2009年9月17日，Google宣布收购reCAPTCHA。这是一个伟大的项目，在发挥验证码作用的同时，使得输入验证码的人对全人类做出了贡献。</p>
+<h2 id="项目初衷"><a href="#项目初衷" class="headerlink" title="项目初衷"></a>项目初衷</h2><p>有江湖的地方就有爬虫，为什么我会去爬一个带有验证码的网站呢？前段时间刚买了车，但是运到店里面需要一些时间，从销售那问了车架号就一直想蠢蠢欲动，看到车托之家有人可以用车架号查询车辆生产以及配置信息，那也是一个别人开发的系统，但是不知道为什么最近一直处于瘫痪状态，好在还有英文网站可以查询。但是因为英文网站带有reCAPTCHA，而天朝又因为某些不可抗力因素导致reCAPTCHA无法使用，除非挂VPN，一般人查不了配置，那么，为什么不自己开发一个呢？</p>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><p>其他爬页面的细节就不说了，主要还是说说<code>reCAPTCHA</code>如何爬，验证码也没想着自动识别，那太复杂了，就把验证码爬下来让用户自己输入吧，reCAPTCHA使用很简单，在页面上嵌入一段JS，然后去问谷歌这个验证码的输入正确与否就OK了，所有遇到的问题如下：</p>
 <ul>
 <li><p>script标签发出的请求带有<code>referer</code>头，显然申请<code>reCAPTCHA</code>服务的时候会生成一个唯一性的token，带着token才能请求到验证码，而发送请求的时候会验证<code>`referer</code>头，如果不是<code>127.0.0.1</code>或者<code>localhost</code>或者申请时候填写的网址，那么谷歌就拒绝提供服务。解决办法：本身因为天朝地址无法访问谷歌服务，就准备在服务端对这些请求做一次转发，转发时候不要带上<code>referer</code>头即可。</p>
 </li>
@@ -154,7 +154,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <ul>
 <li>谷歌毕竟是谷歌，即使爬到了验证码，他也不会让你好用，谷歌的识别能力还是挺强的，原本想带上一些随机<code>agent</code>，<code>x-forwarded-for</code>之类的头来模拟我是一个代理而已，但是无一例外，都被识别为了爬虫而拒绝服务，最后采用的还是没有带上任何头，直接请求，至少服务能用，但是等到用的人多了之后，验证码就会变得非常复杂，好在还有语音验证码可以用。</li>
 </ul>
-<h2 id="总结">总结</h2><p>这次爬得不算完美，当PV超过2 300的时候，验证码就变得非常恶心了，常人一般难以识别，这块还在想办法。最后贴出这个应用实例吧：<a href="http://bmwvin.chegai.club" target="_blank" rel="external">宝马中文车架号查询系统</a>。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次爬得不算完美，当PV超过2 300的时候，验证码就变得非常恶心了，常人一般难以识别，这块还在想办法。最后贴出这个应用实例吧：<a href="http://bmwvin.chegai.club" target="_blank" rel="external">宝马中文车架号查询系统</a>。</p>
 
         
       </div>
@@ -267,6 +267,10 @@ var duoshuoQuery = {short_name:"perterpon"};
   <ul class="entry">
     
       <li>
+        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
+      </li>
+    
+      <li>
         <a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a>
       </li>
     
@@ -282,10 +286,6 @@ var duoshuoQuery = {short_name:"perterpon"};
         <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
       </li>
     
-      <li>
-        <a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -298,6 +298,8 @@ var duoshuoQuery = {short_name:"perterpon"};
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -321,9 +323,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
   
     <a href="/tags/better-package/">better package<small>1</small></a>
   
@@ -344,6 +350,8 @@ var duoshuoQuery = {short_name:"perterpon"};
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>1</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   

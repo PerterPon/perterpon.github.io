@@ -140,7 +140,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       
       <div class="entry">
         
-          <h3 id="背景">背景</h3><p>有如下一张用户表</p>
+          <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>有如下一张用户表</p>
 <table>
 <thead>
 <tr>
@@ -167,13 +167,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </table>
 <p>为了更好地做记录，同时保证安全，代码不做物理删除，只做逻辑删除，将<code>is_deleted</code>字段置为<code>1</code>，即表示删除。</p>
 <p>登陆依赖别人的SSO，如果登陆了之后访问过我的网站的话，那么我就会把这个人记录到自己的系统里面，同时做一些别的操作，<code>uid</code>字段是由SSO系统生成的，每个人唯一。</p>
-<h3 id="问题">问题</h3><p>当两个请求同时访问我的系统时，同时去查询数据库，两次查询都没有查到当前用户，于是这两个请求的逻辑就都走到插入新用户逻辑，同时，因为增加了<code>is_deleted</code>字段，我无法对<code>uid</code>字段加唯一索引，一个用户可以被删除多次，也无法对<code>uid</code>和<code>is_deleted</code>两个字段做复合唯一索引，所以这两个请求的插入动作都能成功执行。这时，表里面就有了两条完全相同的用户记录了，问题发生。</p>
-<h3 id="问题原因">问题原因</h3><p>如果没有<code>is_deleted</code>字段，那么其实不存在这个问题，给<code>uid</code>字段加一个唯一索引，第二次插入的时候必然会报错，所以究其原因，我们需要一把锁，一把在这张表之外的锁。</p>
-<h3 id="解决办法">解决办法</h3><ol>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>当两个请求同时访问我的系统时，同时去查询数据库，两次查询都没有查到当前用户，于是这两个请求的逻辑就都走到插入新用户逻辑，同时，因为增加了<code>is_deleted</code>字段，我无法对<code>uid</code>字段加唯一索引，一个用户可以被删除多次，也无法对<code>uid</code>和<code>is_deleted</code>两个字段做复合唯一索引，所以这两个请求的插入动作都能成功执行。这时，表里面就有了两条完全相同的用户记录了，问题发生。</p>
+<h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>如果没有<code>is_deleted</code>字段，那么其实不存在这个问题，给<code>uid</code>字段加一个唯一索引，第二次插入的时候必然会报错，所以究其原因，我们需要一把锁，一把在这张表之外的锁。</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
 <li>新建一张表，以<code>uid</code>为主键或者唯一索引，在需要插入用户表之前，先插入这张新建的表，如果插入成功了，那么再往业务表里面插入用户信息。</li>
 <li>使用<code>tair``redis</code>等，在准备插入用户表前，先使用<code>uid</code>作为<code>key</code>插一条记录并加上锁，就能够保证只有一个请求能够抢到锁，抢到后再进行用户信息的插入。</li>
 </ol>
-<h3 id="缺陷">缺陷</h3><ol>
+<h3 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h3><ol>
 <li>几种方法都比较重，都需要新建一张表，甚至引入一种新的存储。</li>
 <li>假设同时两个请求抢锁，没抢到锁的请求处理会比较麻烦，可能需要定时隔一段时间去检测用户信息是否已经插入，逻辑较重。</li>
 </ol>
@@ -289,6 +289,10 @@ var duoshuoQuery = {short_name:"perterpon"};
   <ul class="entry">
     
       <li>
+        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
+      </li>
+    
+      <li>
         <a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a>
       </li>
     
@@ -304,10 +308,6 @@ var duoshuoQuery = {short_name:"perterpon"};
         <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
       </li>
     
-      <li>
-        <a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -320,6 +320,8 @@ var duoshuoQuery = {short_name:"perterpon"};
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -343,9 +345,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
   
     <a href="/tags/better-package/">better package<small>1</small></a>
   
@@ -366,6 +372,8 @@ var duoshuoQuery = {short_name:"perterpon"};
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>1</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   

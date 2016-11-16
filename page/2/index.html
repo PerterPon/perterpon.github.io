@@ -118,6 +118,74 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2015/07/05/coffee-script-json/">coffee在编写过程中的一些坑</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2015-07-05T07:20:00.000Z">2015-07-05</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2015/07/05/coffee-script-json/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/07/05/coffee-script-json/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>CoffeeScript在编写过程之中，相对于JS可以带来很多便利性，但是同时也会引入一些问题，JS相对于Coffee来说有一些繁琐，但是相对严谨。</p>
+<p>这里会列出coffee诸多的坑，其实也不能算是坑，只是在还没有灵活运用时，很难排查的一些小问题，也要注意一下自己平时的编写习惯。</p>
+<ul>
+<li>在生产过程中的一个案例。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode,&#10;  base_cdn, &#10;  # data : encodeURIComponent JSON.stringify &#123; formData : body, type &#125;,&#10;  web_config: JSON.stringify web_config,&#10;  user : locals.user&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这个JSON原来的代码是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode,&#10;  base_cdn, &#10;  # data : encodeURIComponent JSON.stringify &#123; formData : body, type &#125;,&#10;  web_config: JSON.stringify web_config,&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>因为Coffee在描述JSON时候无需添加逗号，然后写这段代码的同事恰好将每一行后面都加上了逗号，然后我一看，没啥问题，紧接着加了一个属性”user”，乍一看，基于coffee松散的语法，毫无任何问题。然后，发现后面，这个JSON的user属性始终是undefined，因为后面有很长一段逻辑，一直以为是后面的逻辑出了问题，经过一个下午的调试后，才开始怀疑是JSON的问题，编译一看，顿时内牛满面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode: mode,&#10;  base_cdn: base_cdn,&#10;  web_config: JSON.stringify(web_config, &#123;&#10;    user: locals.user&#10;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2015/07/05/coffee-script-json/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2015/07/05/async/">nodejs异步回调向yield同步的转变</a></h1>
     
   
@@ -148,14 +216,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h2 id="传统的nodejs异步回调">传统的nodejs异步回调</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, function( err, data ) &#123;&#10;  if ( err ) &#123;&#10;    console.log( err );&#10;  &#125; else &#123;&#10;    console.log( 1111 );&#10;  &#125;&#10;&#125; );&#10;&#10;console.log( 2222 );</span><br></pre></td></tr></table></figure>
-<h3 id="代码逻辑阅读较困难,_先执行了下面的代码,_然后再执行了上面的代码-">代码逻辑阅读较困难, 先执行了下面的代码, 然后再执行了上面的代码.</h3><h2 id="co_+_generator_组成的flow_control将异步转换成同步-">co + generator 组成的flow control将异步转换成同步.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;var thunkify = require( &#39;thunkify&#39; );&#10;&#10;var read = thunkify( fs.readFile );&#10;&#10;var co = require( &#39;co&#39; );&#10;&#10;co( function *()&#123;&#10;  console.log( 111 );&#10;  var content = yield read( &#39;xxx.txt&#39;, &#39;utf-8&#39; );&#10;  console.log( 222 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
-<h3 id="thunkify将传统nodejs异步回调函数进行一层包装,_即可被yield同步执行-">thunkify将传统nodejs异步回调函数进行一层包装, 即可被yield同步执行.</h3><h3 id="co作为流程控制工具,_是把异步转换为同步的主要工具-">co作为流程控制工具, 是把异步转换为同步的主要工具.</h3><h3 id="原理">原理</h3><p>首先需要了解generator的的执行原理.</p>
+            <h2 id="传统的nodejs异步回调"><a href="#传统的nodejs异步回调" class="headerlink" title="传统的nodejs异步回调"></a>传统的nodejs异步回调</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, function( err, data ) &#123;&#10;  if ( err ) &#123;&#10;    console.log( err );&#10;  &#125; else &#123;&#10;    console.log( 1111 );&#10;  &#125;&#10;&#125; );&#10;&#10;console.log( 2222 );</span><br></pre></td></tr></table></figure>
+<h3 id="代码逻辑阅读较困难-先执行了下面的代码-然后再执行了上面的代码"><a href="#代码逻辑阅读较困难-先执行了下面的代码-然后再执行了上面的代码" class="headerlink" title="代码逻辑阅读较困难, 先执行了下面的代码, 然后再执行了上面的代码."></a>代码逻辑阅读较困难, 先执行了下面的代码, 然后再执行了上面的代码.</h3><h2 id="co-generator-组成的flow-control将异步转换成同步"><a href="#co-generator-组成的flow-control将异步转换成同步" class="headerlink" title="co + generator 组成的flow control将异步转换成同步."></a>co + generator 组成的flow control将异步转换成同步.</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;var thunkify = require( &#39;thunkify&#39; );&#10;&#10;var read = thunkify( fs.readFile );&#10;&#10;var co = require( &#39;co&#39; );&#10;&#10;co( function *()&#123;&#10;  console.log( 111 );&#10;  var content = yield read( &#39;xxx.txt&#39;, &#39;utf-8&#39; );&#10;  console.log( 222 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<h3 id="thunkify将传统nodejs异步回调函数进行一层包装-即可被yield同步执行"><a href="#thunkify将传统nodejs异步回调函数进行一层包装-即可被yield同步执行" class="headerlink" title="thunkify将传统nodejs异步回调函数进行一层包装, 即可被yield同步执行."></a>thunkify将传统nodejs异步回调函数进行一层包装, 即可被yield同步执行.</h3><h3 id="co作为流程控制工具-是把异步转换为同步的主要工具"><a href="#co作为流程控制工具-是把异步转换为同步的主要工具" class="headerlink" title="co作为流程控制工具, 是把异步转换为同步的主要工具."></a>co作为流程控制工具, 是把异步转换为同步的主要工具.</h3><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>首先需要了解generator的的执行原理.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#39318;&#20808;&#22768;&#26126;&#19968;&#20010;generator, &#21517;&#23383;&#21483;test, generator&#26159;&#20989;&#25968;&#30340;&#19968;&#20010;&#25193;&#23637;.&#10;function *test()&#123;&#10;  console.log( &#39;111&#39; );&#10;  var d = yield &#123; a : &#39;111&#39; &#125;&#10;  console.log( 222 );&#10;  console.log( d );&#10;  yield &#123; b : &#39;222&#39; &#125;&#10;  console.log( 333 );&#10;  return &#123; c : &#39;444&#39; &#125;;&#10;&#125;&#10;&#10;// &#36820;&#22238;&#19968;&#20010;generator&#23454;&#20363;.&#10;var a = test();&#10;&#10;a.next();&#10;console.log( a.value ); // &#123; a : &#39;111&#39; &#125;&#10;console.log( a.done );  // false&#10;// 111&#10;a.next( &#39;this is d&#39; );&#10;console.log( a.value ); // &#123; b : &#39;222&#39; &#125;&#10;console.log( a.done );  // false&#10;// 222&#10;// &#39;this is d&#39;.&#10;a.next();&#10;console.log( a.value ); // &#123; c : &#39;444&#39; &#125;&#10;console.log( a.done );  // true&#10;// 333</span><br></pre></td></tr></table></figure>
-<h3 id="看完generator特性之后貌似跟异步转同步并没有太多关系,_再仔细一看会发现generator的一个特性就是可以中断函数执行,_等到你想到函数继续执行的时候再继续执行(_a-next()_);">看完<code>generator</code>特性之后貌似跟异步转同步并没有太多关系, 再仔细一看会发现<code>generator</code>的一个特性就是可以中断函数执行, 等到你想到函数继续执行的时候再继续执行( a.next() );</h3><h3 id="这里似乎有点思路了,_可不可以等我异步函数执行完了之后再执行next方法,_答案肯定是可以,_动手写写代码看看-">这里似乎有点思路了, 可不可以等我异步函数执行完了之后再执行<code>next</code>方法, 答案肯定是可以, 动手写写代码看看.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;var a = null;&#10;&#10;var test = function *()&#123;&#10;  &#10;  // &#36825;&#37324;yield&#20102;&#19968;&#20010;&#20989;&#25968;, &#26681;&#25454;&#29305;&#24615;&#21487;&#20197;&#30693;&#36947;, &#36825;&#20010;&#20989;&#25968;&#21487;&#20197;&#22312;`a.value`&#20013;&#25343;&#21040;.&#10;  // &#32473;&#36825;&#20010;&#20989;&#25968;&#19968;&#20010;`callback`&#21442;&#25968;, &#20316;&#20026;`readFile`&#25191;&#34892;&#23436;&#25104;&#20043;&#21518;&#30340;&#22238;&#35843;&#20989;&#25968;.&#10;  var content1 = yield function( callback )&#123;&#10;    fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;  &#125;&#10;&#10;  console.log( &#39;read file1 done!&#39;, content1.length );&#10;&#10;  var content2 = yield function( callback ) &#123;&#10;    fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;  &#125;&#10;&#10;  console.log( &#39;read file2 done!&#39;, content2.length );&#10;&#10;&#125;&#10;&#10;var a = test();&#10;&#10;co();&#10;&#10;function co( data ) &#123;&#10;  var result = a.next( data );&#10;  if ( true === result.done ) &#123;&#10;    return;&#10;  &#125;&#10;  var cb = result.value;&#10;&#10;  cb( function( err, data ) &#123;&#10;    if( err ) &#123;&#10;      console.log( &#39;read file error&#39; );&#10;    &#125; else &#123;&#10;      co( data );&#10;    &#125;&#10;  &#125; );&#10;&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="简单套了一下,_其实就已经实现了co的功能,_co函数仅仅只有13行,_就实现了异步转成同步,_当然co因为做了一些边界检测,_代码行数肯定会略多于co函数-">简单套了一下, 其实就已经实现了co的功能, <code>co</code>函数仅仅只有13行, 就实现了异步转成同步, 当然co因为做了一些边界检测, 代码行数肯定会略多于co函数.</h3><h3 id="这里每当有一个异步要当成同步执行时,_需要将异步逻辑封装成一个函数,_这个就是thunkify-">这里每当有一个异步要当成同步执行时, 需要将异步逻辑封装成一个函数, 这个就是<code>thunkify</code>.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var content2 = yield function( callback ) &#123;&#10;  fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="同步式的错误捕获">同步式的错误捕获</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;var a = null;&#10;&#10;var test = function *()&#123;&#10;  &#10;  // &#36825;&#37324;yield&#20102;&#19968;&#20010;&#20989;&#25968;, &#26681;&#25454;&#29305;&#24615;&#21487;&#20197;&#30693;&#36947;, &#36825;&#20010;&#20989;&#25968;&#21487;&#20197;&#22312;`a.value`&#20013;&#25343;&#21040;.&#10;  // &#32473;&#36825;&#20010;&#20989;&#25968;&#19968;&#20010;`callback`&#21442;&#25968;, &#20316;&#20026;`readFile`&#25191;&#34892;&#23436;&#25104;&#20043;&#21518;&#30340;&#22238;&#35843;&#20989;&#25968;.&#10;  try &#123;&#10;    var content1 = yield function( callback )&#123;&#10;      fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;    &#125;&#10;  &#125; catch( e ) &#123;&#10;    console.log( &#39;catched an error&#39; );&#10;    console.log( e );&#10;  &#125;&#10;  console.log( &#39;read file1 done!&#39;, content1.length );&#10;&#10;&#125;&#10;&#10;var a = test();&#10;&#10;co();&#10;&#10;function co( data ) &#123;&#10;  var result = a.next( data );&#10;  if ( true === result.done ) &#123;&#10;    return;&#10;  &#125;&#10;  var cb = result.value;&#10;&#10;  cb( function( err, data ) &#123;&#10;    if( err ) &#123;&#10;      a.throw( err );&#10;    &#125; else &#123;&#10;      co( data );&#10;    &#125;&#10;  &#125; );&#10;&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="honeycomb_+_hc-cover-runner">honeycomb + hc-cover-runner</h3><p>coffee, coffee会自动编译函数和generator, 若函数体里面有<code>yield</code>关键字就自动成为一个<code>generator</code></p>
+<h3 id="看完generator特性之后貌似跟异步转同步并没有太多关系-再仔细一看会发现generator的一个特性就是可以中断函数执行-等到你想到函数继续执行的时候再继续执行-a-next"><a href="#看完generator特性之后貌似跟异步转同步并没有太多关系-再仔细一看会发现generator的一个特性就是可以中断函数执行-等到你想到函数继续执行的时候再继续执行-a-next" class="headerlink" title="看完generator特性之后貌似跟异步转同步并没有太多关系, 再仔细一看会发现generator的一个特性就是可以中断函数执行, 等到你想到函数继续执行的时候再继续执行( a.next() );"></a>看完<code>generator</code>特性之后貌似跟异步转同步并没有太多关系, 再仔细一看会发现<code>generator</code>的一个特性就是可以中断函数执行, 等到你想到函数继续执行的时候再继续执行( a.next() );</h3><h3 id="这里似乎有点思路了-可不可以等我异步函数执行完了之后再执行next方法-答案肯定是可以-动手写写代码看看"><a href="#这里似乎有点思路了-可不可以等我异步函数执行完了之后再执行next方法-答案肯定是可以-动手写写代码看看" class="headerlink" title="这里似乎有点思路了, 可不可以等我异步函数执行完了之后再执行next方法, 答案肯定是可以, 动手写写代码看看."></a>这里似乎有点思路了, 可不可以等我异步函数执行完了之后再执行<code>next</code>方法, 答案肯定是可以, 动手写写代码看看.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;var a = null;&#10;&#10;var test = function *()&#123;&#10;  &#10;  // &#36825;&#37324;yield&#20102;&#19968;&#20010;&#20989;&#25968;, &#26681;&#25454;&#29305;&#24615;&#21487;&#20197;&#30693;&#36947;, &#36825;&#20010;&#20989;&#25968;&#21487;&#20197;&#22312;`a.value`&#20013;&#25343;&#21040;.&#10;  // &#32473;&#36825;&#20010;&#20989;&#25968;&#19968;&#20010;`callback`&#21442;&#25968;, &#20316;&#20026;`readFile`&#25191;&#34892;&#23436;&#25104;&#20043;&#21518;&#30340;&#22238;&#35843;&#20989;&#25968;.&#10;  var content1 = yield function( callback )&#123;&#10;    fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;  &#125;&#10;&#10;  console.log( &#39;read file1 done!&#39;, content1.length );&#10;&#10;  var content2 = yield function( callback ) &#123;&#10;    fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;  &#125;&#10;&#10;  console.log( &#39;read file2 done!&#39;, content2.length );&#10;&#10;&#125;&#10;&#10;var a = test();&#10;&#10;co();&#10;&#10;function co( data ) &#123;&#10;  var result = a.next( data );&#10;  if ( true === result.done ) &#123;&#10;    return;&#10;  &#125;&#10;  var cb = result.value;&#10;&#10;  cb( function( err, data ) &#123;&#10;    if( err ) &#123;&#10;      console.log( &#39;read file error&#39; );&#10;    &#125; else &#123;&#10;      co( data );&#10;    &#125;&#10;  &#125; );&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="简单套了一下-其实就已经实现了co的功能-co函数仅仅只有13行-就实现了异步转成同步-当然co因为做了一些边界检测-代码行数肯定会略多于co函数"><a href="#简单套了一下-其实就已经实现了co的功能-co函数仅仅只有13行-就实现了异步转成同步-当然co因为做了一些边界检测-代码行数肯定会略多于co函数" class="headerlink" title="简单套了一下, 其实就已经实现了co的功能, co函数仅仅只有13行, 就实现了异步转成同步, 当然co因为做了一些边界检测, 代码行数肯定会略多于co函数."></a>简单套了一下, 其实就已经实现了co的功能, <code>co</code>函数仅仅只有13行, 就实现了异步转成同步, 当然co因为做了一些边界检测, 代码行数肯定会略多于co函数.</h3><h3 id="这里每当有一个异步要当成同步执行时-需要将异步逻辑封装成一个函数-这个就是thunkify"><a href="#这里每当有一个异步要当成同步执行时-需要将异步逻辑封装成一个函数-这个就是thunkify" class="headerlink" title="这里每当有一个异步要当成同步执行时, 需要将异步逻辑封装成一个函数, 这个就是thunkify."></a>这里每当有一个异步要当成同步执行时, 需要将异步逻辑封装成一个函数, 这个就是<code>thunkify</code>.</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var content2 = yield function( callback ) &#123;&#10;  fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="同步式的错误捕获"><a href="#同步式的错误捕获" class="headerlink" title="同步式的错误捕获"></a>同步式的错误捕获</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var fs = require( &#39;fs&#39; );&#10;&#10;var a = null;&#10;&#10;var test = function *()&#123;&#10;  &#10;  // &#36825;&#37324;yield&#20102;&#19968;&#20010;&#20989;&#25968;, &#26681;&#25454;&#29305;&#24615;&#21487;&#20197;&#30693;&#36947;, &#36825;&#20010;&#20989;&#25968;&#21487;&#20197;&#22312;`a.value`&#20013;&#25343;&#21040;.&#10;  // &#32473;&#36825;&#20010;&#20989;&#25968;&#19968;&#20010;`callback`&#21442;&#25968;, &#20316;&#20026;`readFile`&#25191;&#34892;&#23436;&#25104;&#20043;&#21518;&#30340;&#22238;&#35843;&#20989;&#25968;.&#10;  try &#123;&#10;    var content1 = yield function( callback )&#123;&#10;      fs.readFile( &#39;xxx.txt&#39;, &#39;utf-8&#39;, callback );&#10;    &#125;&#10;  &#125; catch( e ) &#123;&#10;    console.log( &#39;catched an error&#39; );&#10;    console.log( e );&#10;  &#125;&#10;  console.log( &#39;read file1 done!&#39;, content1.length );&#10;&#10;&#125;&#10;&#10;var a = test();&#10;&#10;co();&#10;&#10;function co( data ) &#123;&#10;  var result = a.next( data );&#10;  if ( true === result.done ) &#123;&#10;    return;&#10;  &#125;&#10;  var cb = result.value;&#10;&#10;  cb( function( err, data ) &#123;&#10;    if( err ) &#123;&#10;      a.throw( err );&#10;    &#125; else &#123;&#10;      co( data );&#10;    &#125;&#10;  &#125; );&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="honeycomb-hc-cover-runner"><a href="#honeycomb-hc-cover-runner" class="headerlink" title="honeycomb + hc-cover-runner"></a>honeycomb + hc-cover-runner</h3><p>coffee, coffee会自动编译函数和generator, 若函数体里面有<code>yield</code>关键字就自动成为一个<code>generator</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;request  = require &#39;request&#39;&#10;&#10;thunkify = require &#39;thunkify&#39;&#10;&#10;class Test&#10;  &#10;  constructor : ( @options ) -&#62;&#10;    @request = thunkify request&#10;&#10;  middleware : -&#62;&#10;    ( req, res, next ) =&#62;&#10;      [ response, content ] = yield @request &#39;http://www.baidu.com&#39;&#10;      res.end content&#10;&#10;module.exports = ( options ) -&#62;&#10;  new Test options</span><br></pre></td></tr></table></figure>
 <p>javascript, js需要显示声明<code>yield</code>所在函数为<code>generator</code>, 否则JS会报出语法错误.</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;let request  = require( &#39;request&#39; );&#10;&#10;let thunkify = require( &#39;thunkify&#39; ):&#10;&#10;class Test &#123;&#10;    &#10;  constructor( options ) &#123;&#10;    this.request = thunkify( request );&#10;  &#125;&#10;&#10;  middleware() &#123;&#10;    let that = this;&#10;    return function *( req, res, next ) &#123;&#10;      let result = yield that.request( &#39;http://www.baidu.com&#39; );&#10;      let body = result[ 0 ];&#10;      res.end( content );&#10;    &#125;&#10;  &#125;&#10;&#10;&#125;&#10;&#10;module.exports = ( options ) =&#62; &#123;&#10;  return new Test options;&#10;&#125;</span><br></pre></td></tr></table></figure>
@@ -217,16 +285,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <h2 id="nodejs_的三大特色:">nodejs 的三大特色:</h2><p><img src="/image/image.jpg" alt="nodejs"></p>
-<h2 id="异步解决方案历史变迁">异步解决方案历史变迁</h2><p>回调嵌套 -&gt;  event-pipe, async -&gt; co -&gt; fibjs</p>
-<h2 id="koa">koa</h2><p>基于co, 使用generator来使得异步代码使用起来同步化。</p>
-<h2 id="需求来了">需求来了</h2><ol>
+            <h2 id="nodejs-的三大特色"><a href="#nodejs-的三大特色" class="headerlink" title="nodejs 的三大特色:"></a>nodejs 的三大特色:</h2><p><img src="/image/image.jpg" alt="nodejs"></p>
+<h2 id="异步解决方案历史变迁"><a href="#异步解决方案历史变迁" class="headerlink" title="异步解决方案历史变迁"></a>异步解决方案历史变迁</h2><p>回调嵌套 -&gt;  event-pipe, async -&gt; co -&gt; fibjs</p>
+<h2 id="koa"><a href="#koa" class="headerlink" title="koa"></a>koa</h2><p>基于co, 使用generator来使得异步代码使用起来同步化。</p>
+<h2 id="需求来了"><a href="#需求来了" class="headerlink" title="需求来了"></a>需求来了</h2><ol>
 <li><p><code>koa</code>封装了大量逻辑, 只想使用类似<code>connect</code>的提供原始<code>IncomingMessage</code>和<code>ServerResponse</code>对象.</p>
 </li>
 <li><p>很多中间件都是采用connect中间件方式写的, 如果切换到koa, 必定要对原先的代码做修改.</p>
 </li>
 </ol>
-<h3 id="node-cover">node-cover</h3><ol>
+<h3 id="node-cover"><a href="#node-cover" class="headerlink" title="node-cover"></a>node-cover</h3><ol>
 <li><p>只提供基础的http server服务.</p>
 </li>
 <li><p>兼容connect中间件, 不兼容koa中间件, 但是可以使用ES6写的各种模块.</p>
@@ -234,7 +302,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li><p>无缝切换现有项目, 同时使用co写同步代码.</p>
 </li>
 </ol>
-<h4 id="使用方法"><a href="https://www.npmjs.com/package/node-cover" target="_blank" rel="external">使用方法</a></h4><h2 id="coffee-script_v1-8">coffee-script v1.8</h2><p>一. coffee-script的github master分支已经是1.8版本, 对es6很多语法都做了支持, 其中就包括generator.</p>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a><a href="https://www.npmjs.com/package/node-cover" target="_blank" rel="external">使用方法</a></h4><h2 id="coffee-script-v1-8"><a href="#coffee-script-v1-8" class="headerlink" title="coffee-script v1.8"></a>coffee-script v1.8</h2><p>一. coffee-script的github master分支已经是1.8版本, 对es6很多语法都做了支持, 其中就包括generator.</p>
   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Function&#10;( test ) -&#62;&#10;  ....&#10;&#10;# GeneratorFuntion&#10;( test ) -&#62;&#10;  yield -&#62;</span><br></pre></td></tr></table></figure>
 <p>二. 使用git地址安装npm包</p>
 <p>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  .......&#10;  dependencies : &#123;&#10;    &#34;coffee-script&#34; : &#34;git+ssh://git@github.com:jashkenas/coffeescript.git&#34;&#10;  &#125;&#10;&#125;&#10;&#10;//git://github.com/user/project.git#commit-ish&#10;//git+ssh://user@hostname:project.git#commit-ish&#10;//git+ssh://user@hostname/project.git#commit-ish&#10;//git+http://user@hostname/project/blah.git#commit-ish&#10;//git+https://user@hostname/project/blah.git#commit-ish</span><br></pre></td></tr></table></figure></p>
@@ -425,6 +493,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
+      </li>
+    
+      <li>
         <a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a>
       </li>
     
@@ -440,10 +512,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a>
       </li>
     
-      <li>
-        <a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -456,6 +524,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -479,9 +549,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
   
     <a href="/tags/better-package/">better package<small>1</small></a>
   
@@ -502,6 +576,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>1</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   

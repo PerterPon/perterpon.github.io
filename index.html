@@ -190,6 +190,15 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>转换成十进制就是：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004440892098500626</span><br></pre></td></tr></table></figure>
 <p>就变成了我们最初所看到的结果。</p>
+<p>至此，我们开头的问题已经有了答案，那么下面有几个引申问题：</p>
+<ul>
+<li>JS中类型存储位是52位，那么可以表达最大的数字就是：Math.pow(2, 53), 也就是：<code>9007199254740992</code>，那么以下几个表达式的值是什么呢？</li>
+</ul>
+<p>9007199254740992 + 1<br>9007199254740992 + 2<br>9007199254740992 + 3<br>9007199254740992 + 4</p>
+<ul>
+<li>0.1, 0.2, 0.3, 0.4 转换成二进制小数都是无穷的，那么以下表达式的结果如何呢？</li>
+</ul>
+<p>0.1 + 0.2 === 0.3<br>0.1 + 0.3 === 0.4<br>0.2 + 0.4 === 0.6<br>0.2 + 0.3 === 0.5</p>
 
           
         

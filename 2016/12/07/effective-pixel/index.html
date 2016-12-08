@@ -1,0 +1,496 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head>
+  <meta charset="utf-8">
+  
+  <title>获取最小有效像素区域 | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="获取最小有效像素区域">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="获取最小有效像素区域"/>
+  <meta property="og:site_name" content="PerterPon"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans"/>
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+    
+  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle" />
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>获取最小有效像素区域</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2016-12-07T09:41:00.000Z">2016-12-07</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2016/12/07/effective-pixel/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在做一个需求是对页面某一块区域截图，本身没什么，但是发现需要截图的区域非常大，然后里面的内容通常只有一小点，这样我把整张图片拿出去就会发现只有中间一点点有东西，其他地方都是空白的，用户体验就会比较差了，记得PhotoShop里面有一个功能是能截取整张图片的最小有效像素区域，本来以为canvas自带有这种功能，没想到还是要自己实现的，虽然功能很简单，但是网上也没找着相应类库，可能是我搜索的姿势不对，或者这个需求实在太简单了，没人封装成类库了，虽然完全没做过图像处理，也开始找一些资料。</p>
+<p>文字描述比较抽象，放上一张图片。</p>
+<h4 id="原始图片"><a href="#原始图片" class="headerlink" title="原始图片"></a>原始图片</h4><p><img src="/image/origin.png" alt="原始图片"></p>
+<h4 id="处理后图片"><a href="#处理后图片" class="headerlink" title="处理后图片"></a>处理后图片</h4><p><img src="/image/translate.png" alt="处理后图片"></p>
+<h2 id="canvas"><a href="#canvas" class="headerlink" title="canvas"></a>canvas</h2><p>网页内容是用<code>Html2Canvas</code>把DOM截图成了canvas，原理不是很清楚，大概是读取DOM样式然后在<code>canvas</code>里面重新画一遍，这不是重点，这个时候我们已经拿到画成了的canvas了，改怎么处理呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var canvas  = document.getElementById( &#39;canvas&#39; );&#10;var ctx     = canvas.getContext( &#39;2d&#39; );&#10;var imgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );</span><br></pre></td></tr></table></figure>
+<p>通过<code>getImageData</code>方法就能够拿到<code>canvas</code>的原始像素点信息了，四个参数描述了一个矩形，返回的像素点信息就是这个矩形内的信息。</p>
+<p>返回的是一个<code>Uint8ClampedArray</code>，<code>Uint8ClampedArray</code>是<code>JavaScript</code>中的类型数组，具体的可以参看<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" target="_blank" rel="external">这里</a>，简单来看就是这个数组中的元素都是<code>unsigned int</code>并且都是8位的，所以取值范围是<code>0~255</code>，非常适合用来存放ImageData，而且类型数组因为类型都是确定的，使用起来比普通数组速度上会快很多。</p>
+<h2 id="ImageData"><a href="#ImageData" class="headerlink" title="ImageData"></a>ImageData</h2><p>拿到了原始的像素点数据，来看看数据长什么样子，首先看数组长度，假设是一个100X100的图片，那么理论上像素点的数量是100<em>100，也就是10000个，拿到ImageData的数组看长度其实有40000，简单猜测一下大概是10000 </em> rgba，看具体的数组内容很容易就能够验证我们的猜想。</p>
+<p>一个典型的<code>ImageData</code>大概长这个样子，这是一个从左往右，从上到下按顺序排列的一个数组：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">imageData = [ &#10;              0,   0,   0,   0,&#10;              255, 255, 255, 1,&#10;              122, 122, 122, 0.5,&#10;              ....&#10;            ];</span><br></pre></td></tr></table></figure>
+<h2 id="如何获取最小像素区域？"><a href="#如何获取最小像素区域？" class="headerlink" title="如何获取最小像素区域？"></a>如何获取最小像素区域？</h2><p>要实现这个功能的本质，其实就是如何寻找最上、最右、最下以及最左四个点(P1,P2,P3,P4)，有了这四个点，我们就能画出一个最小矩形，把这个图像框在里面。</p>
+<h3 id="一维组数映射到二维空间"><a href="#一维组数映射到二维空间" class="headerlink" title="一维组数映射到二维空间"></a>一维组数映射到二维空间</h3><p>根据数组下标计算当前点在二维空间的坐标，方法其实很简单。</p>
+<p>看下面这张图，可以认为这是一张 5X4 的一张图片，那么总共就有20个像素点，每个格子里的<code>0-19</code>数字就意味着这是在一维数组里面的下标<code>N</code>，由此可得</p>
+<p>X = N % width;<br>Y = Math.floor( N / width );</p>
+<p><img src="/image/pixels.png" alt="pixel"></p>
+<h3 id="全数组扫描"><a href="#全数组扫描" class="headerlink" title="全数组扫描"></a>全数组扫描</h3><p>首先能想到的最简单的办法，就是循环整个数组，当<code>alpha</code>值大于0的时候，即可判断这个点是一个有效像素点，然后整个数组循环完成之后，即可知道得到P1,P2,P3,P4四个点。</p>
+<p>以下是实现代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect( imageData, width, height ) &#123;&#10;  // &#19978;&#28857;, Y&#20540;&#26368;&#23567;&#10;  var p1 = [ 0, height ];&#10;  // &#21491;&#28857;, X&#20540;&#26368;&#22823;&#10;  var p2 = [ 0, 0 ];&#10;  // &#19979;&#28857;, Y&#20540;&#26368;&#22823;&#10;  var p3 = [ 0, 0 ];&#10;  // &#24038;&#28857;, X&#20540;&#26368;&#23567;&#10;  var p4 = [ width, 0 ];&#10;&#10;  var data    = imageData.data;&#10;  var number  = 0;&#10;  console.time( &#39;image1&#39; );&#10;  for ( var i = 0; i &#60; data.length; i ) &#123;&#10;    number++;&#10;    var r = data[ i++ ];&#10;    var g = data[ i++ ];&#10;    var b = data[ i++ ];&#10;    var a = data[ i++ ];&#10;    if ( a === 0 ) &#123;&#10;      continue;&#10;    &#125;&#10;    var x = number % width;&#10;    var y = ( number - x ) / width;&#10;    if ( p1[ 1 ] &#62; y ) &#123;&#10;      p1[ 0 ] = x;&#10;      p1[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p2[ 0 ] &#60; x ) &#123;&#10;      p2[ 0 ] = x;&#10;      p2[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p3[ 1 ] &#60; y ) &#123;&#10;      p3[ 0 ] = x;&#10;      p3[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p4[ 0 ] &#62; x ) &#123;&#10;      p4[ 0 ] = x;&#10;      p4[ 1 ] = y;&#10;    &#125;&#10;  &#125;&#10;&#10;  return &#123; p1, p2, p3, p4 &#125;;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="从矩形的四个角分别去寻找"><a href="#从矩形的四个角分别去寻找" class="headerlink" title="从矩形的四个角分别去寻找"></a>从矩形的四个角分别去寻找</h3><p>具体的思路如下图：</p>
+<p><img src="/image/from-rect.png" alt="from-rect"></p>
+<p>理论上只要有效像素区域越大，那么需要计算的量就越少，速度也就越快，以下是我的实现代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect2( imageData, width, height ) &#123;&#10;  var data = imageData.data;&#10;&#10;  console.time( &#39;image2&#39; );&#10;  var p1 = [];&#10;  var p2 = [];&#10;  var p3 = [];&#10;  var p4 = [];&#10;&#10;  // &#23547;&#25214;P1&#10;  var len = 0&#10;  for ( var i = 0; i &#60; data.length / 4; i ++ ) &#123;&#10;    len   += 7;&#10;    var a = data[ len ];&#10;    if ( a !== 0 ) &#123;&#10;      var x = i % width;&#10;      var y = ( i - x ) / width;&#10;      p1    = [ x, y ];&#10;      break;&#10;    &#125;&#10;  &#125;;&#10;&#10;  //&#23547;&#25214;P3&#10;  var len = 0;&#10;  for ( var i = data.length / 4 - 1; i &#62;= 0; i -- ) &#123;&#10;    len  += 7;&#10;    var a = data[ len ];&#10;    if ( a !== 0 ) &#123;&#10;      var x = i % width;&#10;      var y = ( i - x ) / width;&#10;      p3    = [ x, y ];&#10;      break;&#10;    &#125;&#10;  &#125;&#10;&#10;  // &#23547;&#25214;P2&#10;  for ( var i   = width - 1; i &#62;= 0; i -- ) &#123;&#10;    if ( p2.length ) &#123;&#10;      break;&#10;    &#125;&#10;    var a = p1[ 1 ];&#10;    var b = p3[ 1 ];&#10;    var len = i + a * width;&#10;    for ( var j = a; j &#60; b; j ++ ) &#123;&#10;      len += width;&#10;      // var point = i + j * width;&#10;      var point = len;&#10;      var a = data[ point * 4 + 3 ];&#10;      if ( a !== 0 ) &#123;&#10;        var x = point % width;&#10;        var y = ( point - x ) / height;&#10;        p2    = [ x, y ];&#10;        break;&#10;      &#125;&#10;    &#125;&#10;  &#125;;&#10;&#10;  // &#23547;&#25214;P4&#10;  for ( var i = 0; i &#60; width; i ++ ) &#123;&#10;    if ( p4.length ) &#123;&#10;      break;&#10;    &#125;&#10;    for ( var j = p1[ 1 ]; j &#60; p3[ 1 ]; j ++ ) &#123;&#10;      var point = i + j * width;&#10;      var a = data[ point * 4 + 3 ];&#10;      if ( a !== 0 ) &#123;&#10;        var x = point % width;&#10;        var y = ( point - x ) / height;&#10;        p4    = [ x, y ];&#10;        break;&#10;      &#125;&#10;    &#125;&#10;  &#125;&#10;&#10;  return &#123; p1, p2, p3, p4 &#125;;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>将两种方法分别去计算最开头的图片，两种方式的计算时间分别是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image1: 10.83ms&#10;image2: 15.32ms</span><br></pre></td></tr></table></figure>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>方法2引入的复杂的逻辑反而降低了计算时间，逻辑最简单的全数组扫描比第二种方式快了30%，因为涉及到的东西比较多，目前还不清楚到底是什么原因导致第二种方式速度如此慢，测试了一下，只有当一整张图片几乎全部有像素点的时候，两种方法的速度才差不多。后续我会继续寻找原因，猜测可能是方法2的计算量比方法1多，而方法1更多的是比较和赋值。</p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/canvas/">canvas</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/canvas/">canvas</a>, <a href="/tags/pixel/">pixel</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2016/11/23/computer-number/"  title="计算机眼中的数字">
+ <span>计算机眼中的数字
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">留言</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2016/12/07/effective-pixel/" data-title="获取最小有效像素区域" data-url="http://yoursite.com2016/12/07/effective-pixel/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/12/07/effective-pixel/">获取最小有效像素区域</a>
+      </li>
+    
+      <li>
+        <a href="/2016/11/23/computer-number/">计算机眼中的数字</a>
+      </li>
+    
+      <li>
+        <a href="/2016/11/23/async/">相对性推进引擎(emDrive)</a>
+      </li>
+    
+      <li>
+        <a href="/2016/11/23/em-drive/"></a>
+      </li>
+    
+      <li>
+        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">分類</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+  
+    <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>5</small></li>
+  
+    <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
+  
+    <li><a href="/categories/node/">node</a><small>1</small></li>
+  
+    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+  
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">標籤</h3>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/complicating/">complicating<small>1</small></a>
+  
+    <a href="/tags/computer/">computer<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/dataplus/">dataplus<small>1</small></a>
+  
+    <a href="/tags/decimal/">decimal<small>1</small></a>
+  
+    <a href="/tags/drive/">drive<small>1</small></a>
+  
+    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+  
+    <a href="/tags/float/">float<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>1</small></a>
+  
+    <a href="/tags/http/">http<small>1</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>1</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/javascript/">javascript<small>1</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/kaggle/">kaggle<small>1</small></a>
+  
+    <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/members/">members<small>1</small></a>
+  
+    <a href="/tags/microwave/">microwave<small>1</small></a>
+  
+    <a href="/tags/mysql/">mysql<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>3</small></a>
+  
+    <a href="/tags/number/">number<small>1</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>1</small></a>
+  
+    <a href="/tags/package/">package<small>1</small></a>
+  
+    <a href="/tags/pai/">pai<small>1</small></a>
+  
+    <a href="/tags/physical/">physical<small>1</small></a>
+  
+    <a href="/tags/pixel/">pixel<small>1</small></a>
+  
+    <a href="/tags/precision/">precision<small>1</small></a>
+  
+    <a href="/tags/quantum/">quantum<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
+  
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2016 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

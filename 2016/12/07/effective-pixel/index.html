@@ -142,8 +142,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在做一个需求是对页面某一块区域截图，本身没什么，但是发现需要截图的区域非常大，然后里面的内容通常只有一小点，这样我把整张图片拿出去就会发现只有中间一点点有东西，其他地方都是空白的，用户体验就会比较差了，记得PhotoShop里面有一个功能是能截取整张图片的最小有效像素区域，本来以为canvas自带有这种功能，没想到还是要自己实现的，虽然功能很简单，但是网上也没找着相应类库，可能是我搜索的姿势不对，或者这个需求实在太简单了，没人封装成类库了，虽然完全没做过图像处理，也开始找一些资料。</p>
 <p>文字描述比较抽象，放上一张图片。</p>
-<h4 id="原始图片"><a href="#原始图片" class="headerlink" title="原始图片"></a>原始图片</h4><p><img src="/image/origin.png" alt="原始图片"></p>
-<h4 id="处理后图片"><a href="#处理后图片" class="headerlink" title="处理后图片"></a>处理后图片</h4><p><img src="/image/translate.png" alt="处理后图片"></p>
+<p><img src="/image/origin.png" alt="原始图片"></p>
+<p><img src="/image/translate.png" alt="处理后图片"></p>
 <h2 id="canvas"><a href="#canvas" class="headerlink" title="canvas"></a>canvas</h2><p>网页内容是用<code>Html2Canvas</code>把DOM截图成了canvas，原理不是很清楚，大概是读取DOM样式然后在<code>canvas</code>里面重新画一遍，这不是重点，这个时候我们已经拿到画成了的canvas了，改怎么处理呢？</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var canvas  = document.getElementById( &#39;canvas&#39; );&#10;var ctx     = canvas.getContext( &#39;2d&#39; );&#10;var imgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );</span><br></pre></td></tr></table></figure>
 <p>通过<code>getImageData</code>方法就能够拿到<code>canvas</code>的原始像素点信息了，四个参数描述了一个矩形，返回的像素点信息就是这个矩形内的信息。</p>

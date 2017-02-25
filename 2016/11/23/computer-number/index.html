@@ -147,12 +147,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>再试试C语言：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &#34;stdio.h&#34;&#10; &#10;  int main()&#123;&#10;&#10;  double a = 0.1 + 0.2;&#10;  printf( &#34;%.17lf&#34;, a );&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004</span><br></pre></td></tr></table></figure>
-<p><img src="/image/black-question.jpg" alt="qustion"></p>
+<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2hkIJc80kpuFjy1zdXXXuUVXa_!!99218453.jpg" alt="qustion"></p>
 <h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>对于数字的存储绝大多数语言遵循的都是<a href="http://grouper.ieee.org/groups/754/" target="_blank" rel="external">IEEE 754</a>规范，简单来说就是一些革命先烈告诉你当你在二进制计算机中想要一个浮点数的时候应该如何去表达。</p>
 <p>首先，内存是有限的，所以一个数字，当它声明好了之后所占的位数是固定的，比如在C语言中，<code>double</code>类型所占的字节数是8，那么总共就是64位(可能某些奇葩编译器会有些差异)，革命先烈们是怎么规定的呢？</p>
-<p><img src="/image/float.png" alt="double"></p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yn.NdH4npuFjSZFmXXXl4FXa_!!99218453.png" alt="double"></p>
 <p>有一个通用的计算公式：</p>
-<p><img src="/image/float-cal.png" alt="float-cal"></p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2253xdUlnpuFjSZFjXXXTaVXa_!!99218453.png" alt="float-cal"></p>
 <ol>
 <li>(-1)^s表示符号位，当s=0，V为正数；当s=1，V为负数。</li>
 <li>M表示有效数字，大于等于1，小于2。</li>
@@ -292,7 +292,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="搜索">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
@@ -301,6 +301,10 @@ var duoshuoQuery = {short_name:"perterpon"};
 <div class="widget recent-post">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a>
+      </li>
     
       <li>
         <a href="/2016/12/07/effective-pixel/">获取最小有效像素区域</a>
@@ -318,17 +322,13 @@ var duoshuoQuery = {short_name:"perterpon"};
         <a href="/2016/11/23/em-drive/"></a>
       </li>
     
-      <li>
-        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
-      </li>
-    
   </ul>
 </div>
 
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">分类</h3>
   <ul class="entry">
   
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
@@ -339,7 +339,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
   
-    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
+    <li><a href="/categories/iOS/">iOS</a><small>2</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -357,7 +357,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">标签</h3>
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
@@ -397,9 +397,11 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
     <a href="/tags/http/">http<small>1</small></a>
   
-    <a href="/tags/iOS/">iOS<small>1</small></a>
+    <a href="/tags/iOS/">iOS<small>2</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   
@@ -425,7 +427,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/number/">number<small>1</small></a>
   
-    <a href="/tags/objective-c/">objective-c<small>1</small></a>
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
     <a href="/tags/package/">package<small>1</small></a>
   
@@ -445,6 +447,8 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/tcp/">tcp<small>1</small></a>
   
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
     <a href="/tags/upload/">upload<small>1</small></a>
   
     <a href="/tags/uploadify/">uploadify<small>1</small></a>
@@ -460,7 +464,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2016 PerterPon
+	  &copy; 2017 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

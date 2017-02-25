@@ -118,6 +118,122 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-02-25T08:10:00.000Z">2017-02-25</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/02/25/high-precision-timer-in-ios/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/02/25/high-precision-timer-in-ios/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近自己业余时间在开发一个录音软件，要画一个声音的音频图，大概类似下面的样子：</p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2L1EsgrJmpuFjSZFwXXaE4VXa_!!99218453.png" alt=""></p>
+<p>在一秒钟内要取大概20次当前声音的大小，用以绘制成一幅图，那么首先，想当然的当然是用<code>NSTimer</code>了，写了代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#24403;&#28982;&#36825;&#37324;&#25226;&#27599;&#31186;&#38047;&#38656;&#35201;&#30340;&#27425;&#25968;&#35774;&#32622;&#25104;&#19968;&#20010;&#21464;&#37327;&#20250;&#26356;&#22909;&#12290;&#10;[NSTimer scheduledTimerWithTimeInterval:1 / 20&#10;                                repeats:YES&#10;                                  block:^(NSTimer * _Nonnull timer) &#123;&#10;                                    // do somting.&#10;                                  &#125;];</span><br></pre></td></tr></table></figure>
+<p>在<code>block</code>里面去取了一下当前音量，绘制成了一个图，代码运行起来没问题，音量正确得取到了，并且也绘制在了图上面，乍一看发现没什么问题，等了十几秒再回头看，发现貌似时间过得很慢，明明感觉已经起码过了十秒，但是录音图上停留在6秒7秒的样子，很疑惑，在block中，加了一个Log，就看出缘由了。</p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2rZUVgC8mpuFjSZFMXXaxpVXa_!!99218453.png" alt=""></p>
+<p>设置的明明是0.05秒执行一次，但是从图中来看，基本都是隔了0.1秒才执行一次，很少有0.5秒才执行一次，<code>NSTimer</code>在<code>runloop</code>运行的时候执行，<code>runloop</code>中有其他任务时势必会影响到<code>NSTimer</code>，但是没想到影响会那么大，查阅了官方文档后发现，<code>iOS</code>设备中，<code>NSTimer</code>的精度在0.1秒左右，看来是需要另寻他法了。</p>
+<h3 id="平均误差：18-11"><a href="#平均误差：18-11" class="headerlink" title="平均误差：18.11"></a>平均误差：18.11</h3><h2 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h2><p>具体思路就是新开一个线程，然后跑一个while循环去检测，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t timerQueue = dispatch_queue_create(&#34;timer&#34;, DISPATCH_QUEUE_SERIAL);&#10;    &#10;    dispatch_async(timerQueue, ^&#123;&#10;        while (YES) &#123;&#10;            usleep( 50000 );&#10;            NSLog(@&#34;timer&#34;);&#10;        &#125;;&#10;    &#125;);</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yKjjfwxlpuFjy0FoXXa.lXXa_!!99218453.png" alt=""></p>
+<h3 id="平均误差：65-33毫秒"><a href="#平均误差：65-33毫秒" class="headerlink" title="平均误差：65.33毫秒"></a>平均误差：65.33毫秒</h3><p>貌似比<code>NSTimer</code>还不靠谱，经过测试，发现精度基本上在200MS左右。</p>
+<h2 id="CADisplayLink"><a href="#CADisplayLink" class="headerlink" title="CADisplayLink"></a>CADisplayLink</h2><p><code>CADisplayLink</code>的调用是根据屏幕刷新率来的，通常<code>iOS</code>设备的刷新率在60HZ，那么一秒钟就能够被调60次。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(testDisplayLink)];&#10;link.paused = NO;&#10;[link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2.uaRfB4lpuFjy1zjXXcAKpXa_!!99218453.png" alt=""></p>
+<h3 id="平均误差：0-002（在每秒60次调用的情况下）"><a href="#平均误差：0-002（在每秒60次调用的情况下）" class="headerlink" title="平均误差：0.002（在每秒60次调用的情况下）"></a>平均误差：0.002（在每秒60次调用的情况下）</h3><p>相当精确，在固定刷新率下，精度基本在0.001毫秒的样子，但是测试发现<code>CADisplayLink</code>有以下问题：</p>
+<ol>
+<li>时间间隔只能是 1 / 60，没法自定义，可以设置 1 / 60的倍数。</li>
+<li>首先精度在 1 / 60秒的样子，无法再精确了，在此基础上，调用间隔非常精确。</li>
+<li>全局只能有一个<code>CADisplayLink</code>实例在运行。</li>
+<li>屏幕在熄灭状态下无法调用此方法。</li>
+</ol>
+<h2 id="dispatch-after"><a href="#dispatch-after" class="headerlink" title="dispatch_after"></a>dispatch_after</h2><p>通过递归得调用这个函数来实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_after(&#10;                   dispatch_time(&#10;                                 DISPATCH_TIME_NOW,&#10;                                 (int)(0.05 * (double)NSEC_PER_SEC)&#10;                                 ),&#10;                   dispatch_get_main_queue(), ^&#123;&#10;                       NSLog(@&#34;dispatch after&#34;);&#10;                       [self after];&#10;                   &#125;);</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2nhOWfuJ8puFjy1XbXXagqVXa_!!99218453.png" alt=""></p>
+<h3 id="平均误差：12-17毫秒。"><a href="#平均误差：12-17毫秒。" class="headerlink" title="平均误差：12.17毫秒。"></a>平均误差：12.17毫秒。</h3><p>目前看来是误差最小的了，如果不算<code>CADisplayLink</code>的话。</p>
+<h2 id="官方提供的高精度解决方案"><a href="#官方提供的高精度解决方案" class="headerlink" title="官方提供的高精度解决方案"></a>官方提供的高精度解决方案</h2><p>官网地址：<a href="https://developer.apple.com/library/content/technotes/tn2169/_index.html" target="_blank" rel="external">https://developer.apple.com/library/content/technotes/tn2169/_index.html</a></p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2NMnCfwxlpuFjy0FoXXa.lXXa_!!99218453.png" alt=""></p>
+<h3 id="平均误差：0-34毫秒"><a href="#平均误差：0-34毫秒" class="headerlink" title="平均误差：0.34毫秒"></a>平均误差：0.34毫秒</h3><p>大概测试了一下，间隔在1毫秒的时候，误差在0.7毫秒，间隔在5毫秒的时候误差0.36，间隔在2毫秒的时候误差在0.7毫秒，间隔在4毫秒的时候误差为0.3毫秒，间隔在3毫秒的时候误差在0.49</p>
+<table>
+<thead>
+<tr>
+<th>间隔</th>
+<th>误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5ms</td>
+<td>0.36ms</td>
+</tr>
+<tr>
+<td>4ms</td>
+<td>0.3ms</td>
+</tr>
+<tr>
+<td>3ms</td>
+<td>0.49ms</td>
+</tr>
+<tr>
+<td>2ms</td>
+<td>0.7ms</td>
+</tr>
+<tr>
+<td>1ms</td>
+<td>0.7ms</td>
+</tr>
+</tbody>
+</table>
+<p>总体来说，这种方式的精度在5毫秒左右，5毫秒已经能满足绝大多数需求了。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/02/25/high-precision-timer-in-ios/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2016/12/07/effective-pixel/">获取最小有效像素区域</a></h1>
     
   
@@ -150,8 +266,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
             <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在做一个需求是对页面某一块区域截图，本身没什么，但是发现需要截图的区域非常大，然后里面的内容通常只有一小点，这样我把整张图片拿出去就会发现只有中间一点点有东西，其他地方都是空白的，用户体验就会比较差了，记得PhotoShop里面有一个功能是能截取整张图片的最小有效像素区域，本来以为canvas自带有这种功能，没想到还是要自己实现的，虽然功能很简单，但是网上也没找着相应类库，可能是我搜索的姿势不对，或者这个需求实在太简单了，没人封装成类库了，虽然完全没做过图像处理，也开始找一些资料。</p>
 <p>文字描述比较抽象，放上一张图片。</p>
-<p><img src="/image/origin.png" alt="原始图片"></p>
-<p><img src="/image/translate.png" alt="处理后图片"></p>
+<p><img src="/https://img.alicdn.com/imgextra/i4/99218453/TB2D36iaORnpuFjSZFCXXX2DXXa_!!99218453.png" alt="原始图片"></p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2JsvdaJBopuFjSZPcXXc9EpXa_!!99218453.png" alt="处理后图片"></p>
 <h2 id="canvas"><a href="#canvas" class="headerlink" title="canvas"></a>canvas</h2><p>网页内容是用<code>Html2Canvas</code>把DOM截图成了canvas，原理不是很清楚，大概是读取DOM样式然后在<code>canvas</code>里面重新画一遍，这不是重点，这个时候我们已经拿到画成了的canvas了，改怎么处理呢？</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var canvas  = document.getElementById( &#39;canvas&#39; );&#10;var ctx     = canvas.getContext( &#39;2d&#39; );&#10;var imgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );</span><br></pre></td></tr></table></figure>
 <p>通过<code>getImageData</code>方法就能够拿到<code>canvas</code>的原始像素点信息了，四个参数描述了一个矩形，返回的像素点信息就是这个矩形内的信息。</p>
@@ -163,12 +279,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="一维组数映射到二维空间"><a href="#一维组数映射到二维空间" class="headerlink" title="一维组数映射到二维空间"></a>一维组数映射到二维空间</h3><p>根据数组下标计算当前点在二维空间的坐标，方法其实很简单。</p>
 <p>看下面这张图，可以认为这是一张 5X4 的一张图片，那么总共就有20个像素点，每个格子里的<code>0-19</code>数字就意味着这是在一维数组里面的下标<code>N</code>，由此可得</p>
 <p>X = N % width;<br>Y = Math.floor( N / width );</p>
-<p><img src="/image/pixels.png" alt="pixel"></p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2rXniaOlnpuFjSZFgXXbi7FXa_!!99218453.png" alt="pixel"></p>
 <h3 id="全数组扫描"><a href="#全数组扫描" class="headerlink" title="全数组扫描"></a>全数组扫描</h3><p>首先能想到的最简单的办法，就是循环整个数组，当<code>alpha</code>值大于0的时候，即可判断这个点是一个有效像素点，然后整个数组循环完成之后，即可知道得到P1,P2,P3,P4四个点。</p>
 <p>以下是实现代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect( imageData, width, height ) &#123;&#10;  // &#19978;&#28857;, Y&#20540;&#26368;&#23567;&#10;  var p1 = [ 0, height ];&#10;  // &#21491;&#28857;, X&#20540;&#26368;&#22823;&#10;  var p2 = [ 0, 0 ];&#10;  // &#19979;&#28857;, Y&#20540;&#26368;&#22823;&#10;  var p3 = [ 0, 0 ];&#10;  // &#24038;&#28857;, X&#20540;&#26368;&#23567;&#10;  var p4 = [ width, 0 ];&#10;&#10;  var data    = imageData.data;&#10;  var number  = 0;&#10;  console.time( &#39;image1&#39; );&#10;  for ( var i = 0; i &#60; data.length; i ) &#123;&#10;    number++;&#10;    var r = data[ i++ ];&#10;    var g = data[ i++ ];&#10;    var b = data[ i++ ];&#10;    var a = data[ i++ ];&#10;    if ( a === 0 ) &#123;&#10;      continue;&#10;    &#125;&#10;    var x = number % width;&#10;    var y = ( number - x ) / width;&#10;    if ( p1[ 1 ] &#62; y ) &#123;&#10;      p1[ 0 ] = x;&#10;      p1[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p2[ 0 ] &#60; x ) &#123;&#10;      p2[ 0 ] = x;&#10;      p2[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p3[ 1 ] &#60; y ) &#123;&#10;      p3[ 0 ] = x;&#10;      p3[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p4[ 0 ] &#62; x ) &#123;&#10;      p4[ 0 ] = x;&#10;      p4[ 1 ] = y;&#10;    &#125;&#10;  &#125;&#10;&#10;  return &#123; p1, p2, p3, p4 &#125;;&#10;&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="从矩形的四个角分别去寻找"><a href="#从矩形的四个角分别去寻找" class="headerlink" title="从矩形的四个角分别去寻找"></a>从矩形的四个角分别去寻找</h3><p>具体的思路如下图：</p>
-<p><img src="/image/from-rect.png" alt="from-rect"></p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2Mf_jaJFopuFjSZFHXXbSlXXa_!!99218453.png" alt="from-rect"></p>
 <p>理论上只要有效像素区域越大，那么需要计算的量就越少，速度也就越快，以下是我的实现代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect2( imageData, width, height ) &#123;&#10;  var data = imageData.data;&#10;&#10;  console.time( &#39;image2&#39; );&#10;  var p1 = [];&#10;  var p2 = [];&#10;  var p3 = [];&#10;  var p4 = [];&#10;&#10;  // &#23547;&#25214;P1&#10;  var len = 0&#10;  for ( var i = 0; i &#60; data.length / 4; i ++ ) &#123;&#10;    len   += 7;&#10;    var a = data[ len ];&#10;    if ( a !== 0 ) &#123;&#10;      var x = i % width;&#10;      var y = ( i - x ) / width;&#10;      p1    = [ x, y ];&#10;      break;&#10;    &#125;&#10;  &#125;;&#10;&#10;  //&#23547;&#25214;P3&#10;  var len = 0;&#10;  for ( var i = data.length / 4 - 1; i &#62;= 0; i -- ) &#123;&#10;    len  += 7;&#10;    var a = data[ len ];&#10;    if ( a !== 0 ) &#123;&#10;      var x = i % width;&#10;      var y = ( i - x ) / width;&#10;      p3    = [ x, y ];&#10;      break;&#10;    &#125;&#10;  &#125;&#10;&#10;  // &#23547;&#25214;P2&#10;  for ( var i   = width - 1; i &#62;= 0; i -- ) &#123;&#10;    if ( p2.length ) &#123;&#10;      break;&#10;    &#125;&#10;    var a = p1[ 1 ];&#10;    var b = p3[ 1 ];&#10;    var len = i + a * width;&#10;    for ( var j = a; j &#60; b; j ++ ) &#123;&#10;      len += width;&#10;      // var point = i + j * width;&#10;      var point = len;&#10;      var a = data[ point * 4 + 3 ];&#10;      if ( a !== 0 ) &#123;&#10;        var x = point % width;&#10;        var y = ( point - x ) / height;&#10;        p2    = [ x, y ];&#10;        break;&#10;      &#125;&#10;    &#125;&#10;  &#125;;&#10;&#10;  // &#23547;&#25214;P4&#10;  for ( var i = 0; i &#60; width; i ++ ) &#123;&#10;    if ( p4.length ) &#123;&#10;      break;&#10;    &#125;&#10;    for ( var j = p1[ 1 ]; j &#60; p3[ 1 ]; j ++ ) &#123;&#10;      var point = i + j * width;&#10;      var a = data[ point * 4 + 3 ];&#10;      if ( a !== 0 ) &#123;&#10;        var x = point % width;&#10;        var y = ( point - x ) / height;&#10;        p4    = [ x, y ];&#10;        break;&#10;      &#125;&#10;    &#125;&#10;  &#125;&#10;&#10;  return &#123; p1, p2, p3, p4 &#125;;&#10;&#125;</span><br></pre></td></tr></table></figure>
 <p>将两种方法分别去计算最开头的图片，两种方式的计算时间分别是：</p>
@@ -239,12 +355,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>再试试C语言：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &#34;stdio.h&#34;&#10; &#10;  int main()&#123;&#10;&#10;  double a = 0.1 + 0.2;&#10;  printf( &#34;%.17lf&#34;, a );&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004</span><br></pre></td></tr></table></figure>
-<p><img src="/image/black-question.jpg" alt="qustion"></p>
+<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2hkIJc80kpuFjy1zdXXXuUVXa_!!99218453.jpg" alt="qustion"></p>
 <h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>对于数字的存储绝大多数语言遵循的都是<a href="http://grouper.ieee.org/groups/754/" target="_blank" rel="external">IEEE 754</a>规范，简单来说就是一些革命先烈告诉你当你在二进制计算机中想要一个浮点数的时候应该如何去表达。</p>
 <p>首先，内存是有限的，所以一个数字，当它声明好了之后所占的位数是固定的，比如在C语言中，<code>double</code>类型所占的字节数是8，那么总共就是64位(可能某些奇葩编译器会有些差异)，革命先烈们是怎么规定的呢？</p>
-<p><img src="/image/float.png" alt="double"></p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yn.NdH4npuFjSZFmXXXl4FXa_!!99218453.png" alt="double"></p>
 <p>有一个通用的计算公式：</p>
-<p><img src="/image/float-cal.png" alt="float-cal"></p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2253xdUlnpuFjSZFjXXXTaVXa_!!99218453.png" alt="float-cal"></p>
 <ol>
 <li>(-1)^s表示符号位，当s=0，V为正数；当s=1，V为负数。</li>
 <li>M表示有效数字，大于等于1，小于2。</li>
@@ -887,83 +1003,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-04-12T11:35:00.000Z">2016-04-12</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/04/12/nodejs-in-the-world/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/04/12/nodejs-in-the-world/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="paypal"><a href="#paypal" class="headerlink" title="paypal"></a>paypal</h2><p>实现相同的功能，2个人用nodejs干了5个人以前用java干的活，性能提高一倍，代码量减少33%，文件减少了40%。</p>
-<p>nodejs 基金会主席：Danese Cooper，2014年加入paypal。</p>
-<h2 id="Microsoft"><a href="#Microsoft" class="headerlink" title="Microsoft"></a>Microsoft</h2><p>微软自家研发的JS引擎：<a href="https://github.com/nodejs/node-chakracore" target="_blank" rel="external">chakra</a>，主要用来解决在跑在ARM上的windows系统不支持nodejs的问题，微软已经有意向提PR到nodejs主分支上去。</p>
-<h2 id="Uber"><a href="#Uber" class="headerlink" title="Uber"></a>Uber</h2><p>整个Uber的分布式调度系统都是基于nodejs和redis开发。</p>
-<p>API层的业务逻辑基于python，mysql和mongo。</p>
-<h2 id="Groupon"><a href="#Groupon" class="headerlink" title="Groupon"></a>Groupon</h2><p>原先使用Ruby on Rails，有一次大家PK完之后，发现了nodejs的带来的好处，所以转换成nodejs开发，2013年宣布成功从ROR迁移至nodejs。</p>
-<p>目前现在Groupon的技术架构：web front-end mvc / mobile client &lt;–&gt; json &lt;–&gt; nodejs &lt;–&gt; service server</p>
-<p>service server可能也是nodejs。</p>
-<h2 id="New-York-Times"><a href="#New-York-Times" class="headerlink" title="New York Times"></a>New York Times</h2><p>移动端核心业务使用nodejs, Express作为web框架，使用dust.js作为模板渲染，所有node代码用coffeeScript，同时使用redis作为node层和核心业务层之间的缓存。</p>
-<h2 id="GitHub"><a href="#GitHub" class="headerlink" title="GitHub"></a>GitHub</h2><p>找到的资料不多，只找到一条Twitter，是GitHub官网账号在2010年12月20日发布的.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Git tag/branch downloads aren&#39;t working current.  We&#39;re upgrading Node.js.</span><br></pre></td></tr></table></figure>
-<h2 id="NASA"><a href="#NASA" class="headerlink" title="NASA"></a>NASA</h2><p>因为其背景，找到的资料也不多，2008年5月份的时候，<code>nodesource.com</code>的CEO发布了一条Twitter</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Welcome to #Nodejs at NASA&#12290;</span><br></pre></td></tr></table></figure>
-<h2 id="沃尔玛"><a href="#沃尔玛" class="headerlink" title="沃尔玛"></a>沃尔玛</h2><p>沃尔玛实验室，在Github上有自己的主页，发布了很多项目，大部分都跟nodejs还有javascript有关，有自己的nodejs框架：<code>hapi</code>，提供restful的API服务，以配置为核心，提供鉴权需求、输入验证、数据缓存和预加载等功能。<br>另外还有<code>hoek</code>、<code>flod</code>、<code>lout</code>、<code>MUPD8</code>、<code>Lumbar</code>等很多服务于nodejs的工具。</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/04/12/nodejs-in-the-world/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="alignright next">下一頁</a>
+    <a href="/page/2/" class="alignright next">下一页</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -971,7 +1015,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="搜索">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
@@ -980,6 +1024,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget recent-post">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a>
+      </li>
     
       <li>
         <a href="/2016/12/07/effective-pixel/">获取最小有效像素区域</a>
@@ -997,17 +1045,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2016/11/23/em-drive/"></a>
       </li>
     
-      <li>
-        <a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a>
-      </li>
-    
   </ul>
 </div>
 
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">分类</h3>
   <ul class="entry">
   
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
@@ -1018,7 +1062,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
   
-    <li><a href="/categories/iOS/">iOS</a><small>1</small></li>
+    <li><a href="/categories/iOS/">iOS</a><small>2</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>5</small></li>
   
@@ -1036,7 +1080,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">标签</h3>
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
@@ -1076,9 +1120,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/hexo/">hexo<small>1</small></a>
   
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
     <a href="/tags/http/">http<small>1</small></a>
   
-    <a href="/tags/iOS/">iOS<small>1</small></a>
+    <a href="/tags/iOS/">iOS<small>2</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   
@@ -1104,7 +1150,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/number/">number<small>1</small></a>
   
-    <a href="/tags/objective-c/">objective-c<small>1</small></a>
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
     <a href="/tags/package/">package<small>1</small></a>
   
@@ -1124,6 +1170,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/tcp/">tcp<small>1</small></a>
   
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
     <a href="/tags/upload/">upload<small>1</small></a>
   
     <a href="/tags/uploadify/">uploadify<small>1</small></a>
@@ -1139,7 +1187,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2016 PerterPon
+	  &copy; 2017 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

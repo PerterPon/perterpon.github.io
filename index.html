@@ -118,6 +118,158 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/02/28/the-great-unittest/">伟大的单元测试</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-02-28T13:00:00.000Z">2017-02-28</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/02/28/the-great-unittest/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/02/28/the-great-unittest/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="什么是单元测试？"><a href="#什么是单元测试？" class="headerlink" title="什么是单元测试？"></a>什么是单元测试？</h2><p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2Ld8oeYtlpuFjSspoXXbcDpXa_!!99218453.jpeg" alt=""></p>
+<p>在计算机编程中，单元测试（英语：Unit Testing）又称为模块测试, 是针对程序模块（软件设计的最小单位）来进行正确性检验的测试工作。程序单元是应用的最小可测试部件。在过程化编程中，一个单元就是单个程序、函数、过程等；对于面向对象编程，最小单元就是方法，包括基类（超类）、抽象类、或者派生类（子类）中的方法。</p>
+<h2 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h2><h3 id="以逻辑单元为最小单位的测试"><a href="#以逻辑单元为最小单位的测试" class="headerlink" title="以逻辑单元为最小单位的测试"></a>以逻辑单元为最小单位的测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;class Car &#123;&#10;&#10;  constructor() &#123;&#10;    this.status = &#34;stopped&#34;;&#10;  &#125;&#10;&#10;  // &#24320;&#36710;&#10;  start() &#123;&#10;    this.status = &#34;start&#34;;&#10;    this._lockDoor();&#10;  &#125;&#10;&#10;  // &#20572;&#36710;&#10;  stop() &#123;&#10;    this.status = &#34;stop&#34;;&#10;    this._unlockDoor();&#10;  &#125;&#10;&#10;  // &#38145;&#36710;&#38376;&#10;  _lockDoor() &#123;&#10;    console.log( &#34;door locked&#34; );&#10;    this._lockFrontDoor();&#10;    this._lockBackDoor();&#10;  &#125;&#10;&#10;  // &#35299;&#38145;&#36710;&#38376;&#10;  _unlockDoor() &#123;&#10;    console.log( &#34;door unlocked&#34; );&#10;    this._unlockFrontDoor();&#10;    this._unlockBackDoor();&#10;  &#125;&#10;&#10;  _lockFrontDoor() &#123;&#10;    console.log( &#34;front door locked&#34; );&#10;  &#125;&#10;&#10;  _lockBackDoor() &#123;&#10;    console.log( &#34;back door locked&#34; );&#10;  &#125;&#10;&#10;  _unlockFrontDoor() &#123;&#10;    console.log( &#34;front door unlocked&#34; );&#10;  &#125;&#10;&#10;  _unlockBackDoor() &#123;&#10;    console.log( &#34;back door unlocked&#34; );&#10;  &#125;&#10;&#10;&#125;;&#10;&#10;module.exports = Car;</span><br></pre></td></tr></table></figure>
+<h3 id="以业务单元为最小单位的测试"><a href="#以业务单元为最小单位的测试" class="headerlink" title="以业务单元为最小单位的测试"></a>以业务单元为最小单位的测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;const assert = require( &#34;assert&#34; );&#10;&#10;const Car = require( &#34;./sample&#34; );&#10;&#10;describe( &#34;test Car&#34;, function() &#123;&#10;&#10;  it( &#34;start car&#34;, function () &#123;&#10;    let car = new Car();&#10;&#10;    assert.equal( car.status, &#34;stopped&#34; );&#10;&#10;    let _lockFrontDoor  = car._lockFrontDoor;&#10;    let _lockBackDoor   = car._lockBackDoor;&#10;&#10;    let frontDoorLocked = false;&#10;    let backDoorLocked  = false;&#10;&#10;    car._lockFrontDoor  = function () &#123;&#10;      frontDoorLocked     = true;&#10;      _lockBackDoor();&#10;    &#125;;&#10;&#10;    car._lockBackDoor   = function () &#123;&#10;      backDoorLocked      = true;&#10;      _lockFrontDoor();&#10;    &#125;;&#10;&#10;    car.start();&#10;&#10;    assert.equal( car.status, &#34;running&#34; );&#10;    assert.equal( frontDoorLocked, true );&#10;    assert.equal( backDoorLocked, true );&#10;&#10;  &#125; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<h2 id="一些单元测试原则"><a href="#一些单元测试原则" class="headerlink" title="一些单元测试原则"></a>一些单元测试原则</h2><ul>
+<li>单元测试必须由最熟悉代码的人（程序的作者）来写。</li>
+<li>单元测试应该在最低的功能/参数上验证程序的正确性。</li>
+<li>单元测试过后，机器状态保持不变。</li>
+<li>单元测试要快（一个测试运行时间是几秒钟，而不是几分钟）。</li>
+<li>单元测试应该产生可重复、一致的结果。</li>
+<li>独立性，单元测试的运行/通过/失败不依赖于别的测试，可以人为构造数据，以保持单元测试的独立性。</li>
+<li>单元测试应该覆盖所有代码路径，包括错误处理路径，为了保证单元测试的代码覆盖率，单元测试必须测试公开的和私有的函数/方法。</li>
+<li>单元测试应该集成到自动测试的框架中。</li>
+<li>单元测试必须和产品代码一起保存和维护。</li>
+</ul>
+<h2 id="单元测试的好处"><a href="#单元测试的好处" class="headerlink" title="单元测试的好处"></a>单元测试的好处</h2><ul>
+<li>保证现有代码的功能都是正常的。</li>
+<li>若不清楚代码而修改了一个逻辑，运行一下单元测试就知道影响到了什么地方。</li>
+<li>反向推动代码做到一个单元的功能最小化。</li>
+<li>写单元测试的过程中可以重新梳理自己的代码，找出bug。</li>
+<li>重构系统而不改变功能时，对照单元测试来写自己的功能就可以，即使之前的代码不是自己写的。</li>
+</ul>
+<h2 id="单元测试不好的地方"><a href="#单元测试不好的地方" class="headerlink" title="单元测试不好的地方"></a>单元测试不好的地方</h2><ul>
+<li>时间成本，直接导致人力成本上升。不过也有可能前提代码质量上的提升可以减少后期很多修BUG的时间。</li>
+<li>有些外部依赖较多并且逻辑相对简单的时候，初始化外部依赖或者mock的精力复杂度可能已经超过了业务代码本身。</li>
+<li>设计影响。有时候，为了方便测试，甚至已经影响到你的业务代码的逻辑。</li>
+<li>需求快速变化期间。有时候需求变化非常快速，单元测试会降低业务变化的敏捷度。</li>
+</ul>
+<h2 id="MOCK"><a href="#MOCK" class="headerlink" title="MOCK"></a>MOCK</h2><p>MOCK 简单来说就是纸老虎。</p>
+<h4 id="业务代码"><a href="#业务代码" class="headerlink" title="业务代码"></a>业务代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;const DB = require( &#39;database&#39; );&#10;&#10;class Mock &#123;&#10;&#10;  getList() &#123;&#10;    const result = DB.query( &#34;select * from table&#34; );&#10;    for( let i = 0; i &#60; result.length; i ++ ) &#123;&#10;      // do somting&#10;    &#125;;&#10;&#10;    return result;&#10;  &#125;&#10;&#10;&#125;;&#10;&#10;module.exports = Mock;</span><br></pre></td></tr></table></figure>
+<h4 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;const Mock = require( &#39;./mock&#39; );&#10;&#10;const DB   = require( &#39;db&#39; );&#10;&#10;describe( &#34;test Mock&#34;, function () &#123;&#10;&#10;  it( &#34;get list&#34;, function () &#123;&#10;    DB.query = function ( sql ) &#123;&#10;      return [ 1, 2, 3 ];&#10;    &#125;;&#10;&#10;    const car    = new Car();&#10;    const result = car.getList();&#10;&#10;    assert.equal( result, [ 1, 2, 3 ] );&#10;  &#125; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<h2 id="为什么我的代码需要mock？"><a href="#为什么我的代码需要mock？" class="headerlink" title="为什么我的代码需要mock？"></a>为什么我的代码需要mock？</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>可以不用去关注一些底层支撑系统，例如DB，如果不MOCK，那么还需要初始化一个DB，使用前使用后都要去清理环境，给自己擦屁股。</li>
+<li>可以更加关注于自己业务代码的业务逻辑，例如去初始化一个DB，需要很多配置信息。</li>
+<li>不会因为数据库的故障导致自己的单元测试失败。</li>
+<li>隔绝别的模块，别的模块即使只申明了接口，也可以正常跑完自己的单元测试。</li>
+</ul>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>如果mock对象很复杂，属性很多，方法也很多，那就需要自己去录制相当多的工作去实现这个mock.</li>
+<li>有些语言难以mock。一些强类型语言和编译型语言对于mock还是比较难的。</li>
+<li>mock会掩盖某些环境。比如各种输出的时间格式会根据用户的环境而定，不同的地域也会有不同的格式，这个时候用mock返回自己所在地区或者自己所在环境的格式，看似单元测试全部通过，实则埋下了隐患。</li>
+<li>在不清楚被mock对象的所有边界行为时，可能会导致程序没有处理一些边界问题而超出预期。</li>
+</ul>
+<h2 id="TDD"><a href="#TDD" class="headerlink" title="TDD"></a>TDD</h2><p>TDD(Test Drive Development)，单元测试带来的一个非常好的开发方式。TDD思想让你在写代码之前，就先写单元测试，这个时候可以让你把整个代码从整体层面上运行起来，然后再去实现每个方法具体的功能。</p>
+<h3 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>在设计阶段，划分方法，划分类的时候，无需关注某个类或者方法的具体的实现，只要达到功能即可。</li>
+<li>在实现某个类或者某个方法的时候，无需关注这么设计是否合理，直接按照方法名实现方法即可。</li>
+</ul>
+<h2 id="BDD"><a href="#BDD" class="headerlink" title="BDD"></a>BDD</h2><p>BDD指的是Behavior Drive Development，也就是行为驱动开发。这里的B并非指的是Business，实际上BDD可以看作是对TDD的一种补充，当然你也可以把它看作TDD的一个分支。因为在TDD中，我们并不能完全保证根据设计所编写的测试就是用户所期望的功能。BDD将这一部分简单和自然化，用自然语言来描述，让开发、测试、BA以及客户都能在这个基础上达成一致。因为测试优先的概念并不是每个人都能接受的，可能有人觉得系统太复杂而难以测试，有人认为不存在的东西无法测试。所以，我们在这里试图转换一种观念，那便是考虑它的行为，也就是说它应该如何运行，然后抽象出能达成共识的规范。如果你用过JBehave之类的BDD框架，你将会更好的理解其中具体的流程。这里我推荐一篇具体阐述的文章。</p>
+<h2 id="DDD"><a href="#DDD" class="headerlink" title="DDD"></a>DDD</h2><p>Deadline Drive Development.</p>
+<p><strong>软件开发进度表</strong></p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>汇报进度</th>
+<th>真实进度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一天</td>
+<td>20%</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>第二天</td>
+<td>50%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>第三天</td>
+<td>70%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>第四天</td>
+<td>80%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>第五天</td>
+<td>90%</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>第六天</td>
+<td>100%</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://alinw-node-admin-public-oss.cn-hangzhou.oss-pub.aliyun-inc.com/1488284625320-timg%3Fimage%26quality%3D80%26size%3Db9999_10000%26sec%3D1488294692862%26di%3Dc3fb7f52ab415d4d1c2febf2496d6abe%26imgtype%3D0%26src%3Dhttp%253A%252F%252Fwww.boosj.com%252Ftuwen%252Fd%252Ffile%252F2017-02-23%252F4bcee8591aae85fbc671d3a9d8351206.jpeg" alt=""></p>
+<p><img src="http://alinw-node-admin-public-oss.cn-hangzhou.oss-pub.aliyun-inc.com/1488285817861-timg%3Fimage%26quality%3D80%26size%3Db9999_10000%26sec%3D1488295890807%26di%3De2fdedc1ad13d6376a707fd550232562%26imgtype%3D0%26src%3Dhttp%253A%252F%252Fwww.joyurl.com%252Fimage%252Ffunny%252F201204%252Ff20120427220326_fpn.jpg" alt=""></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/02/28/the-great-unittest/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a></h1>
     
   
@@ -945,64 +1097,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-04-13T03:06:00.000Z">2016-04-13</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/04/13/the-crazy-adblock/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/04/13/the-crazy-adblock/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h4 id="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse-data-service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net-ERR-BLOCKED-BY-CLIENT。"><a href="#有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse-data-service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net-ERR-BLOCKED-BY-CLIENT。" class="headerlink" title="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse data service，分析型数据服务，图片名字就取了一个ads.png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net::ERR_BLOCKED_BY_CLIENT。"></a>有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是<code>analyse data service</code>，分析型数据服务，图片名字就取了一个<code>ads.png</code>，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示<code>net::ERR_BLOCKED_BY_CLIENT</code>。</h4><h4 id="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。"><a href="#一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。" class="headerlink" title="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。"></a>一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。</h4><h4 id="于是就把问题放到这个报错信息上net-ERR-BLOCKED-BY-CLIENT，blocked-by-client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。"><a href="#于是就把问题放到这个报错信息上net-ERR-BLOCKED-BY-CLIENT，blocked-by-client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。" class="headerlink" title="于是就把问题放到这个报错信息上net::ERR_BLOCKED_BY_CLIENT，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。"></a>于是就把问题放到这个报错信息上<code>net::ERR_BLOCKED_BY_CLIENT</code>，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。</h4><h4 id="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。"><a href="#为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。" class="headerlink" title="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。"></a>为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。</h4><h4 id="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。"><a href="#各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。" class="headerlink" title="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。"></a>各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。</h4><h4 id="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶-adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。"><a href="#回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶-adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。" class="headerlink" title="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。"></a>回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名<code>ads</code>，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: <code>adblock</code>，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。</h4>
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/04/13/the-crazy-adblock/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1026,6 +1120,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/02/28/the-great-unittest/">伟大的单元测试</a>
+      </li>
+    
+      <li>
         <a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a>
       </li>
     
@@ -1039,10 +1137,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2016/11/23/async/">相对性推进引擎(emDrive)</a>
-      </li>
-    
-      <li>
-        <a href="/2016/11/23/em-drive/"></a>
       </li>
     
   </ul>

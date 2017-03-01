@@ -118,6 +118,83 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2016/05/11/tcp-package-stick/">TCP的粘包和半包</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2016-05-11T12:53:00.000Z">2016-05-11</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2016/05/11/tcp-package-stick/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/05/11/tcp-package-stick/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="什么是粘包"><a href="#什么是粘包" class="headerlink" title="什么是粘包"></a>什么是粘包</h2><p>首先请执行以下以下<code>nodejs</code>代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>你看到的输出一定是 <code>Hi, server!Hi, server!</code>，并且<code>data</code>事件的回调函数只执行了一次，WTF.</p>
+<p>将代码稍作修改, 客户端write的时候加一个间隔时间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  setTimeout( () =&#62; &#123;&#10;    client.write( &#39;Hi, server!&#39; );&#10;  &#125;, 1000 );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>你会看到输出分了两次执行，回调函数也执行了两次，符合了我们的预期，但是，总不能我们的所有代码都加一个延时吧？</p>
+<h2 id="为什么会出现粘包？"><a href="#为什么会出现粘包？" class="headerlink" title="为什么会出现粘包？"></a>为什么会出现粘包？</h2><p>网上的解释已经很明确，这里引用一段，出处已经无法考证了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP&#26159;&#20010;&#34;&#27969;&#34;&#21327;&#35758;,&#25152;&#35859;&#27969;,&#23601;&#26159;&#27809;&#26377;&#30028;&#38480;&#30340;&#19968;&#20018;&#25968;&#25454;.&#22823;&#23478;&#21487;&#20197;&#24819;&#24819;&#27827;&#37324;&#30340;&#27969;&#27700;,&#26159;&#36830;&#25104;&#19968;&#29255;&#30340;,&#20854;&#38388;&#26159;&#27809;&#26377;&#20998;&#30028;&#32447;&#30340;.&#20294;&#19968;&#33324;&#36890;&#35759;&#31243;&#24207;&#24320;&#21457;&#26159;&#38656;&#35201;&#23450;&#20041;&#19968;&#20010;&#20010;&#30456;&#20114;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;&#30340;,&#27604;&#22914;&#29992;&#20110;&#30331;&#38470;&#30340;&#25968;&#25454;&#21253;,&#29992;&#20110;&#27880;&#38144;&#30340;&#25968;&#25454;&#21253;.&#30001;&#20110;TCP&#34;&#27969;&#34;&#30340;&#29305;&#24615;&#20197;&#21450;&#32593;&#32476;&#29366;&#20917;,&#22312;&#36827;&#34892;&#25968;&#25454;&#20256;&#36755;&#26102;&#20250;&#20986;&#29616;&#20197;&#19979;&#20960;&#31181;&#24773;&#20917;.&#10;&#20551;&#35774;&#25105;&#20204;&#36830;&#32493;&#35843;&#29992;&#20004;&#27425;send&#20998;&#21035;&#21457;&#36865;&#20004;&#27573;&#25968;&#25454;data1&#21644;data2,&#22312;&#25509;&#25910;&#31471;&#26377;&#20197;&#19979;&#20960;&#31181;&#25509;&#25910;&#24773;&#20917;(&#24403;&#28982;&#19981;&#27490;&#36825;&#20960;&#31181;&#24773;&#20917;,&#36825;&#37324;&#21482;&#21015;&#20986;&#20102;&#26377;&#20195;&#34920;&#24615;&#30340;&#24773;&#20917;).&#10;A.&#20808;&#25509;&#25910;&#21040;data1,&#28982;&#21518;&#25509;&#25910;&#21040;data2.&#10;B.&#20808;&#25509;&#25910;&#21040;data1&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;data1&#20313;&#19979;&#30340;&#37096;&#20998;&#20197;&#21450;data2&#30340;&#20840;&#37096;.&#10;C.&#20808;&#25509;&#25910;&#21040;&#20102;data1&#30340;&#20840;&#37096;&#25968;&#25454;&#21644;data2&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;&#20102;data2&#30340;&#20313;&#19979;&#30340;&#25968;&#25454;.&#10;D.&#19968;&#27425;&#24615;&#25509;&#25910;&#21040;&#20102;data1&#21644;data2&#30340;&#20840;&#37096;&#25968;&#25454;.&#10;&#10;&#23545;&#20110;A&#36825;&#31181;&#24773;&#20917;&#27491;&#26159;&#25105;&#20204;&#38656;&#35201;&#30340;,&#19981;&#20877;&#20570;&#35752;&#35770;.&#23545;&#20110;B,C,D&#30340;&#24773;&#20917;&#23601;&#26159;&#22823;&#23478;&#32463;&#24120;&#35828;&#30340;&#34;&#31896;&#21253;&#34;,&#23601;&#38656;&#35201;&#25105;&#20204;&#25226;&#25509;&#25910;&#21040;&#30340;&#25968;&#25454;&#36827;&#34892;&#25286;&#21253;,&#25286;&#25104;&#19968;&#20010;&#20010;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;.&#20026;&#20102;&#25286;&#21253;&#23601;&#24517;&#39035;&#22312;&#21457;&#36865;&#31471;&#36827;&#34892;&#23553;&#21253;.&#10;&#10;&#21478;:&#23545;&#20110;UDP&#26469;&#35828;&#23601;&#19981;&#23384;&#22312;&#25286;&#21253;&#30340;&#38382;&#39064;,&#22240;&#20026;UDP&#26159;&#20010;&#34;&#25968;&#25454;&#21253;&#34;&#21327;&#35758;,&#20063;&#23601;&#26159;&#20004;&#27573;&#25968;&#25454;&#38388;&#26159;&#26377;&#30028;&#38480;&#30340;,&#22312;&#25509;&#25910;&#31471;&#35201;&#20040;&#25509;&#25910;&#19981;&#21040;&#25968;&#25454;&#35201;&#20040;&#23601;&#26159;&#25509;&#25910;&#19968;&#20010;&#23436;&#25972;&#30340;&#19968;&#27573;&#25968;&#25454;,&#19981;&#20250;&#23569;&#25509;&#25910;&#20063;&#19981;&#20250;&#22810;&#25509;&#25910;.</span><br></pre></td></tr></table></figure>
+<h2 id="如何处理粘包或者半包的情况？"><a href="#如何处理粘包或者半包的情况？" class="headerlink" title="如何处理粘包或者半包的情况？"></a>如何处理粘包或者半包的情况？</h2><p>这里采用了一个类似HTTP的方法，定义一个HTTP头:<code>Content-Length: 100</code>，然后这个数据包的大小就是100，我只需要在读到头数据之后，再读100，就是我这个数据包的带下了，如果数据还有剩下，那么就是下一个包的内容，如果数据不足100，那就说明这里只传了半个包，等待下次<code>data</code>事件触发，后半部分的数据就是这个包里面。</p>
+<h3 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h3><p>假设我要传送一个数据: <code>hello world!</code>，首先我需要进行封包，一个数据包由头部和身体组成，其中，头部组成如下: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">||||00000012</span><br></pre></td></tr></table></figure>
+<p><code>||||</code>这个是头部开始的标示，由服务端和客户端互相约定，<code>00000012</code>，这个是数据体的大小，前面的<code>0</code>为了补全大小位，这里采用了8位，因为默认情况下，TCP的缓冲区大小是8K，8K换成byte就是: 8388608。</p>
+<p>所以我们的头部其实固定为12位，那么接下来的就都是数据体，<code>hello world!</code>组成一个数据包之后的样子就是: <code>||||00000012hello world!</code>，服务端的解包就不说了，就是自己维护一个缓冲区，从头开始解就行了。</p>
+<h2 id="better-packet"><a href="#better-packet" class="headerlink" title="better-packet"></a>better-packet</h2><p><code>better-packet</code>，提供了一个封包的解包的方法，专门为了用来解决粘包问题，看看使用了<code>better-package</code>之后会怎么样.</p>
+<p>server.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const app = net.createServer( ( connect ) =&#62; &#123;&#10;  &#10;  let unpackager = new betterPacket.UnPackager();&#10;&#10;  connect.on( &#39;data&#39;, unpackager.addBuffer.bind( unpackager ) );&#10;&#10;  connect.on( &#39;error&#39;, () =&#62; &#123;&#125; );&#10;&#10;  unpackager.on( &#39;package&#39;, function ( data ) &#123;&#10;&#10;    // Hi, server!&#10;    // Hi, server!&#10;    console.log( data.toString() );&#10;&#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( &#39;8080&#39;, &#39;0.0.0.0&#39; );</span><br></pre></td></tr></table></figure>
+<p>client.js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;const packager = new betterPacket.Packager();&#10;&#10;let sendData = packager.packageData( &#39;Hi, server!&#39; );&#10;&#10;client.write( sendData );&#10;&#10;client.write( sendData );</span><br></pre></td></tr></table></figure>
+<p>这里服务端的数据就变得正常了，而且<code>data</code>事件的回调函数也被调了两次。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2016/05/11/tcp-package-stick/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a></h1>
     
   
@@ -755,77 +832,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2014/11/21/get-uuid-and-mac-addr/">OSX 中获取UID和MAC地址的方法</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2014-11-21T05:57:00.000Z">2014-11-21</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2014/11/21/get-uuid-and-mac-addr/#ds-thread"><span class="ds-thread-count" data-thread-key="2014/11/21/get-uuid-and-mac-addr/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>很多时候需要搜集用户的MAC地址或者UID来进行用户的身份确认, UID和MAC地址都可以保持唯一性.</p>
-<ul>
-<li>获取UID</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ ( NSString *) getHardwareUUID &#123;&#10;  NSTask *task;&#10;  task = [[NSTask alloc] init];&#10;  [task setLaunchPath: @&#34;/usr/sbin/ioreg&#34;];&#10;  &#10;  //ioreg -rd1 -c IOPlatformExpertDevice | grep -E &#39;(UUID)&#39;&#10;  &#10;  NSArray *arguments;&#10;  arguments = [NSArray arrayWithObjects: @&#34;-rd1&#34;, @&#34;-c&#34;,@&#34;IOPlatformExpertDevice&#34;,nil];&#10;  [task setArguments: arguments];&#10;  &#10;  NSPipe *pipe;&#10;  pipe = [NSPipe pipe];&#10;  [task setStandardOutput: pipe];&#10;  &#10;  NSFileHandle *file;&#10;  file = [pipe fileHandleForReading];&#10;  &#10;  [task launch];&#10;  &#10;  NSData *data;&#10;  data = [file readDataToEndOfFile];&#10;  &#10;  NSString *string;&#10;  string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];&#10;  &#10;  NSString *key = @&#34;IOPlatformUUID&#34;;&#10;  NSRange range = [string rangeOfString:key];&#10;  &#10;  NSInteger location = range.location + [key length] + 5;&#10;  NSInteger length = 32 + 4;&#10;  range.location = location;&#10;  range.length = length;&#10;  &#10;  NSString *UUID = [string substringWithRange:range];&#10;  &#10;  UUID = [UUID stringByReplacingOccurrencesOfString:@&#34;-&#34; withString:@&#34;&#34;];&#10;  &#10;  return UUID;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>获取MAC地址</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ ( NSMutableString *) getMacAddr &#123;&#10;  kern_return_t kr;&#10;  CFMutableDictionaryRef matchDict;&#10;  io_iterator_t iterator;&#10;  io_registry_entry_t entry;&#10;&#10;  matchDict = IOServiceMatching(&#34;IOEthernetInterface&#34;);&#10;  kr = IOServiceGetMatchingServices(kIOMasterPortDefault, matchDict, &#38;iterator);&#10;&#10;  NSDictionary *resultInfo = nil;&#10;&#10;  NSMutableString *macAddrs = [[ NSMutableString alloc ] init];&#10;&#10;  while ((entry = IOIteratorNext(iterator)) != 0)&#10;  &#123;&#10;      CFMutableDictionaryRef properties=NULL;&#10;      kr = IORegistryEntryCreateCFProperties(entry,&#10;                                             &#38;properties,&#10;                                             kCFAllocatorDefault,&#10;                                             kNilOptions);&#10;      if (properties)&#10;      &#123;&#10;          resultInfo = (__bridge_transfer NSDictionary *)properties;&#10;          NSString *bsdName = [resultInfo objectForKey:@&#34;BSD Name&#34;];&#10;          NSData *macData = [resultInfo objectForKey:@&#34;IOMACAddress&#34;];&#10;          if (!macData)&#10;          &#123;&#10;              continue;&#10;          &#125;&#10;&#10;          NSMutableString *macAddress = [[NSMutableString alloc] init];&#10;          const UInt8 *bytes = [macData bytes];&#10;          for (int i=0; i&#60;macData.length; i++)&#10;          &#123;&#10;              [macAddress appendFormat:@&#34;%02x&#34;,*(bytes+i)];&#10;          &#125;&#10;          if (bsdName &#38;&#38; macAddress)&#10;          &#123;&#10;              [ macAddrs appendFormat:@&#34;%@,&#34;, macAddress ];&#10;          &#125;&#10;      &#125;&#10;  &#125;&#10;  IOObjectRelease(iterator);&#10;  return macAddrs;&#10;&#125;</span><br></pre></td></tr></table></figure>
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2014/11/21/get-uuid-and-mac-addr/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
     <a href="/" class="alignleft prev">上一頁</a>
   
+  
+    <a href="/page/3/" class="alignright next">下一頁</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -844,6 +857,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/02/28/deadloop-in-setrootvc/"></a>
+      </li>
+    
+      <li>
         <a href="/2017/02/28/the-great-unittest/">伟大的单元测试</a>
       </li>
     
@@ -857,10 +874,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2016/11/23/computer-number/">计算机眼中的数字</a>
-      </li>
-    
-      <li>
-        <a href="/2016/11/23/async/">相对性推进引擎(emDrive)</a>
       </li>
     
   </ul>

@@ -118,6 +118,159 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2015/07/05/coffee-script-json/">coffee在编写过程中的一些坑</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2015-07-05T07:20:00.000Z">2015-07-05</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2015/07/05/coffee-script-json/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/07/05/coffee-script-json/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>CoffeeScript在编写过程之中，相对于JS可以带来很多便利性，但是同时也会引入一些问题，JS相对于Coffee来说有一些繁琐，但是相对严谨。</p>
+<p>这里会列出coffee诸多的坑，其实也不能算是坑，只是在还没有灵活运用时，很难排查的一些小问题，也要注意一下自己平时的编写习惯。</p>
+<ul>
+<li>在生产过程中的一个案例。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode,&#10;  base_cdn, &#10;  # data : encodeURIComponent JSON.stringify &#123; formData : body, type &#125;,&#10;  web_config: JSON.stringify web_config,&#10;  user : locals.user&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这个JSON原来的代码是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode,&#10;  base_cdn, &#10;  # data : encodeURIComponent JSON.stringify &#123; formData : body, type &#125;,&#10;  web_config: JSON.stringify web_config,&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>因为Coffee在描述JSON时候无需添加逗号，然后写这段代码的同事恰好将每一行后面都加上了逗号，然后我一看，没啥问题，紧接着加了一个属性”user”，乍一看，基于coffee松散的语法，毫无任何问题。然后，发现后面，这个JSON的user属性始终是undefined，因为后面有很长一段逻辑，一直以为是后面的逻辑出了问题，经过一个下午的调试后，才开始怀疑是JSON的问题，编译一看，顿时内牛满面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  mode: mode,&#10;  base_cdn: base_cdn,&#10;  web_config: JSON.stringify(web_config, &#123;&#10;    user: locals.user&#10;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2015/07/05/coffee-script-json/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2015/01/29/node-cover/">node cover</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2015-01-29T12:30:00.000Z">2015-01-29</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2015/01/29/node-cover/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/01/29/node-cover/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="nodejs-的三大特色"><a href="#nodejs-的三大特色" class="headerlink" title="nodejs 的三大特色:"></a>nodejs 的三大特色:</h2><p><img src="/image/image.jpg" alt="nodejs"></p>
+<h2 id="异步解决方案历史变迁"><a href="#异步解决方案历史变迁" class="headerlink" title="异步解决方案历史变迁"></a>异步解决方案历史变迁</h2><p>回调嵌套 -&gt;  event-pipe, async -&gt; co -&gt; fibjs</p>
+<h2 id="koa"><a href="#koa" class="headerlink" title="koa"></a>koa</h2><p>基于co, 使用generator来使得异步代码使用起来同步化。</p>
+<h2 id="需求来了"><a href="#需求来了" class="headerlink" title="需求来了"></a>需求来了</h2><ol>
+<li><p><code>koa</code>封装了大量逻辑, 只想使用类似<code>connect</code>的提供原始<code>IncomingMessage</code>和<code>ServerResponse</code>对象.</p>
+</li>
+<li><p>很多中间件都是采用connect中间件方式写的, 如果切换到koa, 必定要对原先的代码做修改.</p>
+</li>
+</ol>
+<h3 id="node-cover"><a href="#node-cover" class="headerlink" title="node-cover"></a>node-cover</h3><ol>
+<li><p>只提供基础的http server服务.</p>
+</li>
+<li><p>兼容connect中间件, 不兼容koa中间件, 但是可以使用ES6写的各种模块.</p>
+</li>
+<li><p>无缝切换现有项目, 同时使用co写同步代码.</p>
+</li>
+</ol>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a><a href="https://www.npmjs.com/package/node-cover" target="_blank" rel="external">使用方法</a></h4><h2 id="coffee-script-v1-8"><a href="#coffee-script-v1-8" class="headerlink" title="coffee-script v1.8"></a>coffee-script v1.8</h2><p>一. coffee-script的github master分支已经是1.8版本, 对es6很多语法都做了支持, 其中就包括generator.</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Function&#10;( test ) -&#62;&#10;  ....&#10;&#10;# GeneratorFuntion&#10;( test ) -&#62;&#10;  yield -&#62;</span><br></pre></td></tr></table></figure>
+<p>二. 使用git地址安装npm包</p>
+<p>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  .......&#10;  dependencies : &#123;&#10;    &#34;coffee-script&#34; : &#34;git+ssh://git@github.com:jashkenas/coffeescript.git&#34;&#10;  &#125;&#10;&#125;&#10;&#10;//git://github.com/user/project.git#commit-ish&#10;//git+ssh://user@hostname:project.git#commit-ish&#10;//git+ssh://user@hostname/project.git#commit-ish&#10;//git+http://user@hostname/project/blah.git#commit-ish&#10;//git+https://user@hostname/project/blah.git#commit-ish</span><br></pre></td></tr></table></figure></p>
+<p>三. 同时, 1.8的coffee修正了一些逻辑, 偷懒的同学注意了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( @server ) -&#62;</span><br></pre></td></tr></table></figure>
+<p>对于如上代码，1.8 版本以前的coffee会编译成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">  fucntion( server )&#123;&#10;  @server = server&#10;.....&#10;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是对于1.8版本coffee会编译成:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function( _at_server )&#123;&#10;  @server = _at_server&#10;  .....&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果直接在函数中使用server变量的话，1.8版本之前是可以的，但是在1.8版本之后就会报错了。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2015/01/29/node-cover/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2014/12/25/how-to-use-hexo/">如何使用hexo搭建一个个人博客</a></h1>
     
   
@@ -271,6 +424,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a>
+      </li>
+    
+      <li>
+        <a href="/2017/04/07/Untitled/"></a>
+      </li>
+    
+      <li>
         <a href="/2017/03/29/set-root-view-controller/">多次setRootViewController导致view无限叠加的问题</a>
       </li>
     
@@ -280,14 +441,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/02/28/the-great-unittest/">伟大的单元测试</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a>
-      </li>
-    
-      <li>
-        <a href="/2016/12/07/effective-pixel/">获取最小有效像素区域</a>
       </li>
     
   </ul>
@@ -309,7 +462,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/iOS/">iOS</a><small>3</small></li>
   
-    <li><a href="/categories/id2/">id2</a><small>6</small></li>
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
   
     <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
   
@@ -369,13 +522,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/float/">float<small>1</small></a>
   
-    <a href="/tags/hexo/">hexo<small>1</small></a>
+    <a href="/tags/hexo/">hexo<small>2</small></a>
   
     <a href="/tags/high-precision/">high-precision<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
   
-    <a href="/tags/iOS/">iOS<small>3</small></a>
+    <a href="/tags/iOS/">iOS<small>4</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   
@@ -388,6 +541,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/kaggle/">kaggle<small>1</small></a>
   
     <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
   
     <a href="/tags/lock/">lock<small>1</small></a>
   
@@ -434,6 +589,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/uploadify/">uploadify<small>1</small></a>
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
   
 </div>
 

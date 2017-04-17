@@ -118,6 +118,125 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-04-17T13:01:00.000Z">2017-04-17</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/04/17/launch-screen/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/04/17/launch-screen/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>使用<code>StoreBoard</code>来作为<code>Launch Screen</code>的时候，通常做法是在<code>Store Board</code>里面加一个<code>UIImageView</code>，然后里面设置相应的图片就OK了，例如下面这样：</p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB25mgUlYtlpuFjSspfXXXLUpXa_!!99218453.png" alt=""></p>
+<p>我把<code>app-starpup</code>这张图片放到了<code>Assets.xcassets</code>里面，然后在<code>storyboard</code>里面引用了一下，一切都很简单，看起来也毫无问题，但是编译完到启动的时候，发现无论如何这样图片都显示不出来，我以为是同时设置了<code>Launch Image</code>的问题，然后调试了差不多一个小时，最后终于意识到了问题所在：<strong><code>Assets.xcassets</code>里面的文件在启动的时候还没有被加载</strong>，把图片放到某个文件夹里面，然后再引用文件夹里面的图片，问题就解决了。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/04/17/launch-screen/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2017/04/07/Untitled/"></a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-04-07T09:50:13.000Z">2017-04-07</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/04/07/Untitled/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/04/07/Untitled/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/04/07/Untitled/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/03/29/set-root-view-controller/">多次setRootViewController导致view无限叠加的问题</a></h1>
     
   
@@ -814,274 +933,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/11/16/ios-basic/">iOS开发--1天从入门到放弃--基础</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-11-16T06:46:00.000Z">2016-11-16</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/11/16/ios-basic/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/11/16/ios-basic/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>写了一段时间的iOS，把iOS和javascript在各方面做一下对比，记录一些比较基础的东西。</p>
-<h2 id="iOS开发包含哪些东西？"><a href="#iOS开发包含哪些东西？" class="headerlink" title="iOS开发包含哪些东西？"></a>iOS开发包含哪些东西？</h2><ul>
-<li>二门语言：Objective-C，Swift</li>
-<li>一个基础框架：Cocoa Touch</li>
-<li>一个IDE：XCode</li>
-</ul>
-<h2 id="我需要准备哪些东西？"><a href="#我需要准备哪些东西？" class="headerlink" title="我需要准备哪些东西？"></a>我需要准备哪些东西？</h2><ul>
-<li>Mac电脑，身残志坚的朋友可以选择黑苹果。</li>
-<li>最好有一台iPhone，身残志坚的朋友没得选了，通常在模拟器里面没问题的东西在真机里面会有一些诡异的问题，特别是涉及到摄像头以及麦克风等等硬件的时候。</li>
-</ul>
-<h2 id="Objective-c"><a href="#Objective-c" class="headerlink" title="Objective-c"></a>Objective-c</h2><p>从名字上可以见，<code>Objective-c</code>就是对象化的C语言，所以支持C语言，同时扩展了一些面向对象的内容，比如：<code>Class</code>。</p>
-<p><code>Objective-c</code>与类C类的语言的一个比较大的区别是，<code>Objective-c</code>使用消息传递模型，从如下代码可以看出：</p>
-<p>假设我要调用<code>car</code>实例的<code>move</code>方法，</p>
-<p>C++</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">car.move();</span><br></pre></td></tr></table></figure>
-<p>Objective-c</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[car move];</span><br></pre></td></tr></table></figure>
-<p>从语法上可以看出一二，C++中确实是调用了<code>car</code>实例的<code>move</code>方法，如果<code>car</code>实例没有这个方法，那么编译期间就会报错，但是<code>Objective-c</code>仅仅是向<code>car</code>实例发送了一个<code>move</code>消息，代码只会在运行时去检查<code>car</code>实例到底有没有能力对<code>move</code>消息进行回应，从中可以看出<code>Objective-c</code>是一门动态语言。</p>
-<h2 id="新建一个iOS应用"><a href="#新建一个iOS应用" class="headerlink" title="新建一个iOS应用"></a>新建一个iOS应用</h2><p>打开xcode，选择红框中的项目。</p>
-<p><img src="/image/create_project.png" alt="创建项目"></p>
-<p>然后选择<code>Single View Application</code>，顾名思义：单页应用。</p>
-<p>取个名字：<code>IOS-dev-demo</code>，然后选择保存的地方，一个新的iOS应用就创建好了。</p>
-<p><img src="/image/create_folder.png" alt="创建文件夹"></p>
-<p>xcode会自动帮我们创建四个group，分别是<code>IOS-dev-demo</code>，<code>IOS-dev-demoTests</code>，<code>IOS-dev-demoUITests</code>，<code>products</code>，作用如下：</p>
-<ul>
-<li>IOS-dev-demo 项目的主目录，所有的项目业务代码都保存在这个group下。</li>
-<li>IOS-dev-demoTests 单元测试目录。</li>
-<li>IOS-dev-demoUITests UI测试目录。</li>
-<li>Products 相关编译文件保存目录。</li>
-</ul>
-<p>基本我们用到最多的就是我们的项目主目录了。</p>
-<h2 id="运行我们的项目"><a href="#运行我们的项目" class="headerlink" title="运行我们的项目"></a>运行我们的项目</h2><p><img src="/image/run.png" alt="运行按钮"></p>
-<p><code>CMD+R</code> 或者点击左上方三角形的运行按钮，即可在模拟器上运行，刚创建好只是一个空的应用。</p>
-<h2 id="搭建我们的应用"><a href="#搭建我们的应用" class="headerlink" title="搭建我们的应用"></a>搭建我们的应用</h2><p>为什么用<code>搭建</code>这个词呢，因为<code>Cocoa Touch</code>已经帮助我们封装好了很多内部组件，和安卓不同，<code>Cocoa Touch</code>的内部组件通常都有一个比较好的交互和外观，典型应用是<code>微信</code>，微信基本都使用了内部组件，内部组件也最符合用户使用习惯。</p>
-<p>搭建界面有两种方式：</p>
-<ol>
-<li>storyboard，可视化组件拖拉，类似于Dreamweaver，这种方式不做介绍了，快速搭建应用首选，也存在些许弊端，有兴趣的可以看看<a href="http://www.jianshu.com/p/aaa4b89dbba1" target="_blank" rel="external">这篇文章</a>。</li>
-<li>纯代码，类似于手写HTML代码。</li>
-</ol>
-<h2 id="如何添加组件？"><a href="#如何添加组件？" class="headerlink" title="如何添加组件？"></a>如何添加组件？</h2><p>拿一个<code>button</code>组件来说，在<code>ViewController</code>类中的<code>viewDidLoad</code>方法中添加如下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIButton *button = [[UIButton alloc] init];&#10;button.frame     = CGRectMake(100, 100, 100, 50);&#10;[button setTitle:@&#34;&#25353;&#38062;&#27979;&#35797;&#34; forState:UIControlStateNormal];&#10;[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];&#10;&#10;[self.view addSubview:button];</span><br></pre></td></tr></table></figure>
-<p>重新编译运行一下我们的代码，就可以看到一个黑色的按钮在界面上了。</p>
-<p>下面用浏览器的方式展示如何添加一个按钮，相信大家一定都非常熟悉了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const button = document.createElement( &#39;button&#39; );&#10;button.textContent  = &#39;&#25353;&#38062;&#27979;&#35797;&#39;&#10;button.style.width  = &#39;100px&#39;;&#10;button.style.height = &#39;50px&#39;;&#10;button.style[ &#39;margin-left&#39; ]   = &#39;100px&#39;;&#10;button.style[ &#39;margin-top&#39;  ]   = &#39;100px&#39;;&#10;button.style.color  = &#39;rgb(0, 0, 0)&#39;&#10;&#10;document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
-<p>对比一下两段代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#21019;&#24314;&#19968;&#20010;&#32452;&#20214;&#10;UIButton *button = [[UIButton alloc] init];                                ||| let button = document.createElement( &#39;button&#39; );&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#30340;left, top, width, height&#23646;&#24615;&#10;button.frame     = CGRectMake(100, 100, 100, 50);                          ||| button.style.width  = &#39;100px&#39;;&#10;                                                                           ||| button.style.height = &#39;50px&#39;;&#10;                                                                           ||| button.style.margin-left   = &#39;100px&#39;;&#10;                                                                           ||| button.style.margin-top    = &#39;100px&#39;;&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#30340;&#39;&#26631;&#39064;&#39;&#23646;&#24615;&#10;[button setTitle:@&#34;&#25353;&#38062;&#27979;&#35797;&#34; forState:UIControlStateNormal];                 ||| button.textContent  = &#39;&#25353;&#38062;&#27979;&#35797;&#39;&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#26631;&#39064;&#30340;&#39068;&#33394;&#10;[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal]; ||| button.style.color  = &#39;rgb(0, 0, 0)&#39;&#10;&#10;// &#23558;&#32452;&#20214;&#28155;&#21152;&#21040;&#24403;&#21069;&#30011;&#24067;&#19978;&#10;[self.view addSubview:button];                                             ||| document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
-<p>其实从逻辑上来看两段代码非常相似，唯一不同的仅仅是语法而已。</p>
-<h3 id="那么从系统层面看，两者如何？"><a href="#那么从系统层面看，两者如何？" class="headerlink" title="那么从系统层面看，两者如何？"></a>那么从系统层面看，两者如何？</h3><p>首先来看看html</p>
-<p><img src="/image/html-c.png" alt="htmlc"></p>
-<p>再看看iOS</p>
-<p><img src="/image/cocoa-c.png" alt="cocoac"></p>
-<h2 id="响应UI事件"><a href="#响应UI事件" class="headerlink" title="响应UI事件"></a>响应UI事件</h2><p>通常在页面上放置了一个按钮并不是为了展示信息，而是为了能让用户进行交互，那么来看看两者如何进行UI响应。</p>
-<p><code>Javascript</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">button.addEventListener( &#39;click&#39;, function( event ) &#123;&#10;  alert( &#39;clicked&#39; );&#10;&#125; );</span><br></pre></td></tr></table></figure>
-<p>拿到<code>button</code>对象，然后给这个button注册一个名字叫<code>click</code>的事件，再给这个注册方法一个回调函数，然后用户在这个按钮上单击的话，就能够触发这个回调函数了。</p>
-<p><code>Objective-c</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[button addTarget:self action:@selector(clickHandler:) forControlEvents:UIControlEventTouchUpInside];</span><br></pre></td></tr></table></figure>
-<p>调用<code>button</code>对象的<code>addTarget</code>方法，为<code>UIControlEventTouchUpInside</code>事件，也就是单击事件添加<code>self</code>也就是当前实例下的<code>clickHandler</code>作为事件处理函数。这里也可以选择别的类的方法，只要<code>selector</code>中的方法名能在<code>addTarget</code>对象中找到就行。<br><code>iOS</code>中只能使用类的方法作为事件处理函数，没法使用类似匿名函数的<code>block</code>来进行事件处理。</p>
-<h2 id="回调"><a href="#回调" class="headerlink" title="回调"></a>回调</h2><p><code>Javascript</code>中发送一个http请求</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let xhr = new XMLHttpRequest();&#10;xhr.open( &#39;GET&#39;, &#39;http://xxxx.com&#39; );&#10;xhr.send();&#10;&#10;xhr.onreadystatechange = function()&#123;&#10;  // do something&#10;&#125;</span><br></pre></td></tr></table></figure>
-<p><code>Javascript</code>基于事件驱动，通常使用一个匿名函数来作为请求结束时候的回调函数。</p>
-<p><code>Objective-c</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSURL *url = [NSURL URLWithString:@&#34;http://xxx.com&#34;];&#10;NSURLRequest *request = [NSURLRequest requestWithURL:url];&#10;&#10;NSURLSession *session = [NSURLSession sharedSession];&#10;NSURLSessionDataTask *task = [session dataTaskWithRequest: request completionHandler: ^(NSData *data, NSURLResponse *response, NSError *error) &#123;&#10;    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];&#10;         // ...&#10;     &#125;];&#10;[task resume];</span><br></pre></td></tr></table></figure>
-<p><code>Objective-c</code> 相对来说发送一个请求的方式稍微有一些复杂，看到<code>completionHandler</code>这个参数，这在<code>Objective-c</code>中被称为<code>block</code>，是一种类似于<code>Javascript</code>中的回调函数，当然也可以使用<code>typedef</code>声明一个<code>block</code>在多个场景下使用。</p>
-<p>关于<code>block</code>更多的使用奥秘，可以<a href="http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html" target="_blank" rel="external">点击查看这篇文章</a>。</p>
-<h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><p>数据请求回来了，那么就要开始渲染页面了，<code>iOS</code>有良好的动画运行机制，可以比安卓更流畅地运行动画，良好的动画效果可以带来更好的用户体验。</p>
-<p><code>Javascript</code></p>
-<p>JS中动画效果大致有如下几种：</p>
-<p>纯粹的JS实现的动画效果应该就只有如下一种了</p>
-<ul>
-<li><code>setTimeout</code>，定时更新形变达到每秒24次即可实现基本的动画效果。</li>
-</ul>
-<p>示例代码: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let width = 100;&#10;setInterval( function() &#123;&#10;  width++;&#10;  button.style.width = `$&#123;width&#125;px`;&#10;&#125;, 16 );</span><br></pre></td></tr></table></figure>
-<p>更多更高效的动画效果可以借助<code>HTML5</code>和<code>CSS3</code>来实现</p>
-<ul>
-<li><code>requestAnimationFrame</code>，保持和系统相同的刷新率，得到更好体验的同时，有更高的效率。</li>
-<li>css中的<code>transition-duration</code>，效率非常高，可以直接调用GPU来进行渲染。</li>
-</ul>
-<p><code>Objective-c</code></p>
-<p><code>iOS</code>中的动画主要是指<code>Core Animation</code>框架，<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html" target="_blank" rel="external">这里是官方的文档</a>。</p>
-<p>调用方式主要有以下三种：</p>
-<ol>
-<li>UIView 代码块调用</li>
-<li>UIView [begin commit]模式</li>
-<li>CoreAnimation中的类</li>
-</ol>
-<p>简单贴一下最简单也最常用的 UIView 代码块调用的方式，其他方式的详细调用可以<a href="http://blog.csdn.net/yixiangboy/article/details/47016829" target="_blank" rel="external">参考这里</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CGRect newFrame = CGRect( 200, 200, 100, 50 );&#10;[UIView animateWithDuration:1 animations:^&#123;&#10;  button.frame = newFrame;&#10;&#125;];</span><br></pre></td></tr></table></figure>
-<p>修改UI只能在主线程中执行，如果说要在回调函数中执行以上代码，需要嵌套在下面的代码中进行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_async(dispatch_get_main_queue(), ^&#123;&#10;                &#10;&#125;);</span><br></pre></td></tr></table></figure>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了以上这些东西，你能已经能把一个小功能呢给串起来了，但是<code>iOS</code>还有更加强大实用的各种组件，<code>UINavigationController</code>，<code>UITableViewController</code>，<code>NSUrlSession</code>，还有各种全局事件派发，多线程GCD，以及处理音视频的<code>AVFoundation</code>，更多功能，请看进阶篇。</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/11/16/ios-basic/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-07-19T03:21:00.000Z">2016-07-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/07/19/dataplus-pai/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/07/19/dataplus-pai/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="数加pai"><a href="#数加pai" class="headerlink" title="数加pai"></a>数加pai</h2><p>数加pai是一个机器学习平台，提供可视化界面来操作算法，无需自己编写任何代码即可计算自己的数据。<br>如果你没有那么多数据也没有这种场景，那么选择一个外部算法平台也是一个不错的选择。</p>
-<h2 id="kaggle"><a href="#kaggle" class="headerlink" title="kaggle"></a>kaggle</h2><p>一个类似阿里云天池的算法开发大赛平台，会定时发布各种任务，前几名有奖金，第一名$10W。</p>
-<p>我们用这个平台上练手的项目来体验一下PAI。</p>
-<p>找到首页中标着101的那一组，这些题目都是给你练手的，相对来说会比较简单一点，就选第一个，<code>Digit Recognizer</code>。</p>
-<h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><p>这个题目的主要任务的数字识别，很多手写的数字，左边导航栏<code>home</code>-<code>data</code>，进去可以下载本次的训练数据: <code>train.csv</code>和测试数据: <code>test.csv</code>。</p>
-<p>打开<code>train.csv</code>文件，主办方已经把需要识别的图片提取成像素值，直接训练就行了。</p>
-<p>其中，一行代表一个数字的图片，第一列<code>lable</code>代表的是已经识别出来的具体的数字。</p>
-<table>
-<thead>
-<tr>
-<th>label</th>
-<th>pixel0</th>
-<th>pixel1</th>
-<th>…..</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>0</td>
-<td>186</td>
-<td>0</td>
-</tr>
-<tr>
-<td>0</td>
-<td>0</td>
-<td>186</td>
-<td>100</td>
-</tr>
-<tr>
-<td>…..</td>
-<td>……</td>
-<td>……</td>
-<td>…..</td>
-</tr>
-</tbody>
-</table>
-<h3 id="寻找合适算法"><a href="#寻找合适算法" class="headerlink" title="寻找合适算法"></a>寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
-<p>选择<code>kNN</code>是因为<code>kNN</code>算法比较好理解，对于我这种新手也比较容易看懂，缺点是<code>kNN</code>算法是惰性算法，计算时间会比较长。</p>
-<h3 id="开始解题"><a href="#开始解题" class="headerlink" title="开始解题"></a>开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
-<h3 id="上传数据"><a href="#上传数据" class="headerlink" title="上传数据"></a>上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
-<p>首先下载<a href="https://help.aliyun.com/document_detail/27991.html?spm=5176.product27797.6.217.2hjJzR" target="_blank" rel="external">MaxCompute CMD</a>，这里点击<code>新版客户端下载</code>，下载完成后，配置AK以及运行CMD，关于如何建表，请查看帮助文档，注意要把所有字段也建了，和<code>CSV</code>文件相对应，这里字段有段多，可以用一个脚本生成sql. 然后使用 <code>MaxCompute CMD</code>的<code>tunnel</code>命令上传CSV文件建表<code>odps@ my_test_project&gt; tunnel upload train.csv pai_test_train;</code>，还有测试数据表<code>odps@ my_test_project&gt; tunnel upload test.csv pai_test_data;</code></p>
-<h3 id="使用pai来解题"><a href="#使用pai来解题" class="headerlink" title="使用pai来解题"></a>使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
-<ol>
-<li>新建一个实验，取名pai_test，这时候我们会得到一个空的实验，接下来就是往实验上拖组件。</li>
-<li>首先选择数据源，在左侧表列表中选择刚刚新建的<code>pai_test_train</code>，<code>pai_test_data</code>，分别拖到右侧的实验图上。这里表同步机制有延迟，如果在所有表中找不到新建的表，可以尝试一下搜索。</li>
-<li>这时候我们的训练表和测试表已经在实验中ready了，就需要去找我们的算法组件了，在<code>组件-机器学习-多分类</code>中，<code>K近邻</code>就是我们需要的算法组件，同样拖拉到实验中。</li>
-<li>组件都已经准备好了，那么就需要告诉pai如果来运行你的组件了，同样采用拖拉的方式，在<code>pai_test_train</code>表的组件下方有个小白点，鼠标拖拉一下可以拉出一根线，把这个线连接到<code>K近邻</code>算法组件上方的右边白点上，两个组件已经关联完成，同理另外一个表连接到右边白点上。</li>
-<li>接下来就是配置算法组件了，要告诉算法，哪些是我的标签列，哪些是我的特征列，点击<code>K近邻</code>算法组件，在右侧的算法配置界面中，<code>选择训练表特征列</code>，这里把除了<code>label</code>字段外的所有字段都勾上，因为<code>lable</code>列是我们的标签列。</li>
-<li>在<code>选择训练表的标签列</code>中选择<code>label</code>字段，下面两个选项都是可选项，可以选择预测表的哪些特征别参与计算，还有产出表选择产出哪些字段，这些都可以选择默认，同理还有<code>参数设置</code>tab，如果对算法没什么研究，选择默认就可以了。</li>
-<li>全部选择好了，点击下方的<code>运行</code>来进行计算。</li>
-</ol>
-<h3 id="产出数据"><a href="#产出数据" class="headerlink" title="产出数据"></a>产出数据</h3><p>运行成功后，会产出一张新表，名字带有随机性，通常格式是<code>pai_temp_5052_75767_1</code>，因为<code>kaggle</code>没有和阿里云的产品进行打通，这里我们需要把数据下载成CSV文件，然后进行上传。</p>
-<ol>
-<li>首先依然是通过<code>tunnel</code>命令进行下载: <code>odps@ my_test_project&gt; tunnel download pai_temp_5052_75767_1 -h true result.csv;</code>,<code>-h true</code>命令表示带上表头。</li>
-<li>打开CSV文件，找到<code>prediction</code>字段，这个就是我们的预测结果了，然后就是上传<code>kaggle</code>了。</li>
-<li>因为<code>kaggle</code>对上传的字段有要求，这样他才能统计出分数，需要一个csv文件，有两列<code>imageId</code>和<code>label</code>，<code>imageId</code>就是一列自增列，从<code>1</code>开始，<code>label</code>列就是我们的结果列。</li>
-<li>打开<code>101</code>那个项目，找到<code>Make a submission</code>那一项，上传我们的CSV文件，就能得到分数了。</li>
-<li>后续可以调整算法参数，慢慢改善算法，提高分数，提高排名，也可以尝试一下别的算法。</li>
-</ol>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/07/19/dataplus-pai/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1105,6 +956,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a>
+      </li>
+    
+      <li>
+        <a href="/2017/04/07/Untitled/"></a>
+      </li>
+    
+      <li>
         <a href="/2017/03/29/set-root-view-controller/">多次setRootViewController导致view无限叠加的问题</a>
       </li>
     
@@ -1114,14 +973,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/02/28/the-great-unittest/">伟大的单元测试</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a>
-      </li>
-    
-      <li>
-        <a href="/2016/12/07/effective-pixel/">获取最小有效像素区域</a>
       </li>
     
   </ul>
@@ -1143,7 +994,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/iOS/">iOS</a><small>3</small></li>
   
-    <li><a href="/categories/id2/">id2</a><small>6</small></li>
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
   
     <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
   
@@ -1203,13 +1054,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/float/">float<small>1</small></a>
   
-    <a href="/tags/hexo/">hexo<small>1</small></a>
+    <a href="/tags/hexo/">hexo<small>2</small></a>
   
     <a href="/tags/high-precision/">high-precision<small>1</small></a>
   
     <a href="/tags/http/">http<small>1</small></a>
   
-    <a href="/tags/iOS/">iOS<small>3</small></a>
+    <a href="/tags/iOS/">iOS<small>4</small></a>
   
     <a href="/tags/id2/">id2<small>1</small></a>
   
@@ -1222,6 +1073,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/kaggle/">kaggle<small>1</small></a>
   
     <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
   
     <a href="/tags/lock/">lock<small>1</small></a>
   
@@ -1268,6 +1121,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/uploadify/">uploadify<small>1</small></a>
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
   
 </div>
 

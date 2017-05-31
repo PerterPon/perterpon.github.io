@@ -148,7 +148,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <p>上一篇：<a href="">零门槛学习https–(3)https协议详解</a></p>
+            <p>上一篇：<a href="/2017/05/19/https-4/">零门槛学习https–(4)https协议详解</a></p>
 
           
         
@@ -207,7 +207,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <p>上一篇：<a href="">零门槛学习https–(3)https的安全策略</a></p>
+            <p>上一篇：<a href="/2017/05/19/https-3/">零门槛学习https–(3)https的安全策略</a></p>
 
           
         
@@ -266,7 +266,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <p>上一篇：<a href="">零门槛学习https–(2)https中s的秘密</a></p>
+            <p>上一篇：<a href="/2017/05/19/https-2/">零门槛学习https–(2)https中s的秘密</a></p>
 <p>上一篇我们已经把非对称加密<code>RSA</code>的算法原理已经摸清楚了，有了加密算法，我们就能够开始加密了。当然非对称加密还有好几种，这里我们只讨论RSA。</p>
 <h2 id="RSA算法的局限性"><a href="#RSA算法的局限性" class="headerlink" title="RSA算法的局限性"></a>RSA算法的局限性</h2><p>在RSA的加密原理中，我们看到对明文<code>m</code>的要求是：</p>
 <ol>
@@ -339,7 +339,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="如何验证二级CA的证书？"><a href="#如何验证二级CA的证书？" class="headerlink" title="如何验证二级CA的证书？"></a>如何验证二级CA的证书？</h2><p>浏览器和操作系统里面只内置了根证书，那么那些二级CA的证书又该如何验证呢？</p>
 <p>我们来看看谷歌的证书：</p>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2SzdlustnpuFjSZFvXXbcTpXa_!!99218453.png" alt=""></p>
-<p>标红框的地方，就是二级CA的证书下载地址，里面包含了解密的公钥，拿到后就可以解密来验证是否正确了。这里通常是https协议的地址，谷歌使用了http，心还是很大的，不过即使这里的证书被劫持和伪造了，根证书的验证还是通过不了，所以任然是安全的。</p>
+<p><code>证书颁发机构信息访问</code>，这一栏里面标示了此证书的证书颁发机构如何访问和验证，标红框的地址就是CA的证书下载地址，下面还有OCSP协议的验证地址。</p>
 <h2 id="end-user证书的类型"><a href="#end-user证书的类型" class="headerlink" title="end-user证书的类型"></a>end-user证书的类型</h2><p>申请者能够申请的证书种类非常多，价格相差也很大，主要有以下几种：</p>
 <ol>
 <li><p>OV（Organization Validation SSL），以某个组织为维度签发证书，通常这都是一个公司，域名采用通配符的方式来签发，以适应组织业务的灵活发展，例如：<code>*.tmall.com</code><br>，也就是任何<code>tmall.com</code>的三级域名都可以使用这个证书，避免重复申请。使用OV证书的网站访问时候类似下面这样：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2y9fmtYBnpuFjSZFGXXX51pXa_!!99218453.png" alt=""></p>
@@ -351,7 +351,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目前整个互联网建立在对CA信任的基础上，要是CA作恶，那么整个互联网就会混乱了。之前就有发生过有CA误签发google证书，导致google差点被中间人攻击。</p>
 <p>至此，整个<code>https</code>的加密原理和安全认证机制理论知识我们都已经讲完了，我们来回顾一下：首先客户端先校验证书，从服务端证书到二级CA再到根证书，然后双方生成一个对称加密的密钥，用证书里面的公钥加密，发送给服务端，服务端用自己的私钥解密，拿到对称加密的密钥之后，双方开始通信。</p>
 <p>这套加密系统其实适用于所有客户端和服务端的通信，所以网景公司在1994年推出浏览器时，同时推出了ssl，应用到http就变成了https。后面咱们来看看https中，ssl协议的一些具体细节。</p>
-<p><a href="./http4">零门槛学习https–(4)https协议详解</a></p>
+<p><a href="/2017/05/19/https-4/">零门槛学习https–(4)https协议详解</a></p>
 
           
         
@@ -410,7 +410,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <p>上一篇：<a href="">零门槛学习https–(1)为什么我们要用https</a></p>
+            <p>上一篇：<a href="/2017/05/16/https-1/">零门槛学习https–(1)为什么我们要用https</a></p>
 <p>非对称加密在目前的计算机领域内是非常安全的，主要还是受制于目前的计算能力，或许某天量子计算机的出现会改变这个局面。RSA的本质就是一个数学算法，所以本篇即使你不懂任何计算机知识，也能理解RSA算法的原理，但是其中会涉及到大量的数学知识。</p>
 <h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><p>前面已经介绍过RSA的名称由来，下面来介绍下RSA的安全本质：<code>大整数的因数分解</code>。</p>
 <p>举个例子：<code>求77的因数分解</code>，很简单，解是<code>7和11</code>，或许你在高中或者初中就学过这个，很诧异这能成为现代互联网安全的基础？那么你可以看看下面这个数字：</p>
@@ -525,7 +525,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>到这里，我们已经证明了两种情况下等式都是成立了，也就是明文通过公钥加密之后，使用私钥也必然能够得到原本的结果，RSA算法也就成立了。</p>
 <h2 id="RSA中的对称性"><a href="#RSA中的对称性" class="headerlink" title="RSA中的对称性"></a>RSA中的对称性</h2><p>其实你会发现，RSA里面，公钥加密的东西私钥能够解密，同样的，从公式中发现，私钥加密的东西公钥也能解密，这也是非常重要的一个特性。那么，为什么不能把<code>({n, d})</code>作为公钥给用户呢？因为<code>({n, e})</code>中，<code>n</code>是公开的，<code>e</code>基本都使用常数<code>65537</code>，所以很容易就被猜到了，因此，虽然在算法上都能加密和解密，但是只把<code>({n, e})</code>作为公钥，公钥和私钥有非常严格的区分。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了这么安全的加密方式，那么我们就可以开始给HTTP加密了，那么https究竟是怎么做的呢，一起来看看：</p>
-<p><a href="">零门槛学习https–(3)https的安全策略</a></p>
+<p><a href="/2017/05/19/https-3/">零门槛学习https–(3)https的安全策略</a></p>
 
           
         
@@ -609,7 +609,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </li>
 </ul>
 <p>对称加密虽然也很有多种方式，但是相对来说还是比较好理解，但是非对称加密用一个密钥加密，却能用另外一个密钥解密，这个可能就不大好理解了，下面跟大家主要聊一聊非对称加密中的<code>RSA</code>具体是如何实现的。</p>
-<p><a href="./https-2">零门槛学习https–(2)https中s的秘密</a></p>
+<p><a href="/2017/05/19/https-2/">零门槛学习https–(2)https中s的秘密</a></p>
 
           
         
@@ -1183,8 +1183,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/physical/">physical</a><small>2</small></li>
   
-    <li><a href="/categories/rsa/">rsa</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
   </ul>
@@ -1318,8 +1316,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
   
     <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
-  
-    <a href="/tags/非对称加密/">非对称加密<small>0</small></a>
   
 </div>
 

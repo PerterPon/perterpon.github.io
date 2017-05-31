@@ -215,8 +215,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="服务端没有返回中间证书"><a href="#服务端没有返回中间证书" class="headerlink" title="服务端没有返回中间证书"></a>服务端没有返回中间证书</h3><p>我们来看看谷歌的证书：</p>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2SzdlustnpuFjSZFvXXbcTpXa_!!99218453.png" alt=""></p>
 <p><code>证书颁发机构信息访问</code>，这一栏里面标示了此证书的证书颁发机构如何访问和验证，标红框的地址就是CA的证书下载地址，下面还有OCSP协议的验证地址。</p>
-<h3 id="服务端返回了中间证书"><a href="#服务端返回了中间证书" class="headerlink" title="服务端返回了中间证书"></a>服务端返回了中间证书</h3><p>比较适用于实际情况，因为上一中情况会产生额外的http请求，访问速度就会比较慢了。</p>
+<h3 id="服务端返回了中间证书"><a href="#服务端返回了中间证书" class="headerlink" title="服务端返回了中间证书"></a>服务端返回了中间证书</h3><p>比较适用于实际情况，因为上一种情况会产生额外的http请求，访问速度就会比较慢了。</p>
+<p>这里返回了三个证书：</p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2C3E3u.hnpuFjSZFEXXX0PFXa_!!99218453.png" alt=""></p>
+<p>证书链类似下面这样，可以自由配置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE-----&#10;&#33258;&#24049;&#30340;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----&#10;-----BEGIN CERTIFICATE-----&#10;&#29238;&#32423;&#30340;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----&#10;-----BEGIN CERTIFICATE-----&#10;&#29238;&#32423;&#30340;&#29238;&#32423;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----</span><br></pre></td></tr></table></figure>
 <h2 id="end-user证书的类型"><a href="#end-user证书的类型" class="headerlink" title="end-user证书的类型"></a>end-user证书的类型</h2><p>申请者能够申请的证书种类非常多，价格相差也很大，主要有以下几种：</p>
 <ol>
 <li><p>OV（Organization Validation SSL），以某个组织为维度签发证书，通常这都是一个公司，域名采用通配符的方式来签发，以适应组织业务的灵活发展，例如：<code>*.tmall.com</code><br>，也就是任何<code>tmall.com</code>的三级域名都可以使用这个证书，避免重复申请。使用OV证书的网站访问时候类似下面这样：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2y9fmtYBnpuFjSZFGXXX51pXa_!!99218453.png" alt=""></p>

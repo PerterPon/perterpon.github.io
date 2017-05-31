@@ -141,7 +141,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           <p>上一篇：<a href="/2017/05/19/https-3/">零门槛学习https–(3)https的安全策略</a></p>
-
+<p>https其实就是在TLS之上的http协议，所以各种头信息以及数据格式和http其实都一样，主要区别就在TLS，下面我们来看看TLS是如何工作的。</p>
+<h2 id="TLS握手"><a href="#TLS握手" class="headerlink" title="TLS握手"></a>TLS握手</h2><p>和TCP的握手一样，TLS在工作之前也需要握手，保证客户端和服务端的正确运行，下面的图片里面包含了TLS四次握手的整个过程：Client Hello、Server Hello、</p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2BiP6o4RDOuFjSZFzXXcIipXa_!!99218453.png" alt=""></p>
+<p>我们通过抓包来看看整个过程具体是怎么运行的。</p>
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3>
         
       </div>
       <footer>

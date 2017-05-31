@@ -211,9 +211,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="CRL（Certificate-Revocation-List）"><a href="#CRL（Certificate-Revocation-List）" class="headerlink" title="CRL（Certificate Revocation List）"></a>CRL（Certificate Revocation List）</h3><p>CRL是证书吊销列表，早先的浏览器通过这种方式把这个列表缓存在本地，用以验证证书是否有效。但是因为客户端时间不可控，所以这种方式还是存在一定的风险。</p>
 <h3 id="OCSP协议（Online-Certificate-Status-Protocol）"><a href="#OCSP协议（Online-Certificate-Status-Protocol）" class="headerlink" title="OCSP协议（Online Certificate Status Protocol）"></a>OCSP协议（Online Certificate Status Protocol）</h3><p>除了CRL的方式，还有一种在线证书状态协议OCSP，验证的时候会从CA直接获取验证结果，主要用于证书过期吊销等的验证，主流浏览器都已经支持，可以防止因为缓存或者客户端时间不正确导致的证书过期时间判断不准确的问题。</p>
 <h2 id="如何验证二级CA的证书？"><a href="#如何验证二级CA的证书？" class="headerlink" title="如何验证二级CA的证书？"></a>如何验证二级CA的证书？</h2><p>浏览器和操作系统里面只内置了根证书，那么那些二级CA的证书又该如何验证呢？</p>
-<p>我们来看看谷歌的证书：</p>
+<p>这里有两种情况：</p>
+<h3 id="服务端没有返回中间证书"><a href="#服务端没有返回中间证书" class="headerlink" title="服务端没有返回中间证书"></a>服务端没有返回中间证书</h3><p>我们来看看谷歌的证书：</p>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2SzdlustnpuFjSZFvXXbcTpXa_!!99218453.png" alt=""></p>
 <p><code>证书颁发机构信息访问</code>，这一栏里面标示了此证书的证书颁发机构如何访问和验证，标红框的地址就是CA的证书下载地址，下面还有OCSP协议的验证地址。</p>
+<h3 id="服务端返回了中间证书"><a href="#服务端返回了中间证书" class="headerlink" title="服务端返回了中间证书"></a>服务端返回了中间证书</h3><p>比较适用于实际情况，因为上一中情况会产生额外的http请求，访问速度就会比较慢了。</p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2C3E3u.hnpuFjSZFEXXX0PFXa_!!99218453.png" alt=""></p>
 <h2 id="end-user证书的类型"><a href="#end-user证书的类型" class="headerlink" title="end-user证书的类型"></a>end-user证书的类型</h2><p>申请者能够申请的证书种类非常多，价格相差也很大，主要有以下几种：</p>
 <ol>
 <li><p>OV（Organization Validation SSL），以某个组织为维度签发证书，通常这都是一个公司，域名采用通配符的方式来签发，以适应组织业务的灵活发展，例如：<code>*.tmall.com</code><br>，也就是任何<code>tmall.com</code>的三级域名都可以使用这个证书，避免重复申请。使用OV证书的网站访问时候类似下面这样：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2y9fmtYBnpuFjSZFGXXX51pXa_!!99218453.png" alt=""></p>

@@ -118,6 +118,526 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-21T03:09:00.000Z">2017-05-21</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/21/https-5/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/21/https-5/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>上一篇：<a href="">零门槛学习https–(3)https协议详解</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/21/https-5/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-19T15:46:00.000Z">2017-05-19</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/19/https-4/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-4/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>上一篇：<a href="">零门槛学习https–(3)https的安全策略</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/19/https-4/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-19T13:46:00.000Z">2017-05-19</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/19/https-3/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-3/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>上一篇：<a href="">零门槛学习https–(2)https中s的秘密</a></p>
+<p>上一篇我们已经把非对称加密<code>RSA</code>的算法原理已经摸清楚了，有了加密算法，我们就能够开始加密了。当然非对称加密还有好几种，这里我们只讨论RSA。</p>
+<h2 id="RSA算法的局限性"><a href="#RSA算法的局限性" class="headerlink" title="RSA算法的局限性"></a>RSA算法的局限性</h2><p>在RSA的加密原理中，我们看到对明文<code>m</code>的要求是：</p>
+<ol>
+<li>m必须是整数。</li>
+<li>m必须小于n。</li>
+</ol>
+<p>第一个条件很容易满足，文字可以转成<code>arcii</code>，而二进制文件没有小数。问题在第二个条件，通常<code>n</code>的选择是<code>2048</code>位，所以这也就意味着我们每加密一次的数据，二进制长度不得超过2048位，这个局限性就比较大了，因为 <code>2048 / 8 = 256</code>，也就是一次最多只能加密<code>256 byte</code>的东西，所以超出部分就只能分片加密了，而每次加密其实涉及到的计算量还挺大的，都是大数的幂次方计算，所以，如果在一个<code>https</code>请求中，完全采用RSA加密，那么客户端和服务端的计算量简直不可想象，特别是服务端，会造成用户体验异常低下。</p>
+<h2 id="非对称加密的解决办法"><a href="#非对称加密的解决办法" class="headerlink" title="非对称加密的解决办法"></a>非对称加密的解决办法</h2><p>这里我们已经有了相对来说能够保证安全的方式，但是其计算量太大导致无法大规模应用，其他非对称加密的计算量同样非常大，那么，只能另寻他法了，剩下的算法就只有对称加密和摘要算法了，摘要算法不可逆，加密了之后就没法解了，肯定不适合，那么就只剩下对称加密了。</p>
+<h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h3><p>之前我们没有直接用对称加密的原因是因为，如果对称加密的秘钥写死在客户端里面，那么很容易就被人拿到了，如果每次都随机生成，那么无法用加密的方式分发到对方手中。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>聪明的革命先烈们这时候就想到了，那我们用非对称加密来加密对称加密的密钥，然后用对称加密不就行了么？这样既避免了非对称加密的庞大的计算量，又能够避免对称加密的密钥被泄露，完美地解决了这个问题。</p>
+<h2 id="新的问题出现"><a href="#新的问题出现" class="headerlink" title="新的问题出现"></a>新的问题出现</h2><p>上面的解决方案看起来似乎很完美，很快大家都开始实装，代码跑起来没有问题，加密解密也成功得运行了，而且当有人尝试拿到密文，也无从下手解密，突然，人们意识到一个问题：</p>
+<h3 id="MIM-man-in-the-middle-中间人攻击"><a href="#MIM-man-in-the-middle-中间人攻击" class="headerlink" title="MIM(man in the middle)中间人攻击"></a>MIM(man in the middle)中间人攻击</h3><p>有个很常见的场景，假设用户A通过B的网关上网，那么A的所有流量都会经过B，也就是B能看到A的所有进出的流量，RSA在算法层面虽然没法破解，但是有人想到，RSA任然存在一个传递公钥的过程，并且这是明文的，那么就有如下场景：</p>
+<p><strong>A和服务器S进行通信，并且由S生成公钥和私钥，并在连接建立后，S把公钥给A，但是因为A经由B上网，也就是说A的公钥是经由B交给A的，这个时候，B可以伪装成服务端S1接受A的连接，并生成B的公钥和私钥，再伪装成客户端C向S发送请求，S把公钥给了B，所以就变成了，A和B通信，B再和S通信，A虽然加密了，但是是用的B的公钥，所以B有私钥能够解密，然后再用S的公钥加密，发送给S，整个过程神不知，鬼不觉，B就悄悄查看了所有的通信内容，并且在A申请把自己网银里面的钱转给D时，B也可以偷偷改成自己的，S认为这是A发出的，就把钱转给了B。</strong></p>
+<h3 id="问题的原因"><a href="#问题的原因" class="headerlink" title="问题的原因"></a>问题的原因</h3><p>显然，人们深刻地认识到，因为数据的可复制性，无论是什么算法，都无法改变数据会被中间人窥探甚至修改的问题（以后量子加密的出现或许能解决这个问题，因为量子一旦被观测，叠加态就会坍缩，接受者就能够知道自己接收到的数据是否被窥探了）。</p>
+<p>问题源于生活，那么在生活中一定可以找到答案。你把钱给了银行，银行给你承诺，你想用钱的时候一定会还给你，银行在这里承担了一个被所有人信任的角色，在计算机里面其实也一样，于是，人们为计算机通信引入了一个第三方：CA(Certificate Authority)。</p>
+<h2 id="数字证书"><a href="#数字证书" class="headerlink" title="数字证书"></a>数字证书</h2><p>CA又称为证书颁发机构，主要用于颁发数字证书，用一个无法篡改的数字证书来表名身份，数字证书通常分为以下几种：</p>
+<ol>
+<li>个人身份证书。</li>
+<li>企业或机构身份证书。</li>
+<li>支付网关证书。</li>
+<li>服务器证书。</li>
+<li>企业或机构代码签名证书。</li>
+<li>安全电子邮件证书。</li>
+<li>个人代码签名证书。</li>
+</ol>
+<h3 id="数字证书如何生成？"><a href="#数字证书如何生成？" class="headerlink" title="数字证书如何生成？"></a>数字证书如何生成？</h3><ol>
+<li>首先，CA要生成一个自己的公钥和私钥，这里通常只生成一次就行了。</li>
+<li>有人向CA申请证书，把自己的各种身份信息，营业执照，域名，到期时间等等的信息发给CA。</li>
+<li>CA严格审核申请者的信息，申请通过后，CA为申请者生成一对公钥和私钥（也可以自己生成），把CA的签发人、地址、签发时间、过期失效时间等信息，加上申请者的基本信息以及DNS、域名、公钥等基本信息整合到一起，生成一个证书，这里的证书还未签名，仅仅是很多信息的聚合而已。</li>
+<li>通过通用的摘要算法（通常是sha256）将信息摘要提取出来，然后用CA的私钥加密，这里因为私钥严格保存，所以别人无法伪造签名，除非拿到私钥。</li>
+<li>把上一步计算出来的信息摘要附加到第三步生成的证书中，之后，这个证书就称为了一个被CA签名过的证书了，因为私钥被CA严格保存，所以没有人能够模仿CA的签名，这也就是签名安全的根本了。</li>
+<li>服务端把这个证书挂到自己的服务器上去，就能够供人使用了。</li>
+</ol>
+<p>以上整个过程称为：Public Key Infrastructure（PKI，公开密钥基础建设）</p>
+<h3 id="如何验证证书的有效性呢？"><a href="#如何验证证书的有效性呢？" class="headerlink" title="如何验证证书的有效性呢？"></a>如何验证证书的有效性呢？</h3><ol>
+<li>客户端向服务端发起请求，服务端返回数字证书。</li>
+<li>客户端拿到证书之后，首先解析证书，拿到被私钥加密的摘要密文，然后再拿出证书的元数据。</li>
+<li>用CA的公钥进行解密，CA的公钥是公开的，任何人都可以获取（会内置在操作系统里面，或者在CA的官方网站中可以获取），解密后拿到摘要的原文。</li>
+<li>对元数据再次执行摘要算法，拿到摘要信息，然后和第三步的结果进行对比，只有当结果一致的时候，才认为证书是有效的。</li>
+</ol>
+<h3 id="整个过程可以理解为下图："><a href="#整个过程可以理解为下图：" class="headerlink" title="整个过程可以理解为下图："></a>整个过程可以理解为下图：</h3><p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB21kBQqMNlpuFjy0FfXXX3CpXa_!!99218453.png" alt=""></p>
+<h2 id="如果我们获取CA的公钥的时候，已经被替换了怎么办？"><a href="#如果我们获取CA的公钥的时候，已经被替换了怎么办？" class="headerlink" title="如果我们获取CA的公钥的时候，已经被替换了怎么办？"></a>如果我们获取CA的公钥的时候，已经被替换了怎么办？</h2><p>设想一下，当我们获取CA公钥的时候，已经被人替换了，这时候真正的证书反而没法解析，只有被伪造的证书才能被解析了，这里就有了证书链的概念。</p>
+<h3 id="证书链"><a href="#证书链" class="headerlink" title="证书链"></a>证书链</h3><p>通常在一个证书链中包含以下三种结构：</p>
+<ol>
+<li>end-user。终端用户，也就是https中真正用来加密通信的证书。</li>
+<li>intermediates。给end-user签发证书的CA的证书，主要用来校验end-user的证书是否合法的证书。</li>
+<li>root。root也是CA证书，区别在于，root证书是给intermediates签发证书的，用来校验intermediates的合法性。</li>
+</ol>
+<h3 id="证书链的签发。"><a href="#证书链的签发。" class="headerlink" title="证书链的签发。"></a>证书链的签发。</h3><ol>
+<li>首先，root自己先生成一对公钥和私钥，然后用自己的私钥给自己自签名，因为root的绝对信任。</li>
+<li>二级CA向root申请证书，root按照上面提到的数字证书的生成方式，先给CA生成一对公钥和私钥，然后</li>
+<li>把CA的各种信息算出摘要，再用自己的私钥加密，加上给二级CA生成的公钥，就组成了一张CA的证书。</li>
+<li>然后有用户向二级CA申请证书时，按照这个步骤一步步签发，就形成了证书链。</li>
+<li>证书一级一级签发，中间无法伪造，因为root证书的绝对安全，保证了整个证书链的安全。</li>
+<li>证书链是有长度限制的，root颁发证书的时候会添加此字段，所以证书申请者无法再为别人签发证书。</li>
+</ol>
+<h3 id="CA的类型"><a href="#CA的类型" class="headerlink" title="CA的类型"></a>CA的类型</h3><p>上面提到intermediates和root都是CA证书，所以CA其实也就分为root CAs和intermediates CAs，root CAs可以认为是一个品牌，而intermediates CAs则是真正使用这个品牌生产产品的企业，举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#21703;&#21704;&#21704;&#27597;&#20844;&#21496;&#65292;&#25317;&#26377;&#21703;&#21704;&#21704;&#21697;&#29260;&#65292;&#20294;&#26159;&#24182;&#27809;&#26377;&#33258;&#24049;&#30340;&#20135;&#21697;&#65292;&#20570;&#30340;&#21482;&#26159;&#32473;&#23376;&#20844;&#21496;&#25480;&#26435;&#21697;&#29260;&#65292;&#20063;&#23601;&#26159;root.&#10;&#23376;&#20844;&#21496;A&#65292;&#29983;&#20135;&#30719;&#27849;&#27700;&#65292;&#26159;&#19968;&#20010;intermediates.&#10;&#23376;&#20844;&#21496;B&#65292;&#29983;&#20135;&#20843;&#23453;&#31909;&#65292;&#26159;&#19968;&#20010;intermediates.&#10;&#23376;&#20844;&#21496;C&#65292;&#29983;&#20135;&#27225;&#27713;&#65292;&#20063;&#26159;&#19968;&#20010;intermediates.</span><br></pre></td></tr></table></figure>
+<h3 id="为什么不能用root-CA的私钥直接签名？"><a href="#为什么不能用root-CA的私钥直接签名？" class="headerlink" title="为什么不能用root CA的私钥直接签名？"></a>为什么不能用root CA的私钥直接签名？</h3><p>主要还是从安全性上考虑，私钥是需要放到服务器上去做签名用的，所以不可避免可能服务器会被人攻破，导致私钥泄露，所以root的私钥隔离得越远越好，如果某个intermediates的私钥被窃取了，那么用root的私钥再签发一个intermediates证书即可，不会威胁到整个root证书下所有人的安全。root CA的私钥一般锁在大金库里面，完全得物理隔离，以下是godaddy对这个的解释：</p>
+<p><strong><em>ntermediate certificates are used as a stand-in for our root certificate. We use intermediate certificates as a proxy because we must keep our root certificate behind numerous layers of security, ensuring its keys are absolutely inaccessible.</em></strong></p>
+<h3 id="root证书的获取"><a href="#root证书的获取" class="headerlink" title="root证书的获取"></a>root证书的获取</h3><p>回到我们最初的问题，获取证书的时候就已经被替换了怎么办？这里我们只需要保证root证书的获取没有问题，那么只要其他中间证书被替换，最后校验root证书这里还是没法通过，那么如果保证root证书的获取是安全的呢？</p>
+<ol>
+<li>首先，成为一个CA的一个前提是你要向微软等操作系统厂商申请加入他们的白名单，就是把自己的root证书内置在操作系统里面，随着系统的安装和升级的过程就已经被安装到操作系统里面。</li>
+<li>浏览器等终端在验证的时候，就直接调用操作系统的接口，获取证书，用来验证，例如chrome和ie。</li>
+<li>有些浏览器类似firefox有一套自己的证书系统，是随着安装firefox的时候，安装到本地，这样，即使操作系统的证书被篡改了，firefox依然有能力验证证书的有效性。</li>
+</ol>
+<p>root证书并不会很多，目前主流的基本就只有：Symantec(VeriSign/GeoTrust)、Comodo、GoDaddy，也是被这几家垄断，签发证书躺着赚钱，所以现在也有一些公益的组织开始提供免费证书。</p>
+<h3 id="CRL（Certificate-Revocation-List）"><a href="#CRL（Certificate-Revocation-List）" class="headerlink" title="CRL（Certificate Revocation List）"></a>CRL（Certificate Revocation List）</h3><p>CRL是证书吊销列表，早先的浏览器通过这种方式把这个列表缓存在本地，用以验证证书是否有效。但是因为客户端时间不可控，所以这种方式还是存在一定的风险。</p>
+<h3 id="OCSP协议（Online-Certificate-Status-Protocol）"><a href="#OCSP协议（Online-Certificate-Status-Protocol）" class="headerlink" title="OCSP协议（Online Certificate Status Protocol）"></a>OCSP协议（Online Certificate Status Protocol）</h3><p>除了CRL的方式，还有一种在线证书状态协议OCSP，验证的时候会从CA直接获取验证结果，主要用于证书过期吊销等的验证，主流浏览器都已经支持，可以防止因为缓存或者客户端时间不正确导致的证书过期时间判断不准确的问题。</p>
+<h2 id="如何验证二级CA的证书？"><a href="#如何验证二级CA的证书？" class="headerlink" title="如何验证二级CA的证书？"></a>如何验证二级CA的证书？</h2><p>浏览器和操作系统里面只内置了根证书，那么那些二级CA的证书又该如何验证呢？</p>
+<p>我们来看看谷歌的证书：</p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2SzdlustnpuFjSZFvXXbcTpXa_!!99218453.png" alt=""></p>
+<p>标红框的地方，就是二级CA的证书下载地址，里面包含了解密的公钥，拿到后就可以解密来验证是否正确了。这里通常是https协议的地址，谷歌使用了http，心还是很大的，不过即使这里的证书被劫持和伪造了，根证书的验证还是通过不了，所以任然是安全的。</p>
+<h2 id="end-user证书的类型"><a href="#end-user证书的类型" class="headerlink" title="end-user证书的类型"></a>end-user证书的类型</h2><p>申请者能够申请的证书种类非常多，价格相差也很大，主要有以下几种：</p>
+<ol>
+<li><p>OV（Organization Validation SSL），以某个组织为维度签发证书，通常这都是一个公司，域名采用通配符的方式来签发，以适应组织业务的灵活发展，例如：<code>*.tmall.com</code><br>，也就是任何<code>tmall.com</code>的三级域名都可以使用这个证书，避免重复申请。使用OV证书的网站访问时候类似下面这样：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2y9fmtYBnpuFjSZFGXXX51pXa_!!99218453.png" alt=""></p>
+</li>
+<li><p>DV（Domain Validation SSL），一个域名对应一个证书，无法使用通配符，这是最便宜的证书，申请无需人工干预，不需要组织信息，因为价格便宜，由某CA最早推出来之后，很受欢迎，但是因为没有人工审核，很多犯罪网站都使用DV。</p>
+</li>
+<li>EV（Extended Validation Certificate），扩展验证证书，价格最高，审核最严，也是安全性最高的证书，能够使用一些安全性更高的加密算法，例如椭圆曲线算法，访问时还能在浏览器地址栏显示绿色，并且显示组织的名称，看起来非常高大上，如下图：<br> <img src="https://img.alicdn.com/imgextra/i3/99218453/TB2l43etYlmpuFjSZFlXXbdQXXa_!!99218453.png" alt=""></li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目前整个互联网建立在对CA信任的基础上，要是CA作恶，那么整个互联网就会混乱了。之前就有发生过有CA误签发google证书，导致google差点被中间人攻击。</p>
+<p>至此，整个<code>https</code>的加密原理和安全认证机制理论知识我们都已经讲完了，我们来回顾一下：首先客户端先校验证书，从服务端证书到二级CA再到根证书，然后双方生成一个对称加密的密钥，用证书里面的公钥加密，发送给服务端，服务端用自己的私钥解密，拿到对称加密的密钥之后，双方开始通信。</p>
+<p>这套加密系统其实适用于所有客户端和服务端的通信，所以网景公司在1994年推出浏览器时，同时推出了ssl，应用到http就变成了https。后面咱们来看看https中，ssl协议的一些具体细节。</p>
+<p><a href="./http4">零门槛学习https–(4)https协议详解</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/19/https-3/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2017/05/19/https-2/">零门槛学习https--(2)https中s的秘密</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-19T11:46:00.000Z">2017-05-19</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/19/https-2/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-2/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>上一篇：<a href="">零门槛学习https–(1)为什么我们要用https</a></p>
+<p>非对称加密在目前的计算机领域内是非常安全的，主要还是受制于目前的计算能力，或许某天量子计算机的出现会改变这个局面。RSA的本质就是一个数学算法，所以本篇即使你不懂任何计算机知识，也能理解RSA算法的原理，但是其中会涉及到大量的数学知识。</p>
+<h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><p>前面已经介绍过RSA的名称由来，下面来介绍下RSA的安全本质：<code>大整数的因数分解</code>。</p>
+<p>举个例子：<code>求77的因数分解</code>，很简单，解是<code>7和11</code>，或许你在高中或者初中就学过这个，很诧异这能成为现代互联网安全的基础？那么你可以看看下面这个数字：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12301866845301177551304949&#10;58384962720772853569595334&#10;79219732245215172640050726&#10;36575187452021997864693899&#10;56474942774063845925192557&#10;32630345373154826850791702&#10;61221429134616704292143116&#10;02221240479274737794080665&#10;351419597459856902143413</span><br></pre></td></tr></table></figure>
+<p>这个就是人类目前破解过的最长的一个整数，在2009年才破解成功，转成二进制就是768位，而现在普遍都是2048位的加密，如果非要破解，那么所需时间是一个天文数字。如果有一天，有人发明了简单的因数分解的方式，那么RSA就很容易被破解了，目前，基本上只有暴力破解，也就是一个数一个数地测试。</p>
+<h2 id="RSA的思路"><a href="#RSA的思路" class="headerlink" title="RSA的思路"></a>RSA的思路</h2><p>上面那个数等于下面这两个数的乘积，计算这两个数的乘积很简单，计算机在瞬间就可以给出答案，但是只有两个数的乘积，而让你求出其因数，就几乎是不可能了，当然这是基于大整数的情况下，简单的整数，通过暴力破解，还是可以求出来的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">33478071698956898786044169&#10;84821269081770479498371376&#10;85689124313889828837938780&#10;02287614711652531743087737&#10;814467999489&#10;&#12288;&#12288;&#12288;&#12288;&#215;&#10;36746043666799590428244633&#10;79962795263227915816434308&#10;76426760322838157396665112&#10;79233373417143396810270092&#10;798736308917</span><br></pre></td></tr></table></figure>
+<p>我们把这两个数分别称为<code>p</code>和<code>q</code>，这两个数的乘积称为<code>n</code>，从这个角度出发，只要加密者拥有<code>p</code>和<code>q</code>，很容易算出乘积<code>n</code>，而尝试破解的人，只有<code>n</code>，就没法算出<code>p</code>和<code>q</code>了。</p>
+<h2 id="如何生成公私钥？"><a href="#如何生成公私钥？" class="headerlink" title="如何生成公私钥？"></a>如何生成公私钥？</h2><p>本质已经知道了，那么我们来生成RSA的公钥和私钥吧，生成公钥和私钥总共分为五步：</p>
+<h3 id="1-随机选择两个质数p和q"><a href="#1-随机选择两个质数p和q" class="headerlink" title="1. 随机选择两个质数p和q"></a>1. 随机选择两个质数p和q</h3><p>质数又称素数，具体的特性和定义请<a href="https://zh.wikipedia.org/zh/%E7%B4%A0%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
+<p>比如这里我选择了<code>p=17，q=23</code></p>
+<h3 id="2-将这个两个数相乘得到n"><a href="#2-将这个两个数相乘得到n" class="headerlink" title="2. 将这个两个数相乘得到n"></a>2. 将这个两个数相乘得到n</h3><p><code>17 * 23 = 391</code>，<code>391</code>换算成二进制就是<code>110001000</code>，这里的位数就是9位，这就是我们密钥的长度。选择RSA密钥长度的时候，其实就是选择这个n的长度，长度越大，安全性越高，当然加密和解密的时候耗费的计算量也更大。</p>
+<h3 id="3-计算n的欧拉函数φ-n"><a href="#3-计算n的欧拉函数φ-n" class="headerlink" title="3. 计算n的欧拉函数φ(n)"></a>3. 计算n的欧拉函数φ(n)</h3><p>欧拉函数的作用是求得大于1小于n的所有质数的个数，例如符合φ(8)的情况是：<code>2, 3, 5, 7</code>，也就是φ(8)的值为：<code>4</code>，具体有关欧拉函数的其他特性请<a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
+<p>我们这里φ(n)可以这么求值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#966;(n) = (p-1)(q-1).&#10;&#10;&#36825;&#37324;&#65292;&#966;(n) = ( 17 -1 ) * ( 23 - 1 ) = 352</span><br></pre></td></tr></table></figure>
+<h3 id="4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质"><a href="#4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质" class="headerlink" title="4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质"></a>4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质</h3><p>也就是说，<code>e</code>和<code>φ(n)</code>不能有公约数，并且<code>φ(n)</code>不能是<code>e</code>的倍数。</p>
+<p>举个例子：<code>φ(n)</code> = 12，所以e可以选的数有<code>3, 5, 7, 11 ....</code>，这里我选择<strong><code>17</code></strong>。</p>
+<p>在现实场景中，通常<code>e</code>的选择是<code>65537</code>，为什么要选择这个数呢？请参看<a href="https://crypto.stackexchange.com/questions/3110/impacts-of-not-using-rsa-exponent-of-65537" target="_blank" rel="external">这篇文章</a>，解释得非常清楚，总的来说，比<code>65537</code>大的数，在现有的硬件和软件场景下，会造成计算变慢，而比<code>65537</code>小的数，在安全性上会有减弱，所以<code>65537</code>是一个折中的选择。</p>
+<h3 id="5-计算e对于φ-n-的模反元素d"><a href="#5-计算e对于φ-n-的模反元素d" class="headerlink" title="5. 计算e对于φ(n)的模反元素d"></a>5. 计算e对于<code>φ(n)</code>的模反元素<code>d</code></h3><h4 id="求模"><a href="#求模" class="headerlink" title="求模"></a>求模</h4><p>求模操作在大部分计算机语言中操作符都是<code>%</code>，比如：<code>10 % 3 = 1</code>，指的是余数。</p>
+<h4 id="同余≡"><a href="#同余≡" class="headerlink" title="同余≡"></a>同余<code>≡</code></h4><p>三横的等号，代表同余，两个整数<code>a</code>，<code>b</code>，若它们除以正整数<code>m</code>所得的余数相等，则称 <code>a</code>， <code>b</code>对于模 <code>m</code>同余，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 &#8801; 1 (mod 3)</span><br></pre></td></tr></table></figure>
+<p>10 和 1 对于 <code>3</code> 同余。</p>
+<h4 id="模反元素"><a href="#模反元素" class="headerlink" title="模反元素"></a>模反元素</h4><p>模反元素也成为<code>模逆元</code></p>
+<p>一整数a对同余n之模逆元是指满足以下公式的整数 b</p>
+<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/be54db4848231e9f72f61b746a27d6a0aeace369" alt=""></p>
+<p>也可以写成以下的式子</p>
+<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/297023f006cd9486fa4192b391dbc819dd8f89e1" alt=""></p>
+<p>整数 a 对模数 n 之模逆元存在的充分必要条件是 a 和 n 互素，若此模逆元存在，在模数 n 下的除法可以用和对应模逆元的乘法来达成，此概念和实数除法的概念相同。</p>
+<p>以上是维基百科对于模反元素的介绍，将<code>e</code>和<code>φ(n)</code>代入公式就变成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d &#8801; 1(mod &#966;(n))</span><br></pre></td></tr></table></figure>
+<p>也就是说<code>e * d</code>的结果除以<code>k * φ(n)</code>的余数是<code>1</code>，所以我们的公式就变成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d - 1 = k * &#966;(n);</span><br></pre></td></tr></table></figure>
+<p>将<code>e</code>和<code>φ(n)</code>代入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231 * d - 1 = k * 352</span><br></pre></td></tr></table></figure>
+<p>转变一下位置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231x - 352y = 1</span><br></pre></td></tr></table></figure>
+<p>就变成了一个二元一次方程，初中时候就求过二元一次方程的解，但是必须得有两个二元一次方程才能求出解，不然就是一个直线方程了，这里我们采用<a href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95" target="_blank" rel="external">扩展欧几里得算法</a>来进行求解。</p>
+<h4 id="欧几里得算法"><a href="#欧几里得算法" class="headerlink" title="欧几里得算法"></a>欧几里得算法</h4><p>我们先看看欧几里得算法的定义：<code>欧几里得算法又称为辗转相除法，是一种求最大公约数的方法，其核心思想如下图：</code></p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2iDY8p4XlpuFjSsphXXbJOXXa_!!99218453.gif" alt=""></p>
+<p>假设我们要求<code>120</code>和<code>76</code>的最大公约数，可以这么计算：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39318;&#20808;&#36873;&#25321;&#22823;&#30340;&#25968;&#20943;&#21435;&#23567;&#30340;&#25968;&#10;&#10;120 - 76 = 44&#10;&#10;&#29616;&#22312;&#25105;&#20204;&#21097;&#19979;76 &#21644; 44&#20004;&#20010;&#25968;&#65292;&#32487;&#32493;&#31532;&#19968;&#27493;&#25805;&#20316;&#10;&#10;76 - 44 = 32&#10;&#10;44 - 32 = 12&#10;&#10;32 - 12  = 20&#10;&#10;20 - 12  = 8&#10;&#10;12 - 8  = 4&#10;&#10;8  - 4  = 4&#10;&#10;4  - 4  = 0</span><br></pre></td></tr></table></figure>
+<p>所以，我们就可以求出，<code>120</code>和<code>76</code>的最大公约数是<code>4</code>。</p>
+<h4 id="扩展欧几里得算法"><a href="#扩展欧几里得算法" class="headerlink" title="扩展欧几里得算法"></a>扩展欧几里得算法</h4><p>看名字就可以知道这是欧几里得算法的扩展，其核心思想如下：</p>
+<p>已知a和b，求解一组x, y使得<strong><code>ax+by=Gcd(a, b)=d</code></strong> <code>(Gcd(a, b) 表示a和b的最大公约数)</code>。</p>
+<p>用类似辗转相除法来求解这个等式<code>17x - 352y = 1</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">352 = 17 * 20 + 12&#10;17  = 12 * 1 + 5&#10;12  = 5 * 2 + 2&#10;5   = 2 * 2 + 1</span><br></pre></td></tr></table></figure>
+<p>改变一下等式两边</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12  = 352 - 17 * 20&#10;5   = 17 - 12&#10;2   = 12 - 5 * 2&#10;1   = 5 - 2 * 2</span><br></pre></td></tr></table></figure>
+<p>把等式代入上一个等式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1  = 5 - 2 * 2&#10;1  = 5 -&#65288; 12 - 5 * 2 &#65289;* 2 // &#20195;&#20837;&#31561;&#24335;&#65306;2 = 12 - 5 * 2&#10;1  = 5 - 12 * 2 + 5 * 4&#10;1  = 5 * 5 - 12 * 2&#10;1  = ( 17 - 12 ) * 5 - 12 * 2 // &#20195;&#20837;&#31561;&#24335;&#65306;5 = 17 - 12&#10;1  = 17 * 5 - 12 * 5 - 12 * 2&#10;1  = 17 * 5 - 12 * 7&#10;1  = 17 * 5 - ( 352 - 17 * 20 ) * 7 // &#20195;&#20837;&#31561;&#24335;&#65306;12 = 352 - 17 * 20&#10;1  = 17 * 5 - 352 * 7 + 17 * 140&#10;1  = 17 * 145 - 352 * 7</span><br></pre></td></tr></table></figure>
+<p>即可得出：<code>x = 145, y = 7</code></p>
+<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p>在第五步中我们想要的<code>d</code>就是这里的x，所以，<code>d = 145</code>。</p>
+<p>作为一个直线方程，这里理论上这里会有无数个整数解，的确，尝试一下就发现，所有整数解都是能计算的，只是数字越大，计算量越大，但是要注意，这里的<code>d</code>不能小于0。</p>
+<h3 id="组合公钥和私钥"><a href="#组合公钥和私钥" class="headerlink" title="组合公钥和私钥"></a>组合公钥和私钥</h3><p>到这里，公钥和私钥所需要的东西都齐全了，<code>({n, e})</code>就是公钥，而<code>({n, d})</code>就是私钥，一般会使用<a href="https://zh.wikipedia.org/zh-cn/ASN.1" target="_blank" rel="external">ASN.1</a>来表达。</p>
+<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><p>首先，我们用公钥加密。</p>
+<h3 id="要加密的数据m"><a href="#要加密的数据m" class="headerlink" title="要加密的数据m"></a>要加密的数据m</h3><p>m需要满足以下条件：</p>
+<ol>
+<li>m必须是正整数(字符串之类的可以取arcii)</li>
+<li>m必须小于n</li>
+</ol>
+<h3 id="加密公式"><a href="#加密公式" class="headerlink" title="加密公式"></a>加密公式</h3><p><strong><em>m<sup>e</sup> ≡ c (mod n)</em></strong></p>
+<p>这里的<code>c</code>就是我们的密文。</p>
+<p>上面我们计算的n是：<code>391</code>，e是：<code>17</code>， 那假设我们要加密的内容是：<code>11</code>，所以我们的密文就是：<code>198</code>。</p>
+<p>这里非常需要注意的一点就是，需要使用一些大数计算的方式，而不能使用普通的<code>double</code>之类的类型，因为<code>double</code>类型，还有js等语言的默认的数字类型尾数位只有52位，无法精确表达比<code>2的53次</code>更大的数字</p>
+<h3 id="解密公式"><a href="#解密公式" class="headerlink" title="解密公式"></a>解密公式</h3><p><strong><em>c<sup>d</sup> ≡ m (mod n)</em></strong></p>
+<p>c是：<code>198</code>，d是：<code>145</code>，n是：<code>391</code>，解出我们的明文是：<code>11</code>，至此，我们的整个加密和解密过程就结束了。也许你会好奇，为什么这么算就能算出相等的结果，下面就来证明一下。</p>
+<h2 id="公式证明"><a href="#公式证明" class="headerlink" title="公式证明"></a>公式证明</h2><p>我们的加密公式是：</p>
+<p><strong><em>m<sup>e</sup> ≡ c (mod n)</em></strong></p>
+<p>我们的解密公式是：</p>
+<p><strong><em>c<sup>d</sup> ≡ m (mod n)</em></strong></p>
+<p>根据上面的规则，<code>c</code>可以这么表达：</p>
+<p><strong><em>c = m<sup>e</sup> - kn</em></strong></p>
+<p>把<code>c</code>代入我们的解密方程：</p>
+<p><strong><em>(m<sup>e</sup> - kn)<sup>d</sup> ≡ m (mod n)</em></strong></p>
+<p>因为这是一个同余等式，等号左边加减<code>n</code>都不会影响等式，所以我们可以把等式简化为</p>
+<p><strong><em>m<sup>ed</sup> ≡ m (mod n)</em></strong></p>
+<p>当我们在求<code>d</code>的时候有同余等式：</p>
+<p><strong><em>ed ≡ 1 (mod φ(n))</em></strong></p>
+<p>这个等式也可以写成这个样子：</p>
+<p>ed = h * φ(n) + 1</p>
+<p>代入刚刚简化后的等式：</p>
+<p><strong><em>m<sup>hφ(n)+1</sup> ≡ m (mod n)</em></strong></p>
+<p>到这里，只要我们能够证明这个等式是成立的，那么就能够证明我们的加密和解密公式是成立的，这里就有两种情况了：</p>
+<h3 id="m和n是互质的关系"><a href="#m和n是互质的关系" class="headerlink" title="m和n是互质的关系"></a>m和n是互质的关系</h3><p><strong><a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86_(%E6%95%B0%E8%AE%BA" target="_blank" rel="external">欧拉定理</a>)</strong>：<code>如果两个正整数a和n互质，则n的欧拉函数 φ(n) 可以让下面的等式成立：</code></p>
+<p><strong><em>a<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
+<p>我们把<code>m</code>和<code>n</code>代入公式可以得到：</p>
+<p><strong><em>m<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
+<p>因为<code>m</code>和<code>n</code>互质，那么以下等式依然成立：</p>
+<p>(m<sup>φ(n)</sup>)<sup>h</sup> * m ≡ m (mod n)</p>
+<p>对指数稍微换算一下就能得到我们之前的等式了，<code>m</code>和<code>n</code>互质的情况下，我们很容易就能证明之前的等式成立。</p>
+<h3 id="m和n不是互质的关系"><a href="#m和n不是互质的关系" class="headerlink" title="m和n不是互质的关系"></a>m和n不是互质的关系</h3><p>首先我们有<code>n = p * q</code>，因为<code>m</code>和<code>n</code>不是互质的，而因为<code>n</code>是两个质数相乘的结果，也就是说<code>p</code>或者<code>q</code>就是<code>m</code>和<code>n</code>的一个公约数，所以有<code>m = p * k</code>，或者<code>m = q * k</code>。假设<code>p</code>是<code>m</code>和<code>n</code>的公约数，那么就有<code>m = p * k</code>。</p>
+<p>然后因为<code>p</code>和<code>q</code>都是质数，质数和除了是自己倍数之外的数都互质，又因为<code>m</code>必须小于<code>n</code>，所以这里<code>k</code>取值必然不能是<code>q</code>或者更大的数，所以我们有一个结论是：<code>k</code>必然和<code>q</code>互质。</p>
+<p><code>k * p</code>必然和<code>q</code>互质，把<code>k * p</code>和<code>q</code>代入，所以我们能够得出以下同余等式：</p>
+<p><strong><em>(kp)<sup>φ(q)</sup> ≡ 1 (mod q)</em></strong></p>
+<p>因为<code>k * p</code>和<code>q</code>互质，所以可以有：</p>
+<p>(kp)<sup>h * φ(q) + 1</sup> ≡ kp (mod q)</p>
+<p>而我们之前已经求出：</p>
+<p>ed = h * φ(n) + 1</p>
+<p>代入刚刚的式子：</p>
+<p><strong><em>kp<sup>ed</sup> ≡ kp (mod q)</em></strong></p>
+<p>假设有<code>t</code>，使得求模运算可以写成：</p>
+<p>kp<sup>ed</sup> = t <em> q + k </em> p</p>
+<p>转换一下等式：</p>
+<p>kp<sup>ed - 1</sup> = t * q</p>
+<p>因为<code>p</code>和<code>q</code>是互质关系，所以<code>k * p</code>只有当<code>k</code>等于<code>q</code>或者其倍数的时候，才能整除<code>q</code>，但是<code>m = q * k</code>，而且<code>m &lt; n</code>，所以<code>k * p</code>必然是不能整除<code>q</code>的，由此可得<code>p</code>必然能够整除<code>t</code>才能使得等式成立，也就是有：<code>t = t&lt;sup&gt;&#39;&lt;/sup&gt; * p</code>，由此可得如下等式：</p>
+<p><strong><em>kp<sup>ed</sup> = t<sup>‘</sup> pq + kp</em></strong></p>
+<p>因为<code>m = kp</code>，而<code>n = pq</code>，所以：</p>
+<p><strong><em>m<sup>ed</sup> = t<sup>‘</sup>n + m</em></strong></p>
+<p>写成同余等式可得：</p>
+<p><strong><em>m<sup>ed</sup> ≡ m (mod n)</em></strong></p>
+<p>这里就得出了我们刚刚求出的等式。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>到这里，我们已经证明了两种情况下等式都是成立了，也就是明文通过公钥加密之后，使用私钥也必然能够得到原本的结果，RSA算法也就成立了。</p>
+<h2 id="RSA中的对称性"><a href="#RSA中的对称性" class="headerlink" title="RSA中的对称性"></a>RSA中的对称性</h2><p>其实你会发现，RSA里面，公钥加密的东西私钥能够解密，同样的，从公式中发现，私钥加密的东西公钥也能解密，这也是非常重要的一个特性。那么，为什么不能把<code>({n, d})</code>作为公钥给用户呢？因为<code>({n, e})</code>中，<code>n</code>是公开的，<code>e</code>基本都使用常数<code>65537</code>，所以很容易就被猜到了，因此，虽然在算法上都能加密和解密，但是只把<code>({n, e})</code>作为公钥，公钥和私钥有非常严格的区分。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了这么安全的加密方式，那么我们就可以开始给HTTP加密了，那么https究竟是怎么做的呢，一起来看看：</p>
+<p><a href="">零门槛学习https–(3)https的安全策略</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/19/https-2/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2017/05/16/https-1/">零门槛学习https--(1)为什么我们要用https</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-16T11:46:00.000Z">2017-05-16</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/16/https-1/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/16/https-1/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>目前几乎主流的所有网站都使用了https，而且苹果也强制要求开发者使用https要传输数据，我们先不说什么是https，以及为什么需要https，因为任何技术的诞生都是因为现实中遇到的问题，而诞生了这个技术去解决问题，那么，https是为了解决什么问题呢？</p>
+<h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>http是一个非常伟大的协议，几乎承载了整个互联网，它有一个特点，那就是明文传输，如今家用的一个最简单的网络情况往往是，你连着路由器，路由器连着一个猫，然后接入电信运营商，这时候，我们就遇到了两个问题：</p>
+<ol>
+<li>路由器被人动了手脚，跟女神聊天的聊天记录全被别人看到了。</li>
+<li>随便打开一个网页，右下角都会弹出一些诡异的广告。</li>
+</ol>
+<p>也许你不知道也不在乎自己的聊天记录被人看到了，那么当你兴致勃勃打开115准备欣赏大片的时候，右下角的广告一定能让你炸毛了，比如下面这样子：</p>
+<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2Fbz4pSxjpuFjSszeXXaeMVXa_!!99218453.jpg" alt=""></p>
+<p>因为http是明文传输，那么想查看别人的信息，也就很容易了，同样，在你返回的http页面插入一个js脚本也是轻而易举，运营商的广告就是这么来的，非常无耻。</p>
+<h2 id="http有多不安全？"><a href="#http有多不安全？" class="headerlink" title="http有多不安全？"></a>http有多不安全？</h2><p>打开Wireshark随便抓一个包看看</p>
+<p><code>cookie</code>轻松就拿到了，在一些安全性不是很高的网站，有了cookie，你就相当于在短时间内登陆了这个账号，甚至都不用账号密码。</p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2suGMtdRopuFjSZFtXXcanpXa_!!99218453.png" alt=""></p>
+<p>返回的<code>html</code>也完整得能被解析出来，运营商插入一段广告JS还好，在一些安全性不是很高的网站插入监听键盘的脚本，然后就能拿到账号密码了，再通过撞库等方式，你在很多网站或许都不安全了。</p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2Y._Wp9hlpuFjSspkXXa1ApXa_!!99218453.png" alt=""></p>
+<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>聪明的你肯定想到了，既然都是明文传输惹得祸，那么我加密就行了呀。的确，加密就行了，但是这么简单的一句话，里面可是包含了无数革命先烈的研究成果，造就了https的由来。</p>
+<h2 id="加密方法"><a href="#加密方法" class="headerlink" title="加密方法"></a>加密方法</h2><p>既然提到了加密，那么无非就是三种加密方法：</p>
+<ul>
+<li><p>摘要算法。摘要算法严格意义上来说其实也不算是加密方法，最大的特点是不可逆，并且普遍防碰撞性较好。典型的有MD5，sha256等算法。现在有一些彩虹表，存储了大量的摘要信息以及其原文，并且还在不断增加，加上一些暴力破解技术，例如<code>ophcrack</code>等工具，几秒内即可破解<code>windows</code>登陆密码。</p>
+</li>
+<li><p>对称加密。典型的一个对称加密算法就是凯撒加密，比如原文是：<code>1234</code>，那么约定一个密钥<code>1</code>，加密的时候每一位都<code>+1</code>，所以密文就是：<code>2345</code>，解密的时候很简单，只要每一位都<code>-1</code>即可，运算速度很快，唯一的缺点是，两个人之间的密钥有一个人的泄露了，那么所有的通信都不安全了，并且传递密钥的时候除非当面给，不然都不安全。</p>
+</li>
+<li><p>非对称加密。最大的特点是通信双方的密钥是不一样的，并且加密者的密钥只能用于加密，无法解密，只有解密者的密钥能解密。典型的一个是RSA，几乎是奠定了现代互联网安全的基石，在HTTPS中被大量采用，其他例如椭圆曲线加密算法(ECC)，以及ElGamal等算法。RSA三个字母取自三位发明者的首字母：Ron Rivest、Adi Shamir、Leonard Adleman，由这三位数学家在1977年提出。</p>
+</li>
+</ul>
+<p>对称加密虽然也很有多种方式，但是相对来说还是比较好理解，但是非对称加密用一个密钥加密，却能用另外一个密钥解密，这个可能就不大好理解了，下面跟大家主要聊一聊非对称加密中的<code>RSA</code>具体是如何实现的。</p>
+<p><a href="./https-2">零门槛学习https–(2)https中s的秘密</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/16/https-1/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a></h1>
     
   
@@ -159,64 +679,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <div class="alignright">
             <a href="/2017/04/17/launch-screen/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/04/07/Untitled/"></a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-04-07T09:50:13.000Z">2017-04-07</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/04/07/Untitled/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/04/07/Untitled/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/04/07/Untitled/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
           </div>
         
         <div class="clearfix"></div>
@@ -287,64 +749,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <div class="alignright">
             <a href="/2017/03/29/set-root-view-controller/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/02/28/deadloop-in-setrootvc/"></a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-02-28T13:26:06.000Z">2017-02-28</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/02/28/deadloop-in-setrootvc/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/02/28/deadloop-in-setrootvc/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/02/28/deadloop-in-setrootvc/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
           </div>
         
         <div class="clearfix"></div>
@@ -708,231 +1112,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/11/23/computer-number/">计算机眼中的数字</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-11-23T11:19:00.000Z">2016-11-23</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/11/23/computer-number/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/11/23/computer-number/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="0-1-0-2"><a href="#0-1-0-2" class="headerlink" title="0.1 + 0.2 = ?"></a>0.1 + 0.2 = ?</h2><p>即使是没上过学的人，也知道答案是0.3，但是，在看似无所不能，计算速度远超人类的计算机来说，答案就不是0.3了。看看chrome下的结果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.1 + 0.2&#10;&#10;0.30000000000000004</span><br></pre></td></tr></table></figure>
-<p>再看看python：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Python 2.7.10 (default, Jul 30 2016, 18:31:42) &#10;[GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.34)] on darwin&#10;Type &#34;help&#34;, &#34;copyright&#34;, &#34;credits&#34; or &#34;license&#34; for more information.&#10;&#62;&#62;&#62; 0.1 + 0.2&#10;0.30000000000000004&#10;&#62;&#62;&#62;</span><br></pre></td></tr></table></figure>
-<p>再试试C语言：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &#34;stdio.h&#34;&#10; &#10;  int main()&#123;&#10;&#10;  double a = 0.1 + 0.2;&#10;  printf( &#34;%.17lf&#34;, a );&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2hkIJc80kpuFjy1zdXXXuUVXa_!!99218453.jpg" alt="qustion"></p>
-<h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>对于数字的存储绝大多数语言遵循的都是<a href="http://grouper.ieee.org/groups/754/" target="_blank" rel="external">IEEE 754</a>规范，简单来说就是一些革命先烈告诉你当你在二进制计算机中想要一个浮点数的时候应该如何去表达。</p>
-<p>首先，内存是有限的，所以一个数字，当它声明好了之后所占的位数是固定的，比如在C语言中，<code>double</code>类型所占的字节数是8，那么总共就是64位(可能某些奇葩编译器会有些差异)，革命先烈们是怎么规定的呢？</p>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yn.NdH4npuFjSZFmXXXl4FXa_!!99218453.png" alt="double"></p>
-<p>有一个通用的计算公式：</p>
-<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2253xdUlnpuFjSZFjXXXTaVXa_!!99218453.png" alt="float-cal"></p>
-<ol>
-<li>(-1)^s表示符号位，当s=0，V为正数；当s=1，V为负数。</li>
-<li>M表示有效数字，大于等于1，小于2。</li>
-<li>2^E表示指数位。</li>
-</ol>
-<p>举例来说，十进制的5.0，写成二进制是101.0，相当于1.01×2^2。那么，按照上面V的格式，可以得出s=0，M=1.01，E=2。<br>十进制的-5.0，写成二进制是-101.0，相当于-1.01×2^2。那么，s=1，M=1.01，E=2。</p>
-<p>有几点需要注意：</p>
-<ul>
-<li><p>因为有效数字M的第一位必然是1，所以存储的时候就把这一位舍去了，可以空出一位用来存储，在计算的时候加回来就行了。</p>
-</li>
-<li><p>指数E没有符号位，无法表示负数，所以在计算的时候减去一个半数，比如：double是64位，11位用来存储指数，假设你要保存指数10，那么就必须存储<code>1023 + 10</code>，也就是<code>10000001001</code>。ps: 以上讨论的都是64位浮点数，如果是float，也就是32位的浮点数，指数位数是8，保存指数10就是:<code>127 + 10</code></p>
-</li>
-</ul>
-<p>对于指数E，还有一下三条更细的规则：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#65288;1&#65289;E&#19981;&#20840;&#20026;0&#25110;&#19981;&#20840;&#20026;1&#12290;&#36825;&#26102;&#65292;&#25351;&#25968;E&#30340;&#35745;&#31639;&#20540;&#20943;&#21435;127&#65288;&#25110;1023&#65289;&#65292;&#24471;&#21040;&#30495;&#23454;&#20540;&#65292;&#20877;&#23558;&#26377;&#25928;&#25968;&#23383;M&#21069;&#21152;&#19978;&#31532;&#19968;&#20301;&#30340;1&#12290;&#10;&#65288;2&#65289;E&#20840;&#20026;0&#12290;&#36825;&#26102;&#65292;&#28014;&#28857;&#25968;&#30340;&#25351;&#25968;E&#31561;&#20110;1-127&#65288;&#25110;&#32773;1-1023&#65289;&#65292;&#26377;&#25928;&#25968;&#23383;M&#19981;&#20877;&#21152;&#19978;&#31532;&#19968;&#20301;&#30340;1&#65292;&#32780;&#26159;&#36824;&#21407;&#20026;0.xxxxxx&#30340;&#23567;&#25968;&#12290;&#36825;&#26679;&#20570;&#26159;&#20026;&#20102;&#34920;&#31034;&#177;0&#65292;&#20197;&#21450;&#25509;&#36817;&#20110;0&#30340;&#24456;&#23567;&#30340;&#25968;&#23383;&#12290;&#10;&#65288;3&#65289;E&#20840;&#20026;1&#12290;&#36825;&#26102;&#65292;&#22914;&#26524;&#26377;&#25928;&#25968;&#23383;M&#20840;&#20026;0&#65292;&#34920;&#31034;&#177;&#26080;&#31351;&#22823;&#65288;&#27491;&#36127;&#21462;&#20915;&#20110;&#31526;&#21495;&#20301;s&#65289;&#65307;&#22914;&#26524;&#26377;&#25928;&#25968;&#23383;M&#19981;&#20840;&#20026;0&#65292;&#34920;&#31034;&#36825;&#20010;&#25968;&#19981;&#26159;&#19968;&#20010;&#25968;&#65288;NaN&#65289;&#12290;</span><br></pre></td></tr></table></figure>
-<h4 id="好了，说完了背景，那么就可以来看看到底是什么原因了。"><a href="#好了，说完了背景，那么就可以来看看到底是什么原因了。" class="headerlink" title="好了，说完了背景，那么就可以来看看到底是什么原因了。"></a>好了，说完了背景，那么就可以来看看到底是什么原因了。</h4><p>整数的二进制和十进制之间的相互转换，相信大家都会算，小数部分，很多人可能已经忘记如何计算了。</p>
-<p>总体来说就是 <strong>乘二取整</strong>，比如0.1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.1 * 2&#10;0.2      &#62;&#62; 0&#10;0.2 * 2&#10;0.4      &#62;&#62; 0&#10;0.4 * 2&#10;0.8      &#62;&#62; 0&#10;0.8 * 2&#10;1.6      &#62;&#62; 1&#10;0.6 * 2&#10;1.2      &#62;&#62; 1&#10;&#10;0.2 * 2&#10;0.4      &#62;&#62; 0&#10;0.4 * 2&#10;0.8      &#62;&#62; 0&#10;0.8 * 2&#10;1.6      &#62;&#62; 1&#10;......</span><br></pre></td></tr></table></figure>
-<p>0.1 变成了 <code>0.0001 1001 1001 1001 ....</code> 1001无限循环<br>0.2 变成了 <code>0.0011 0011 0011 0011 ....</code> 0011无限循环</p>
-<p>对于计算机来说，0.1和0.2的二进制就变成了一个无尽数，其实大部分小数转换成二进制都是无穷数。于是，二进制的0.1和0.2就变成了：</p>
-<p>竖线后面代表存储位数之外   </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.0001 1001 1001 ...... 1001 | 1001   &#10;0.0011 0011 0011 ...... 0011 | 0011</span><br></pre></td></tr></table></figure>
-<p>二进制相加之后变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...... 1100 | 1100</span><br></pre></td></tr></table></figure>
-<p>由于存储位数限制，必须舍去竖线后面的有效数字，按照舍0进1的方式，就变成了 <code>.... 1101</code>，所以整个二进制数字就变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.0100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1101</span><br></pre></td></tr></table></figure>
-<p>转换成十进制就是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004440892098500626</span><br></pre></td></tr></table></figure>
-<p>就变成了我们最初所看到的结果。</p>
-<p>至此，我们开头的问题已经有了答案，那么下面有几个引申问题：</p>
-<ul>
-<li>JS中类型存储位是52位，那么可以准确表达最大的数字就是：Math.pow(2, 53), 也就是：<code>9007199254740992</code>，那么以下几个表达式的值是什么呢？</li>
-</ul>
-<p>9007199254740992 + 1<br>9007199254740992 + 2<br>9007199254740992 + 3<br>9007199254740992 + 4</p>
-<ul>
-<li>0.1, 0.2, 0.3, 0.4 转换成二进制小数都是无穷的，那么以下表达式的结果如何呢？</li>
-</ul>
-<p>0.1 + 0.2 === 0.3<br>0.1 + 0.3 === 0.4<br>0.2 + 0.4 === 0.6<br>0.2 + 0.3 === 0.5</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/11/23/computer-number/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/11/23/async/">相对性推进引擎(emDrive)</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-11-23T09:35:00.000Z">2016-11-23</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/11/23/async/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/11/23/async/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/11/23/async/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/11/23/em-drive/"></a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-11-23T09:34:42.000Z">2016-11-23</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/11/23/em-drive/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/11/23/em-drive/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/11/23/em-drive/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -956,23 +1135,23 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
-        <a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a>
+        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
       </li>
     
       <li>
-        <a href="/2017/04/07/Untitled/"></a>
+        <a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a>
       </li>
     
       <li>
-        <a href="/2017/03/29/set-root-view-controller/">多次setRootViewController导致view无限叠加的问题</a>
+        <a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a>
       </li>
     
       <li>
-        <a href="/2017/02/28/deadloop-in-setrootvc/"></a>
+        <a href="/2017/05/19/https-2/">零门槛学习https--(2)https中s的秘密</a>
       </li>
     
       <li>
-        <a href="/2017/02/28/the-great-unittest/">伟大的单元测试</a>
+        <a href="/2017/05/16/https-1/">零门槛学习https--(1)为什么我们要用https</a>
       </li>
     
   </ul>
@@ -992,6 +1171,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
   
+    <li><a href="/categories/https/">https</a><small>5</small></li>
+  
     <li><a href="/categories/iOS/">iOS</a><small>3</small></li>
   
     <li><a href="/categories/id2/">id2</a><small>7</small></li>
@@ -1001,6 +1182,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
     <li><a href="/categories/physical/">physical</a><small>2</small></li>
+  
+    <li><a href="/categories/rsa/">rsa</a><small>0</small></li>
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
@@ -1058,7 +1241,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/high-precision/">high-precision<small>1</small></a>
   
-    <a href="/tags/http/">http<small>1</small></a>
+    <a href="/tags/http/">http<small>5</small></a>
+  
+    <a href="/tags/https/">https<small>5</small></a>
   
     <a href="/tags/iOS/">iOS<small>4</small></a>
   
@@ -1104,6 +1289,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
+    <a href="/tags/rsa/">rsa<small>5</small></a>
+  
     <a href="/tags/setRootViewController/">setRootViewController<small>1</small></a>
   
     <a href="/tags/spider/">spider<small>1</small></a>
@@ -1122,7 +1309,17 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   
+    <a href="/tags/对称加密/">对称加密<small>5</small></a>
+  
+    <a href="/tags/扩展欧几里德/">扩展欧几里德<small>1</small></a>
+  
+    <a href="/tags/数字证书/">数字证书<small>4</small></a>
+  
+    <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
     <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
+  
+    <a href="/tags/非对称加密/">非对称加密<small>0</small></a>
   
 </div>
 

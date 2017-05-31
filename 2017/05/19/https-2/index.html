@@ -1,0 +1,632 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head>
+  <meta charset="utf-8">
+  
+  <title>零门槛学习https--(2)https中s的秘密 | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="https中s的秘密">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="零门槛学习https--(2)https中s的秘密"/>
+  <meta property="og:site_name" content="PerterPon"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans"/>
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+    
+  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle" />
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>零门槛学习https--(2)https中s的秘密</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-19T11:46:00.000Z">2017-05-19</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-2/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <p>上一篇：<a href="">零门槛学习https–(1)为什么我们要用https</a></p>
+<p>非对称加密在目前的计算机领域内是非常安全的，主要还是受制于目前的计算能力，或许某天量子计算机的出现会改变这个局面。RSA的本质就是一个数学算法，所以本篇即使你不懂任何计算机知识，也能理解RSA算法的原理，但是其中会涉及到大量的数学知识。</p>
+<h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><p>前面已经介绍过RSA的名称由来，下面来介绍下RSA的安全本质：<code>大整数的因数分解</code>。</p>
+<p>举个例子：<code>求77的因数分解</code>，很简单，解是<code>7和11</code>，或许你在高中或者初中就学过这个，很诧异这能成为现代互联网安全的基础？那么你可以看看下面这个数字：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12301866845301177551304949&#10;58384962720772853569595334&#10;79219732245215172640050726&#10;36575187452021997864693899&#10;56474942774063845925192557&#10;32630345373154826850791702&#10;61221429134616704292143116&#10;02221240479274737794080665&#10;351419597459856902143413</span><br></pre></td></tr></table></figure>
+<p>这个就是人类目前破解过的最长的一个整数，在2009年才破解成功，转成二进制就是768位，而现在普遍都是2048位的加密，如果非要破解，那么所需时间是一个天文数字。如果有一天，有人发明了简单的因数分解的方式，那么RSA就很容易被破解了，目前，基本上只有暴力破解，也就是一个数一个数地测试。</p>
+<h2 id="RSA的思路"><a href="#RSA的思路" class="headerlink" title="RSA的思路"></a>RSA的思路</h2><p>上面那个数等于下面这两个数的乘积，计算这两个数的乘积很简单，计算机在瞬间就可以给出答案，但是只有两个数的乘积，而让你求出其因数，就几乎是不可能了，当然这是基于大整数的情况下，简单的整数，通过暴力破解，还是可以求出来的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">33478071698956898786044169&#10;84821269081770479498371376&#10;85689124313889828837938780&#10;02287614711652531743087737&#10;814467999489&#10;&#12288;&#12288;&#12288;&#12288;&#215;&#10;36746043666799590428244633&#10;79962795263227915816434308&#10;76426760322838157396665112&#10;79233373417143396810270092&#10;798736308917</span><br></pre></td></tr></table></figure>
+<p>我们把这两个数分别称为<code>p</code>和<code>q</code>，这两个数的乘积称为<code>n</code>，从这个角度出发，只要加密者拥有<code>p</code>和<code>q</code>，很容易算出乘积<code>n</code>，而尝试破解的人，只有<code>n</code>，就没法算出<code>p</code>和<code>q</code>了。</p>
+<h2 id="如何生成公私钥？"><a href="#如何生成公私钥？" class="headerlink" title="如何生成公私钥？"></a>如何生成公私钥？</h2><p>本质已经知道了，那么我们来生成RSA的公钥和私钥吧，生成公钥和私钥总共分为五步：</p>
+<h3 id="1-随机选择两个质数p和q"><a href="#1-随机选择两个质数p和q" class="headerlink" title="1. 随机选择两个质数p和q"></a>1. 随机选择两个质数p和q</h3><p>质数又称素数，具体的特性和定义请<a href="https://zh.wikipedia.org/zh/%E7%B4%A0%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
+<p>比如这里我选择了<code>p=17，q=23</code></p>
+<h3 id="2-将这个两个数相乘得到n"><a href="#2-将这个两个数相乘得到n" class="headerlink" title="2. 将这个两个数相乘得到n"></a>2. 将这个两个数相乘得到n</h3><p><code>17 * 23 = 391</code>，<code>391</code>换算成二进制就是<code>110001000</code>，这里的位数就是9位，这就是我们密钥的长度。选择RSA密钥长度的时候，其实就是选择这个n的长度，长度越大，安全性越高，当然加密和解密的时候耗费的计算量也更大。</p>
+<h3 id="3-计算n的欧拉函数φ-n"><a href="#3-计算n的欧拉函数φ-n" class="headerlink" title="3. 计算n的欧拉函数φ(n)"></a>3. 计算n的欧拉函数φ(n)</h3><p>欧拉函数的作用是求得大于1小于n的所有质数的个数，例如符合φ(8)的情况是：<code>2, 3, 5, 7</code>，也就是φ(8)的值为：<code>4</code>，具体有关欧拉函数的其他特性请<a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
+<p>我们这里φ(n)可以这么求值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#966;(n) = (p-1)(q-1).&#10;&#10;&#36825;&#37324;&#65292;&#966;(n) = ( 17 -1 ) * ( 23 - 1 ) = 352</span><br></pre></td></tr></table></figure>
+<h3 id="4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质"><a href="#4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质" class="headerlink" title="4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质"></a>4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质</h3><p>也就是说，<code>e</code>和<code>φ(n)</code>不能有公约数，并且<code>φ(n)</code>不能是<code>e</code>的倍数。</p>
+<p>举个例子：<code>φ(n)</code> = 12，所以e可以选的数有<code>3, 5, 7, 11 ....</code>，这里我选择<strong><code>17</code></strong>。</p>
+<p>在现实场景中，通常<code>e</code>的选择是<code>65537</code>，为什么要选择这个数呢？请参看<a href="https://crypto.stackexchange.com/questions/3110/impacts-of-not-using-rsa-exponent-of-65537" target="_blank" rel="external">这篇文章</a>，解释得非常清楚，总的来说，比<code>65537</code>大的数，在现有的硬件和软件场景下，会造成计算变慢，而比<code>65537</code>小的数，在安全性上会有减弱，所以<code>65537</code>是一个折中的选择。</p>
+<h3 id="5-计算e对于φ-n-的模反元素d"><a href="#5-计算e对于φ-n-的模反元素d" class="headerlink" title="5. 计算e对于φ(n)的模反元素d"></a>5. 计算e对于<code>φ(n)</code>的模反元素<code>d</code></h3><h4 id="求模"><a href="#求模" class="headerlink" title="求模"></a>求模</h4><p>求模操作在大部分计算机语言中操作符都是<code>%</code>，比如：<code>10 % 3 = 1</code>，指的是余数。</p>
+<h4 id="同余≡"><a href="#同余≡" class="headerlink" title="同余≡"></a>同余<code>≡</code></h4><p>三横的等号，代表同余，两个整数<code>a</code>，<code>b</code>，若它们除以正整数<code>m</code>所得的余数相等，则称 <code>a</code>， <code>b</code>对于模 <code>m</code>同余，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 &#8801; 1 (mod 3)</span><br></pre></td></tr></table></figure>
+<p>10 和 1 对于 <code>3</code> 同余。</p>
+<h4 id="模反元素"><a href="#模反元素" class="headerlink" title="模反元素"></a>模反元素</h4><p>模反元素也成为<code>模逆元</code></p>
+<p>一整数a对同余n之模逆元是指满足以下公式的整数 b</p>
+<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/be54db4848231e9f72f61b746a27d6a0aeace369" alt=""></p>
+<p>也可以写成以下的式子</p>
+<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/297023f006cd9486fa4192b391dbc819dd8f89e1" alt=""></p>
+<p>整数 a 对模数 n 之模逆元存在的充分必要条件是 a 和 n 互素，若此模逆元存在，在模数 n 下的除法可以用和对应模逆元的乘法来达成，此概念和实数除法的概念相同。</p>
+<p>以上是维基百科对于模反元素的介绍，将<code>e</code>和<code>φ(n)</code>代入公式就变成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d &#8801; 1(mod &#966;(n))</span><br></pre></td></tr></table></figure>
+<p>也就是说<code>e * d</code>的结果除以<code>k * φ(n)</code>的余数是<code>1</code>，所以我们的公式就变成了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d - 1 = k * &#966;(n);</span><br></pre></td></tr></table></figure>
+<p>将<code>e</code>和<code>φ(n)</code>代入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231 * d - 1 = k * 352</span><br></pre></td></tr></table></figure>
+<p>转变一下位置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231x - 352y = 1</span><br></pre></td></tr></table></figure>
+<p>就变成了一个二元一次方程，初中时候就求过二元一次方程的解，但是必须得有两个二元一次方程才能求出解，不然就是一个直线方程了，这里我们采用<a href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95" target="_blank" rel="external">扩展欧几里得算法</a>来进行求解。</p>
+<h4 id="欧几里得算法"><a href="#欧几里得算法" class="headerlink" title="欧几里得算法"></a>欧几里得算法</h4><p>我们先看看欧几里得算法的定义：<code>欧几里得算法又称为辗转相除法，是一种求最大公约数的方法，其核心思想如下图：</code></p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2iDY8p4XlpuFjSsphXXbJOXXa_!!99218453.gif" alt=""></p>
+<p>假设我们要求<code>120</code>和<code>76</code>的最大公约数，可以这么计算：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39318;&#20808;&#36873;&#25321;&#22823;&#30340;&#25968;&#20943;&#21435;&#23567;&#30340;&#25968;&#10;&#10;120 - 76 = 44&#10;&#10;&#29616;&#22312;&#25105;&#20204;&#21097;&#19979;76 &#21644; 44&#20004;&#20010;&#25968;&#65292;&#32487;&#32493;&#31532;&#19968;&#27493;&#25805;&#20316;&#10;&#10;76 - 44 = 32&#10;&#10;44 - 32 = 12&#10;&#10;32 - 12  = 20&#10;&#10;20 - 12  = 8&#10;&#10;12 - 8  = 4&#10;&#10;8  - 4  = 4&#10;&#10;4  - 4  = 0</span><br></pre></td></tr></table></figure>
+<p>所以，我们就可以求出，<code>120</code>和<code>76</code>的最大公约数是<code>4</code>。</p>
+<h4 id="扩展欧几里得算法"><a href="#扩展欧几里得算法" class="headerlink" title="扩展欧几里得算法"></a>扩展欧几里得算法</h4><p>看名字就可以知道这是欧几里得算法的扩展，其核心思想如下：</p>
+<p>已知a和b，求解一组x, y使得<strong><code>ax+by=Gcd(a, b)=d</code></strong> <code>(Gcd(a, b) 表示a和b的最大公约数)</code>。</p>
+<p>用类似辗转相除法来求解这个等式<code>17x - 352y = 1</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">352 = 17 * 20 + 12&#10;17  = 12 * 1 + 5&#10;12  = 5 * 2 + 2&#10;5   = 2 * 2 + 1</span><br></pre></td></tr></table></figure>
+<p>改变一下等式两边</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12  = 352 - 17 * 20&#10;5   = 17 - 12&#10;2   = 12 - 5 * 2&#10;1   = 5 - 2 * 2</span><br></pre></td></tr></table></figure>
+<p>把等式代入上一个等式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1  = 5 - 2 * 2&#10;1  = 5 -&#65288; 12 - 5 * 2 &#65289;* 2 // &#20195;&#20837;&#31561;&#24335;&#65306;2 = 12 - 5 * 2&#10;1  = 5 - 12 * 2 + 5 * 4&#10;1  = 5 * 5 - 12 * 2&#10;1  = ( 17 - 12 ) * 5 - 12 * 2 // &#20195;&#20837;&#31561;&#24335;&#65306;5 = 17 - 12&#10;1  = 17 * 5 - 12 * 5 - 12 * 2&#10;1  = 17 * 5 - 12 * 7&#10;1  = 17 * 5 - ( 352 - 17 * 20 ) * 7 // &#20195;&#20837;&#31561;&#24335;&#65306;12 = 352 - 17 * 20&#10;1  = 17 * 5 - 352 * 7 + 17 * 140&#10;1  = 17 * 145 - 352 * 7</span><br></pre></td></tr></table></figure>
+<p>即可得出：<code>x = 145, y = 7</code></p>
+<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p>在第五步中我们想要的<code>d</code>就是这里的x，所以，<code>d = 145</code>。</p>
+<p>作为一个直线方程，这里理论上这里会有无数个整数解，的确，尝试一下就发现，所有整数解都是能计算的，只是数字越大，计算量越大，但是要注意，这里的<code>d</code>不能小于0。</p>
+<h3 id="组合公钥和私钥"><a href="#组合公钥和私钥" class="headerlink" title="组合公钥和私钥"></a>组合公钥和私钥</h3><p>到这里，公钥和私钥所需要的东西都齐全了，<code>({n, e})</code>就是公钥，而<code>({n, d})</code>就是私钥，一般会使用<a href="https://zh.wikipedia.org/zh-cn/ASN.1" target="_blank" rel="external">ASN.1</a>来表达。</p>
+<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><p>首先，我们用公钥加密。</p>
+<h3 id="要加密的数据m"><a href="#要加密的数据m" class="headerlink" title="要加密的数据m"></a>要加密的数据m</h3><p>m需要满足以下条件：</p>
+<ol>
+<li>m必须是正整数(字符串之类的可以取arcii)</li>
+<li>m必须小于n</li>
+</ol>
+<h3 id="加密公式"><a href="#加密公式" class="headerlink" title="加密公式"></a>加密公式</h3><p><strong><em>m<sup>e</sup> ≡ c (mod n)</em></strong></p>
+<p>这里的<code>c</code>就是我们的密文。</p>
+<p>上面我们计算的n是：<code>391</code>，e是：<code>17</code>， 那假设我们要加密的内容是：<code>11</code>，所以我们的密文就是：<code>198</code>。</p>
+<p>这里非常需要注意的一点就是，需要使用一些大数计算的方式，而不能使用普通的<code>double</code>之类的类型，因为<code>double</code>类型，还有js等语言的默认的数字类型尾数位只有52位，无法精确表达比<code>2的53次</code>更大的数字</p>
+<h3 id="解密公式"><a href="#解密公式" class="headerlink" title="解密公式"></a>解密公式</h3><p><strong><em>c<sup>d</sup> ≡ m (mod n)</em></strong></p>
+<p>c是：<code>198</code>，d是：<code>145</code>，n是：<code>391</code>，解出我们的明文是：<code>11</code>，至此，我们的整个加密和解密过程就结束了。也许你会好奇，为什么这么算就能算出相等的结果，下面就来证明一下。</p>
+<h2 id="公式证明"><a href="#公式证明" class="headerlink" title="公式证明"></a>公式证明</h2><p>我们的加密公式是：</p>
+<p><strong><em>m<sup>e</sup> ≡ c (mod n)</em></strong></p>
+<p>我们的解密公式是：</p>
+<p><strong><em>c<sup>d</sup> ≡ m (mod n)</em></strong></p>
+<p>根据上面的规则，<code>c</code>可以这么表达：</p>
+<p><strong><em>c = m<sup>e</sup> - kn</em></strong></p>
+<p>把<code>c</code>代入我们的解密方程：</p>
+<p><strong><em>(m<sup>e</sup> - kn)<sup>d</sup> ≡ m (mod n)</em></strong></p>
+<p>因为这是一个同余等式，等号左边加减<code>n</code>都不会影响等式，所以我们可以把等式简化为</p>
+<p><strong><em>m<sup>ed</sup> ≡ m (mod n)</em></strong></p>
+<p>当我们在求<code>d</code>的时候有同余等式：</p>
+<p><strong><em>ed ≡ 1 (mod φ(n))</em></strong></p>
+<p>这个等式也可以写成这个样子：</p>
+<p>ed = h * φ(n) + 1</p>
+<p>代入刚刚简化后的等式：</p>
+<p><strong><em>m<sup>hφ(n)+1</sup> ≡ m (mod n)</em></strong></p>
+<p>到这里，只要我们能够证明这个等式是成立的，那么就能够证明我们的加密和解密公式是成立的，这里就有两种情况了：</p>
+<h3 id="m和n是互质的关系"><a href="#m和n是互质的关系" class="headerlink" title="m和n是互质的关系"></a>m和n是互质的关系</h3><p><strong><a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86_(%E6%95%B0%E8%AE%BA" target="_blank" rel="external">欧拉定理</a>)</strong>：<code>如果两个正整数a和n互质，则n的欧拉函数 φ(n) 可以让下面的等式成立：</code></p>
+<p><strong><em>a<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
+<p>我们把<code>m</code>和<code>n</code>代入公式可以得到：</p>
+<p><strong><em>m<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
+<p>因为<code>m</code>和<code>n</code>互质，那么以下等式依然成立：</p>
+<p>(m<sup>φ(n)</sup>)<sup>h</sup> * m ≡ m (mod n)</p>
+<p>对指数稍微换算一下就能得到我们之前的等式了，<code>m</code>和<code>n</code>互质的情况下，我们很容易就能证明之前的等式成立。</p>
+<h3 id="m和n不是互质的关系"><a href="#m和n不是互质的关系" class="headerlink" title="m和n不是互质的关系"></a>m和n不是互质的关系</h3><p>首先我们有<code>n = p * q</code>，因为<code>m</code>和<code>n</code>不是互质的，而因为<code>n</code>是两个质数相乘的结果，也就是说<code>p</code>或者<code>q</code>就是<code>m</code>和<code>n</code>的一个公约数，所以有<code>m = p * k</code>，或者<code>m = q * k</code>。假设<code>p</code>是<code>m</code>和<code>n</code>的公约数，那么就有<code>m = p * k</code>。</p>
+<p>然后因为<code>p</code>和<code>q</code>都是质数，质数和除了是自己倍数之外的数都互质，又因为<code>m</code>必须小于<code>n</code>，所以这里<code>k</code>取值必然不能是<code>q</code>或者更大的数，所以我们有一个结论是：<code>k</code>必然和<code>q</code>互质。</p>
+<p><code>k * p</code>必然和<code>q</code>互质，把<code>k * p</code>和<code>q</code>代入，所以我们能够得出以下同余等式：</p>
+<p><strong><em>(kp)<sup>φ(q)</sup> ≡ 1 (mod q)</em></strong></p>
+<p>因为<code>k * p</code>和<code>q</code>互质，所以可以有：</p>
+<p>(kp)<sup>h * φ(q) + 1</sup> ≡ kp (mod q)</p>
+<p>而我们之前已经求出：</p>
+<p>ed = h * φ(n) + 1</p>
+<p>代入刚刚的式子：</p>
+<p><strong><em>kp<sup>ed</sup> ≡ kp (mod q)</em></strong></p>
+<p>假设有<code>t</code>，使得求模运算可以写成：</p>
+<p>kp<sup>ed</sup> = t <em> q + k </em> p</p>
+<p>转换一下等式：</p>
+<p>kp<sup>ed - 1</sup> = t * q</p>
+<p>因为<code>p</code>和<code>q</code>是互质关系，所以<code>k * p</code>只有当<code>k</code>等于<code>q</code>或者其倍数的时候，才能整除<code>q</code>，但是<code>m = q * k</code>，而且<code>m &lt; n</code>，所以<code>k * p</code>必然是不能整除<code>q</code>的，由此可得<code>p</code>必然能够整除<code>t</code>才能使得等式成立，也就是有：<code>t = t&lt;sup&gt;&#39;&lt;/sup&gt; * p</code>，由此可得如下等式：</p>
+<p><strong><em>kp<sup>ed</sup> = t<sup>‘</sup> pq + kp</em></strong></p>
+<p>因为<code>m = kp</code>，而<code>n = pq</code>，所以：</p>
+<p><strong><em>m<sup>ed</sup> = t<sup>‘</sup>n + m</em></strong></p>
+<p>写成同余等式可得：</p>
+<p><strong><em>m<sup>ed</sup> ≡ m (mod n)</em></strong></p>
+<p>这里就得出了我们刚刚求出的等式。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>到这里，我们已经证明了两种情况下等式都是成立了，也就是明文通过公钥加密之后，使用私钥也必然能够得到原本的结果，RSA算法也就成立了。</p>
+<h2 id="RSA中的对称性"><a href="#RSA中的对称性" class="headerlink" title="RSA中的对称性"></a>RSA中的对称性</h2><p>其实你会发现，RSA里面，公钥加密的东西私钥能够解密，同样的，从公式中发现，私钥加密的东西公钥也能解密，这也是非常重要的一个特性。那么，为什么不能把<code>({n, d})</code>作为公钥给用户呢？因为<code>({n, e})</code>中，<code>n</code>是公开的，<code>e</code>基本都使用常数<code>65537</code>，所以很容易就被猜到了，因此，虽然在算法上都能加密和解密，但是只把<code>({n, e})</code>作为公钥，公钥和私钥有非常严格的区分。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了这么安全的加密方式，那么我们就可以开始给HTTP加密了，那么https究竟是怎么做的呢，一起来看看：</p>
+<p><a href="">零门槛学习https–(3)https的安全策略</a></p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/https/">https</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/https/">https</a>, <a href="/tags/rsa/">rsa</a>, <a href="/tags/对称加密/">对称加密</a>, <a href="/tags/扩展欧几里德/">扩展欧几里德</a>, <a href="/tags/欧拉函数/">欧拉函数</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+ <div class="article-prev" >
+ <a href="/2017/05/19/https-3/" title="零门槛学习https--(3)https的安全策略">
+  <i class="fa fa-long-arrow-left"></i>
+  <span>
+  零门槛学习https--(3)https的安全策略</span>
+</a>
+</div>
+
+
+<div class="article-next">
+<a href="/2017/05/16/https-1/"  title="零门槛学习https--(1)为什么我们要用https">
+ <span>零门槛学习https--(1)为什么我们要用https
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">留言</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2017/05/19/https-2/" data-title="零门槛学习https--(2)https中s的秘密" data-url="http://yoursite.com2017/05/19/https-2/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-2/">零门槛学习https--(2)https中s的秘密</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/16/https-1/">零门槛学习https--(1)为什么我们要用https</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">分類</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+  
+    <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/https/">https</a><small>5</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>3</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
+  
+    <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
+  
+    <li><a href="/categories/node/">node</a><small>1</small></li>
+  
+    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+  
+    <li><a href="/categories/rsa/">rsa</a><small>0</small></li>
+  
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">標籤</h3>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
+  
+    <a href="/tags/bdd/">bdd<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/cocoaTouch/">cocoaTouch<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/complicating/">complicating<small>1</small></a>
+  
+    <a href="/tags/computer/">computer<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/dataplus/">dataplus<small>1</small></a>
+  
+    <a href="/tags/ddd/">ddd<small>1</small></a>
+  
+    <a href="/tags/decimal/">decimal<small>1</small></a>
+  
+    <a href="/tags/drive/">drive<small>1</small></a>
+  
+    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+  
+    <a href="/tags/float/">float<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>2</small></a>
+  
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
+    <a href="/tags/http/">http<small>5</small></a>
+  
+    <a href="/tags/https/">https<small>5</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>4</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/javascript/">javascript<small>1</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/kaggle/">kaggle<small>1</small></a>
+  
+    <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
+  
+    <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/members/">members<small>1</small></a>
+  
+    <a href="/tags/microwave/">microwave<small>1</small></a>
+  
+    <a href="/tags/mysql/">mysql<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>3</small></a>
+  
+    <a href="/tags/number/">number<small>1</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
+  
+    <a href="/tags/package/">package<small>1</small></a>
+  
+    <a href="/tags/pai/">pai<small>1</small></a>
+  
+    <a href="/tags/physical/">physical<small>1</small></a>
+  
+    <a href="/tags/pixel/">pixel<small>1</small></a>
+  
+    <a href="/tags/precision/">precision<small>1</small></a>
+  
+    <a href="/tags/quantum/">quantum<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/rsa/">rsa<small>5</small></a>
+  
+    <a href="/tags/setRootViewController/">setRootViewController<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
+  
+    <a href="/tags/tdd/">tdd<small>1</small></a>
+  
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
+    <a href="/tags/unittest/">unittest<small>1</small></a>
+  
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/对称加密/">对称加密<small>5</small></a>
+  
+    <a href="/tags/扩展欧几里德/">扩展欧几里德<small>1</small></a>
+  
+    <a href="/tags/数字证书/">数字证书<small>4</small></a>
+  
+    <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
+  
+    <a href="/tags/非对称加密/">非对称加密<small>0</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2017 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

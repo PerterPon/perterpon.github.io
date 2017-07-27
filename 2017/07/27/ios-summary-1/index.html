@@ -1,0 +1,575 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head>
+  <meta charset="utf-8">
+  
+  <title>iOS大保健 - 基础信息的收集 | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="iOS大保健 - 基础信息的收集">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="iOS大保健 - 基础信息的收集"/>
+  <meta property="og:site_name" content="PerterPon"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans"/>
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+    
+  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle" />
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>iOS大保健 - 基础信息的收集</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-07-27T02:56:00.000Z">2017-07-27</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2017/07/27/ios-summary-1/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <p>本文列出了各种iOS的基础信息的获取方式。</p>
+<h2 id="系统信息"><a href="#系统信息" class="headerlink" title="系统信息"></a>系统信息</h2><ul>
+<li>设备型号</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">struct utsname systemInfo;&#10;uname(&#38;systemInfo);&#10;NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSASCIIStringEncoding];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>操作系统名称</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];&#10;[device systemName];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>操作系统版本</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];&#10;[device systemVersion];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>设备型号，如: iPad，iPod等。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];&#10;[device model];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>屏幕分辨率</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIScreen *screen     = [UIScreen mainScreen];&#10;CGSize screenSize    = [[UIScreen mainScreen] bounds].size;&#10;CGFloat scale        = screen.scale;&#10;int screenX          = screenSize.width * scale;&#10;int screenY          = screenSize.height *scale;&#10;NSString *resolution = [NSString stringWithFormat:@&#34;%d*%d&#34;, screenX, screenY];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>电池电量</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[UIDevice currentDevice].batteryMonitoringEnabled = YES;&#10;[[NSNotificationCenter defaultCenter] addObserverForName:UIDeviceBatteryLevelDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) &#123;&#10;     // Level has changed&#10;     NSLog(@&#34;Battery Level Change&#34;);&#10;     NSLog(@&#34;&#30005;&#27744;&#30005;&#37327;&#65306;%.2f&#34;, [UIDevice currentDevice].batteryLevel);&#10; &#125;];</span><br></pre></td></tr></table></figure>
+<h2 id="网络信息"><a href="#网络信息" class="headerlink" title="网络信息"></a>网络信息</h2><p>需要引入库：<code>CoreTelephony.framework</code></p>
+<ul>
+<li>网络类型，如：WiFi，4G等。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSString *networktype = nil;&#10;NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@&#34;statusBar&#34;] valueForKey:@&#34;foregroundView&#34;]subviews];&#10;NSNumber *dataNetworkItemView = nil;&#10;for (id subview in subviews) &#123;&#10;    if([subview isKindOfClass:[NSClassFromString(@&#34;UIStatusBarDataNetworkItemView&#34;) class]]) &#123;&#10;        dataNetworkItemView = subview;&#10;        break;&#10;    &#125;&#10;&#125;&#10;switch ([[dataNetworkItemView valueForKey:@&#34;dataNetworkType&#34;]integerValue]) &#123;&#10;    case 0:&#10;        networktype = @&#34;UNKNOW&#34;;&#10;        break;&#10;    case 1:&#10;        networktype = @&#34;2G&#34;;&#10;        break;&#10;    case 2:&#10;        networktype = @&#34;3G&#34;;&#10;        break;&#10;    case 3:&#10;        networktype = @&#34;4G&#34;;&#10;        break;&#10;    case 4:&#10;        networktype = @&#34;LTE&#34;;&#10;        break;&#10;    case 5:&#10;        networktype = @&#34;Wi-Fi&#34;;&#10;        break;&#10;    default:&#10;        break;&#10;&#125;&#10;return networktype;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>蜂窝网络类型</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];&#10;if ( [telephonyInfo respondsToSelector:@selector(currentRadioAccessTechnology)] ) &#123;&#10;    id radioAccessType = [telephonyInfo performSelector:@selector(currentRadioAccessTechnology)&#10;                                             withObject:nil];&#10;    &#10;    if ( [radioAccessType isKindOfClass:[NSString class]] ) &#123;&#10;        NSString *accessType = (NSString *)radioAccessType;&#10;        if ( [accessType hasPrefix:@&#34;CTRadioAccessTechnology&#34;] &#38;&#38; accessType.length &#62;= 23 ) &#123;&#10;            NSString *accessTypeStr = [accessType substringFromIndex:23];&#10;            return accessTypeStr;&#10;        &#125;&#10;    &#125;&#10;&#125;&#10;    &#10;return @&#34;UNKNOW&#34;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>运营商信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];&#10;CTCarrier *carrier    = [telephonyInfo subscriberCellularProvider];&#10;NSString *carrierName = [carrier carrierName];&#10;if ( nil != carrierName ) &#123;&#10;    return carrierName;&#10;&#125;&#10;return @&#34;UNKNOW&#34;;</span><br></pre></td></tr></table></figure>
+<h2 id="应用状态"><a href="#应用状态" class="headerlink" title="应用状态"></a>应用状态</h2><ul>
+<li>APP启动，或者由后台进入前台</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>APP从后台进入前台</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationBecomeActive) name:UIApplicationWillEnterForegroundNotification object:nil];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>APP进入后台</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground) name: UIApplicationDidEnterBackgroundNotification object:nil];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>APP在前台锁屏</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#import &#60;notify.h&#62;&#10;#define NotificationLock CFSTR(&#34;com.apple.springboard.lockcomplete&#34;)&#10;#define NotificationChange CFSTR(&#34;com.apple.springboard.lockstate&#34;)&#10;#define NotificationPwdUI CFSTR(&#34;com.apple.springboard.hasBlankedScreen&#34;)&#10;&#10;static void screenLockStateChanged(CFNotificationCenterRef center,void* observer,CFStringRef name,const void* object,CFDictionaryRef userInfo)&#10;&#123;&#10;&#9;NSString* lockstate = (__bridge NSString*)name;&#10;&#9;if ([lockstate isEqualToString:(__bridge  NSString*)NotificationLock]) &#123;&#10;&#9;    NSLog(@&#34;locked.&#34;);&#10;&#9;&#125; else &#123;&#10;&#9;    NSLog(@&#34;lock state changed.&#34;);&#10;&#9;&#125;&#10;&#125;&#10;&#10;- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions&#10;&#123;&#10;&#9;CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, screenLockStateChanged, NotificationLock, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);&#10;&#9;CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, screenLockStateChanged, NotificationChange, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);&#10;&#9;return YES;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>APP在后台锁屏，通过循环的方式检测</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static void setScreenStateCb()&#10;&#123;&#10;uint64_t locked;&#10;&#10;__block int token = 0;&#10;notify_register_dispatch(&#34;com.apple.springboard.lockstate&#34;,&#38;token,dispatch_get_main_queue(),^(int t)&#123;&#10;&#125;);&#10;&#9;notify_get_state(token, &#38;locked);&#10;&#9;NSLog(@&#34;%d&#34;,(int)locked);&#10;&#125;&#10;&#10;- (void)applicationDidEnterBackground:(UIApplication *)application&#10;&#123;&#10;&#9;while (YES) &#123;&#10;&#9;    setScreenStateCb();&#10;&#9;    sleep(5); // &#24490;&#29615;5s&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>获取当前APP的CPU使用率</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kern_return_t kr;&#10;task_info_data_t tinfo;&#10;mach_msg_type_number_t task_info_count;&#10;    &#10;task_info_count = TASK_INFO_MAX;&#10;kr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)tinfo, &#38;task_info_count);&#10;if (kr != KERN_SUCCESS) &#123;&#10;    return;&#10;&#125;&#10;    &#10;task_basic_info_t      basic_info;&#10;thread_array_t         thread_list;&#10;mach_msg_type_number_t thread_count;&#10;    &#10;thread_info_data_t     thinfo;&#10;mach_msg_type_number_t thread_info_count;&#10;    &#10;thread_basic_info_t basic_info_th;&#10;uint32_t stat_thread = 0; // Mach threads&#10;    &#10;basic_info = (task_basic_info_t)tinfo;&#10;    &#10;// get threads in the task&#10;kr = task_threads(mach_task_self(), &#38;thread_list, &#38;thread_count);&#10;if (kr != KERN_SUCCESS) &#123;&#10;    return;&#10;&#125;&#10;if (thread_count &#62; 0)&#10;    stat_thread += thread_count;&#10;    &#10;long tot_sec = 0;&#10;long tot_usec = 0;&#10;float tot_cpu = 0;&#10;int j;&#10;    &#10;for (j = 0; j &#60; thread_count; j++)&#10;&#123;&#10;    thread_info_count = THREAD_INFO_MAX;&#10;    kr = thread_info(thread_list[j], THREAD_BASIC_INFO,&#10;                     (thread_info_t)thinfo, &#38;thread_info_count);&#10;    if (kr != KERN_SUCCESS) &#123;&#10;        return;&#10;    &#125;&#10;    &#10;    basic_info_th = (thread_basic_info_t)thinfo;&#10;    &#10;    if (!(basic_info_th-&#62;flags &#38; TH_FLAGS_IDLE)) &#123;&#10;        tot_sec = tot_sec + basic_info_th-&#62;user_time.seconds + basic_info_th-&#62;system_time.seconds;&#10;        tot_usec = tot_usec + basic_info_th-&#62;system_time.microseconds + basic_info_th-&#62;system_time.microseconds;&#10;        tot_cpu = tot_cpu + basic_info_th-&#62;cpu_usage / (float)TH_USAGE_SCALE * 100.0;&#10;    &#125;&#10;    &#10;&#125; // for each thread&#10;    &#10;kr = vm_deallocate(mach_task_self(), (vm_offset_t)thread_list, thread_count * sizeof(thread_t));&#10;assert(kr == KERN_SUCCESS);&#10;    &#10;NSLog(@&#34;CPU Usage: %f \n&#34;, tot_cpu);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>获取当前APP的内存使用情况</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">task_basic_info_data_t taskInfo;&#10;mach_msg_type_number_t infoCount = TASK_BASIC_INFO_COUNT;&#10;kern_return_t kernReturn = task_info(mach_task_self(),&#10;                                     TASK_BASIC_INFO, (task_info_t)&#38;taskInfo, &#38;infoCount);&#10;&#10;if(kernReturn != KERN_SUCCESS) &#123;&#10;    return;&#10;&#125;&#10;    &#10;NSLog(@&#34;Memory Usage: %f&#34;, taskInfo.resident_size / 1024.0 / 1024.0);</span><br></pre></td></tr></table></figure>
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/iOS/">iOS</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/iOS/">iOS</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2017/05/21/https-5/"  title="零门槛学习https--(5)常见的https攻击原理">
+ <span>零门槛学习https--(5)常见的https攻击原理
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">留言</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2017/07/27/ios-summary-1/" data-title="iOS大保健 - 基础信息的收集" data-url="http://yoursite.com2017/07/27/ios-summary-1/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-2/">零门槛学习https--(2)https中s的秘密</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">分類</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+  
+    <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/https/">https</a><small>5</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>4</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
+  
+    <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
+  
+    <li><a href="/categories/node/">node</a><small>1</small></li>
+  
+    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+  
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">標籤</h3>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
+  
+    <a href="/tags/bdd/">bdd<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/cocoaTouch/">cocoaTouch<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/complicating/">complicating<small>1</small></a>
+  
+    <a href="/tags/computer/">computer<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/dataplus/">dataplus<small>1</small></a>
+  
+    <a href="/tags/ddd/">ddd<small>1</small></a>
+  
+    <a href="/tags/decimal/">decimal<small>1</small></a>
+  
+    <a href="/tags/drive/">drive<small>1</small></a>
+  
+    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+  
+    <a href="/tags/float/">float<small>1</small></a>
+  
+    <a href="/tags/freak/">freak<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>2</small></a>
+  
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
+    <a href="/tags/http/">http<small>5</small></a>
+  
+    <a href="/tags/https/">https<small>5</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>5</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/javascript/">javascript<small>1</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/kaggle/">kaggle<small>1</small></a>
+  
+    <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
+  
+    <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/members/">members<small>1</small></a>
+  
+    <a href="/tags/microwave/">microwave<small>1</small></a>
+  
+    <a href="/tags/mysql/">mysql<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>3</small></a>
+  
+    <a href="/tags/number/">number<small>1</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
+  
+    <a href="/tags/package/">package<small>1</small></a>
+  
+    <a href="/tags/pai/">pai<small>1</small></a>
+  
+    <a href="/tags/physical/">physical<small>1</small></a>
+  
+    <a href="/tags/pixel/">pixel<small>1</small></a>
+  
+    <a href="/tags/poodle/">poodle<small>1</small></a>
+  
+    <a href="/tags/precision/">precision<small>1</small></a>
+  
+    <a href="/tags/quantum/">quantum<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/rsa/">rsa<small>4</small></a>
+  
+    <a href="/tags/setRootViewController/">setRootViewController<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
+  
+    <a href="/tags/tdd/">tdd<small>1</small></a>
+  
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
+    <a href="/tags/tls/">tls<small>1</small></a>
+  
+    <a href="/tags/unittest/">unittest<small>1</small></a>
+  
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/对称加密/">对称加密<small>4</small></a>
+  
+    <a href="/tags/扩展欧几里德/">扩展欧几里德<small>1</small></a>
+  
+    <a href="/tags/数字证书/">数字证书<small>3</small></a>
+  
+    <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2017 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

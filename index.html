@@ -118,6 +118,74 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-09-04T07:01:00.000Z">2017-09-04</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/09/04/main-host/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/09/04/main-host/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近项目中需要获取url的主域名，比如<code>www.baidu.com</code>那么就需要获取<code>baidu.com</code>，看似简单，<code>.</code>号分隔，取到最后两位就行，但是坑爹的是有<code>xxx.com.cn</code>这类域名，还有很多日本的域名，类似<code>toei.aichi.jp</code>等，这些都无法通过这种简单的取最后两位的方式来获取，看来只能枚举了。</p>
+<h2 id="Public-Suffix-List"><a href="#Public-Suffix-List" class="headerlink" title="Public Suffix List"></a>Public Suffix List</h2><p>这问题肯定是早有人就遇到了，于是各路有识之士已经帮你完整得准备好了一个列表，里面全部都是那些奇葩域名，一些jp域名也是让我长见识了，不知道各位老司机在秋名山飙车的时候有没有见过这些个域名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#31179;&#30000;.jp&#10;&#32676;&#39340;.jp&#10;&#39321;&#24029;.jp&#10;&#39640;&#30693;.jp&#10;&#40165;&#21462;.jp&#10;&#40575;&#20816;&#23798;.jp&#10;// jp geographic type names&#10;// http://jprs.jp/doc/rule/saisoku-1.html&#10;*.kawasaki.jp&#10;*.kitakyushu.jp&#10;*.kobe.jp&#10;*.nagoya.jp&#10;*.sapporo.jp&#10;*.sendai.jp&#10;*.yokohama.jp&#10;!city.kawasaki.jp&#10;!city.kitakyushu.jp&#10;!city.kobe.jp&#10;!city.nagoya.jp&#10;!city.sapporo.jp&#10;!city.sendai.jp&#10;!city.yokohama.jp&#10;// 4th level registration&#10;aisai.aichi.jp</span><br></pre></td></tr></table></figure>
+<p>感兴趣的朋友可以看看这个github项目：<a href="https://github.com/wrangr/psl" target="_blank" rel="external">https://github.com/wrangr/psl</a>。</p>
+<p>这里有各种主域名的列表：<a href="https://publicsuffix.org/list/public_suffix_list.dat" target="_blank" rel="external">https://publicsuffix.org/list/public_suffix_list.dat</a>.</p>
+<p>浏览器其实也有内置类似的东西，用来做域名判断，cookie存储之类的事宜。</p>
+<h2 id="pls的问题"><a href="#pls的问题" class="headerlink" title="pls的问题"></a>pls的问题</h2><p>问题看似好像解决了，已经有现成的脚本去获取，但是仔细一看这脚本竟然有将近200K，而我自己的脚本才10K，既然浏览器已经内置了pls，那浏览器有没有暴露内置接口呢？很遗憾，搜索了一下并没有，而且浏览器那么多，即使chrome暴露了，IE肯定没有，等等，刚刚好像我们说到浏览器用来做域名判断，cookie存储，那我们能不能用这类方式间接地去调用内置pls呢？</p>
+<h2 id="最终解决方案"><a href="#最终解决方案" class="headerlink" title="最终解决方案"></a>最终解决方案</h2><p>目前想到有两种方式可以间接去调，<code>document.doamin</code>和<code>document.cookie</code>，测试一下就会发现，如果你尝试把当前域名设置为<code>com.cn</code>或者把cookie设置到<code>com.cn</code>上面，浏览器并不会生效，<code>document.domain</code>在第二次设置的时候，firefox会抛错，看来并不是很合适，而且可能多多少少会影响到业务，cookie设置方便，而且清除也方便，上代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getMainHost() &#123;&#10;  let key  = `mh_$&#123;Math.random()&#125;`;&#10;  let keyR = new RegExp( `(^|;)\\s*$&#123;key&#125;=12345` );&#10;  let expiredTime = new Date( 0 );&#10;  let domain = document.domain;&#10;  let domainList = domain.split( &#39;.&#39; );&#10;&#10;  let urlItems   = [];&#10;  // &#20027;&#22495;&#21517;&#19968;&#23450;&#20250;&#26377;&#20004;&#37096;&#20998;&#32452;&#25104;&#10;  urlItems.unshift( domainList.pop() );&#10;  // &#24930;&#24930;&#20174;&#21518;&#24448;&#21069;&#27979;&#35797;&#10;  while( domainList.length ) &#123;&#10;    urlItems.unshift( domainList.pop() );&#10;    let mainHost = urlItems.join( &#39;.&#39; );&#10;    let cookie   = `$&#123;key&#125;=$&#123;12345&#125;;domain=.$&#123;mainHost&#125;`;&#10;&#10;    document.cookie = cookie;&#10;&#10;    //&#22914;&#26524;cookie&#23384;&#22312;&#65292;&#21017;&#35828;&#26126;&#22495;&#21517;&#21512;&#27861;&#10;    if ( keyR.test( document.cookie ) ) &#123;&#10;      document.cookie = `$&#123;cookie&#125;;expires=$&#123;expiredTime&#125;`;&#10;      return mainHost;&#10;    &#125;&#10;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>拉了差不多几十个pls里面的域名，跑了一下单元测试，没有问题。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/09/04/main-host/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a></h1>
     
   
@@ -1161,122 +1229,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/02/25/high-precision-timer-in-ios/">iOS中实现高精度定时器的方法</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-02-25T08:10:00.000Z">2017-02-25</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/02/25/high-precision-timer-in-ios/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/02/25/high-precision-timer-in-ios/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近自己业余时间在开发一个录音软件，要画一个声音的音频图，大概类似下面的样子：</p>
-<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2L1EsgrJmpuFjSZFwXXaE4VXa_!!99218453.png" alt=""></p>
-<p>在一秒钟内要取大概20次当前声音的大小，用以绘制成一幅图，那么首先，想当然的当然是用<code>NSTimer</code>了，写了代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#24403;&#28982;&#36825;&#37324;&#25226;&#27599;&#31186;&#38047;&#38656;&#35201;&#30340;&#27425;&#25968;&#35774;&#32622;&#25104;&#19968;&#20010;&#21464;&#37327;&#20250;&#26356;&#22909;&#12290;&#10;[NSTimer scheduledTimerWithTimeInterval:1 / 20&#10;                                repeats:YES&#10;                                  block:^(NSTimer * _Nonnull timer) &#123;&#10;                                    // do somting.&#10;                                  &#125;];</span><br></pre></td></tr></table></figure>
-<p>在<code>block</code>里面去取了一下当前音量，绘制成了一个图，代码运行起来没问题，音量正确得取到了，并且也绘制在了图上面，乍一看发现没什么问题，等了十几秒再回头看，发现貌似时间过得很慢，明明感觉已经起码过了十秒，但是录音图上停留在6秒7秒的样子，很疑惑，在block中，加了一个Log，就看出缘由了。</p>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2rZUVgC8mpuFjSZFMXXaxpVXa_!!99218453.png" alt=""></p>
-<p>设置的明明是0.05秒执行一次，但是从图中来看，基本都是隔了0.1秒才执行一次，很少有0.5秒才执行一次，<code>NSTimer</code>在<code>runloop</code>运行的时候执行，<code>runloop</code>中有其他任务时势必会影响到<code>NSTimer</code>，但是没想到影响会那么大，查阅了官方文档后发现，<code>iOS</code>设备中，<code>NSTimer</code>的精度在0.1秒左右，看来是需要另寻他法了。</p>
-<h3 id="平均误差：18-11"><a href="#平均误差：18-11" class="headerlink" title="平均误差：18.11"></a>平均误差：18.11</h3><h2 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h2><p>具体思路就是新开一个线程，然后跑一个while循环去检测，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t timerQueue = dispatch_queue_create(&#34;timer&#34;, DISPATCH_QUEUE_SERIAL);&#10;    &#10;    dispatch_async(timerQueue, ^&#123;&#10;        while (YES) &#123;&#10;            usleep( 50000 );&#10;            NSLog(@&#34;timer&#34;);&#10;        &#125;;&#10;    &#125;);</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yKjjfwxlpuFjy0FoXXa.lXXa_!!99218453.png" alt=""></p>
-<h3 id="平均误差：65-33毫秒"><a href="#平均误差：65-33毫秒" class="headerlink" title="平均误差：65.33毫秒"></a>平均误差：65.33毫秒</h3><p>貌似比<code>NSTimer</code>还不靠谱，经过测试，发现精度基本上在200MS左右。</p>
-<h2 id="CADisplayLink"><a href="#CADisplayLink" class="headerlink" title="CADisplayLink"></a>CADisplayLink</h2><p><code>CADisplayLink</code>的调用是根据屏幕刷新率来的，通常<code>iOS</code>设备的刷新率在60HZ，那么一秒钟就能够被调60次。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(testDisplayLink)];&#10;link.paused = NO;&#10;[link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2.uaRfB4lpuFjy1zjXXcAKpXa_!!99218453.png" alt=""></p>
-<h3 id="平均误差：0-002（在每秒60次调用的情况下）"><a href="#平均误差：0-002（在每秒60次调用的情况下）" class="headerlink" title="平均误差：0.002（在每秒60次调用的情况下）"></a>平均误差：0.002（在每秒60次调用的情况下）</h3><p>相当精确，在固定刷新率下，精度基本在0.001毫秒的样子，但是测试发现<code>CADisplayLink</code>有以下问题：</p>
-<ol>
-<li>时间间隔只能是 1 / 60，没法自定义，可以设置 1 / 60的倍数。</li>
-<li>首先精度在 1 / 60秒的样子，无法再精确了，在此基础上，调用间隔非常精确。</li>
-<li>全局只能有一个<code>CADisplayLink</code>实例在运行。</li>
-<li>屏幕在熄灭状态下无法调用此方法。</li>
-</ol>
-<h2 id="dispatch-after"><a href="#dispatch-after" class="headerlink" title="dispatch_after"></a>dispatch_after</h2><p>通过递归得调用这个函数来实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_after(&#10;                   dispatch_time(&#10;                                 DISPATCH_TIME_NOW,&#10;                                 (int)(0.05 * (double)NSEC_PER_SEC)&#10;                                 ),&#10;                   dispatch_get_main_queue(), ^&#123;&#10;                       NSLog(@&#34;dispatch after&#34;);&#10;                       [self after];&#10;                   &#125;);</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2nhOWfuJ8puFjy1XbXXagqVXa_!!99218453.png" alt=""></p>
-<h3 id="平均误差：12-17毫秒。"><a href="#平均误差：12-17毫秒。" class="headerlink" title="平均误差：12.17毫秒。"></a>平均误差：12.17毫秒。</h3><p>目前看来是误差最小的了，如果不算<code>CADisplayLink</code>的话。</p>
-<h2 id="官方提供的高精度解决方案"><a href="#官方提供的高精度解决方案" class="headerlink" title="官方提供的高精度解决方案"></a>官方提供的高精度解决方案</h2><p>官网地址：<a href="https://developer.apple.com/library/content/technotes/tn2169/_index.html" target="_blank" rel="external">https://developer.apple.com/library/content/technotes/tn2169/_index.html</a></p>
-<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2NMnCfwxlpuFjy0FoXXa.lXXa_!!99218453.png" alt=""></p>
-<h3 id="平均误差：0-34毫秒"><a href="#平均误差：0-34毫秒" class="headerlink" title="平均误差：0.34毫秒"></a>平均误差：0.34毫秒</h3><p>大概测试了一下，间隔在1毫秒的时候，误差在0.7毫秒，间隔在5毫秒的时候误差0.36，间隔在2毫秒的时候误差在0.7毫秒，间隔在4毫秒的时候误差为0.3毫秒，间隔在3毫秒的时候误差在0.49</p>
-<table>
-<thead>
-<tr>
-<th>间隔</th>
-<th>误差</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>5ms</td>
-<td>0.36ms</td>
-</tr>
-<tr>
-<td>4ms</td>
-<td>0.3ms</td>
-</tr>
-<tr>
-<td>3ms</td>
-<td>0.49ms</td>
-</tr>
-<tr>
-<td>2ms</td>
-<td>0.7ms</td>
-</tr>
-<tr>
-<td>1ms</td>
-<td>0.7ms</td>
-</tr>
-</tbody>
-</table>
-<p>总体来说，这种方式的精度在5毫秒左右，5毫秒已经能满足绝大多数需求了。</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/02/25/high-precision-timer-in-ios/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1300,6 +1252,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
+      </li>
+    
+      <li>
         <a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a>
       </li>
     
@@ -1315,10 +1271,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a>
       </li>
     
-      <li>
-        <a href="/2017/05/19/https-2/">零门槛学习https--(2)https中s的秘密</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -1327,6 +1279,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget category">
   <h3 class="title">分類</h3>
   <ul class="entry">
+  
+    <li><a href="/categories/JavaScript/">JavaScript</a><small>1</small></li>
   
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
@@ -1359,6 +1313,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <h3 class="title">標籤</h3>
   
     <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/JavaScript/">JavaScript<small>1</small></a>
   
     <a href="/tags/Javascript/">Javascript<small>1</small></a>
   
@@ -1406,6 +1362,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/high-precision/">high-precision<small>1</small></a>
   
+    <a href="/tags/host/">host<small>1</small></a>
+  
     <a href="/tags/http/">http<small>5</small></a>
   
     <a href="/tags/https/">https<small>5</small></a>
@@ -1427,6 +1385,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
   
     <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/mainHost/">mainHost<small>1</small></a>
   
     <a href="/tags/members/">members<small>1</small></a>
   
@@ -1475,6 +1435,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/upload/">upload<small>1</small></a>
   
     <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/url/">url<small>1</small></a>
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   

@@ -197,8 +197,23 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
 <p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
 <h2 id="为什么是1500？"><a href="#为什么是1500？" class="headerlink" title="为什么是1500？"></a>为什么是1500？</h2><p>其实一个标准的以太网数据帧大小是：<code>1518</code>，头信息有14字节，尾部校验和FCS占了4字节，所以真正留给上层协议传输数据的大小就是：1518 - 14 - 4 = 1500，那么，1518这个值又是从哪里来的呢？</p>
-<h2 id="假设取一个更大的值"><a href="#假设取一个更大的值" class="headerlink" title="假设取一个更大的值"></a>假设取一个更大的值</h2><p>假设MTU值和IP数据包大小一致，一个IP数据包的大小是：65535，那么加上以太网帧头和为，一个以太网帧的大小就是：<code>65535 + 14 + 4 = 65553</code>，看起来似乎很完美，发送方也不需要拆包，接收方也不需要组合。那么假设我们现在的带宽是：<code>100Mbps</code>，因为以太网帧是传输中的最小可识别单元，再往下就是0101所对应的光信号了，所以我们的一条带宽同时只能发送一个以太网帧，如果同时发送多个，那么对端就无法重组成一个以太网帧，所以在<code>100Mbps</code>的带宽中（假设中间没有损耗），那么发送一个以太网帧所需要的时间就是：<code>( 65553 * 8 ) / ( 100 * 1024 * 1024 ) ≈ 0.005(s)</code>，也就是说一个包传输就需要<code>5ms</code>，这还是最理想的情况，100Mbps的宽带也只是近几年才开始普及，早先了电话拨号上网，最大速率也就2Mbps，那么一个包传输时间就需要：<code>100ms</code>，这100MS内别的进程或者别的PC就无法发送数据了，简直是噩耗。</p>
-<h2 id="既然大了不行，那设置小一点可以么？"><a href="#既然大了不行，那设置小一点可以么？" class="headerlink" title="既然大了不行，那设置小一点可以么？"></a>既然大了不行，那设置小一点可以么？</h2><p>假设MTU值设置为100，那么单个帧传输的时间，在2Mbps带宽下需要：<code>( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 ≈ 5(ms)</code>，时间上已经能接受了，问题在于，不管MTU设置为多少，以太网头帧尾大小是固定的，都是14 + 4，所以在MTU为100的时候，一个以太网帧的传输效率为：<code>( 100 - 14 - 4 ) / 100 = 82%</code>， 写成公式就是：<code>( T - 14 - 4 ) / T</code>，当T趋于无穷大的时候，效率接近<code>100%</code>，也就是MTU的值越大，传输效率最高，但是基于上一点传输时间的问题，来个折中的选择吧，既然头加尾是18，那就凑个整来个1500，总大小就是1518，传输效率：<code>1500 / 1518 =  98.8%</code>，100Mbps传输时间：<code>( 1518 * 8 ) / ( 100 * 1024 * 1024 ) * 1000 = 0.11(ms)</code>，0.1毫秒，时间上也能接受。</p>
+<h2 id="假设取一个更大的值"><a href="#假设取一个更大的值" class="headerlink" title="假设取一个更大的值"></a>假设取一个更大的值</h2><p>假设MTU值和IP数据包大小一致，一个IP数据包的大小是：65535，那么加上以太网帧头和为，一个以太网帧的大小就是：<code>65535 + 14 + 4 = 65553</code>，看起来似乎很完美，发送方也不需要拆包，接收方也不需要重组。</p>
+<p>那么假设我们现在的带宽是：<code>100Mbps</code>，因为以太网帧是传输中的最小可识别单元，再往下就是0101所对应的光信号了，所以我们的一条带宽同时只能发送一个以太网帧。如果同时发送多个，那么对端就无法重组成一个以太网帧了，在<code>100Mbps</code>的带宽中（假设中间没有损耗），我们计算一下发送这一帧需要的时间：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 100 * 1024 * 1024 ) &#8776; 0.005(s)</span><br></pre></td></tr></table></figure>
+<p>在100M网络下传输一帧就需要5ms，也就是说这5ms其他进程发送不了任何数据。如果是早先的电话拨号，网速只有2M的情况下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 2 * 1024 * 1024 ) &#8776; 0.100(s)</span><br></pre></td></tr></table></figure>
+<p>100ms，这简直是噩梦。其实这就像红绿灯，时间要设置合理，交替通行，不然同一个方向如果一直是绿灯，那么另一个方向就要堵成翔了。</p>
+<h2 id="既然大了不行，那设置小一点可以么？"><a href="#既然大了不行，那设置小一点可以么？" class="headerlink" title="既然大了不行，那设置小一点可以么？"></a>既然大了不行，那设置小一点可以么？</h2><p>假设MTU值设置为100，那么单个帧传输的时间，在2Mbps带宽下需要：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 &#8776; 5(ms)</span><br></pre></td></tr></table></figure>
+<p>时间上已经能接受了，问题在于，不管MTU设置为多少，以太网头帧尾大小是固定的，都是14 + 4，所以在MTU为100的时候，一个以太网帧的传输效率为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 - 14 - 4 ) / 100 = 82%</span><br></pre></td></tr></table></figure>
+<p>写成公式就是：<code>( T - 14 - 4 ) / T</code>，当T趋于无穷大的时候，效率接近<code>100%</code>，也就是MTU的值越大，传输效率最高，但是基于上一点传输时间的问题，来个折中的选择吧，既然头加尾是18，那就凑个整来个1500，总大小就是1518，传输效率：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1500 / 1518 =  98.8%</span><br></pre></td></tr></table></figure>
+<p>100Mbps传输时间：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 1518 * 8 ) / ( 100 * 1024 * 1024 ) * 1000 = 0.11(ms)</span><br></pre></td></tr></table></figure>
+<p>2Mbps传输时间：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 1518 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 = 5.79(ms)</span><br></pre></td></tr></table></figure>
+<p>总体上时间都还能接受</p>
 <h3 id="最小值被限制在64"><a href="#最小值被限制在64" class="headerlink" title="最小值被限制在64"></a>最小值被限制在64</h3><p>为什么是64呢？</p>
 <p>这个其实和以太网帧在半双工下的碰撞有关，感兴趣的同学可以自行去搜索。</p>
 <h2 id="在我玩游戏的时候，为什么把MTU改成1480就不卡了？"><a href="#在我玩游戏的时候，为什么把MTU改成1480就不卡了？" class="headerlink" title="在我玩游戏的时候，为什么把MTU改成1480就不卡了？"></a>在我玩游戏的时候，为什么把MTU改成1480就不卡了？</h2><p>路由器默认值大多都是1500，理论上是没有问题的，那为什么我玩游戏的时候改成1480才能流畅呢？原因在于当时我使用的是ADSL上网的方式，ADSL使用的PPPoE协议。</p>
@@ -211,7 +226,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="最根本原因"><a href="#最根本原因" class="headerlink" title="最根本原因"></a>最根本原因</h3><p>问题就出在路由器拨号，如果是PC拨号，那么PC会进行PPPoE的封装，会按照MTU:1492来进行以太网帧的封装，即使通过路由器，路由器这时候也只是转发而已，不会进行拆包。</p>
 <p>而当用路由器拨号时，PC并不知道路由器的通信方式，会以网卡的设置，默认1500的MTU来进行以太网帧的封装，到达路由器时，由于路由器需要进行PPPoE协议的封装，加上8字节的头信息，这样一来，就必须进行拆包，路由器把这一帧的内容拆成两帧发送，一帧是1492，一帧是8，然后分别加上PPPoE的头进行发送。</p>
 <p>平时玩游戏不卡，是因为数据量路由器还处理得过来，而当进行群怪AOE的时候，由于短时间数据量过大，路由器处理不过来，就会发生丢包卡顿的情况，也就掉线了。</p>
-<p>帖子里面提到的1480，猜测可能是尽量设小一点，避免二次拨号带来的又一次PPPoE的封装，因为时间久远，还真没办法回到当时的场景再去抓包了。</p>
+<p>帖子里面提到的1480，猜测可能是尽量设小一点，避免二次拨号带来的又一次PPPoE的封装，因为时间久远，没办法回到当时的场景再去抓包了。</p>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>1518这个值是考虑到传输效率以及传输时间而折中选择的一个值，并且由于目前网络链路中的节点太多，其中某个节点的MTU值如果和别的节点不一样，就很容易带来拆包重组的问题，甚至会导致无法发送。</p>
 
         

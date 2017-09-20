@@ -1,0 +1,600 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head>
+  <meta charset="utf-8">
+  
+  <title>什么是MTU？为什么MTU值普遍都是1500？ | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="什么是MTU？为什么MTU值普遍都是1500？">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="什么是MTU？为什么MTU值普遍都是1500？"/>
+  <meta property="og:site_name" content="PerterPon"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans"/>
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+    
+  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle" />
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>什么是MTU？为什么MTU值普遍都是1500？</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-09-12T08:01:00.000Z">2017-09-12</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2017/09/12/why-MTU-equals-1500/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <p>大学那会我玩魔兽世界，我的职业是法师，然后经常有朋友找我我带小号，带小号的方式是冲到血色副本里面把所有怪拉到一起，然后一起用AOE技能瞬间杀掉，在学校玩的时候没什么问题，但是放假在家的时候，我发现每次我拉好怪，放技能AOE的那个瞬间，很大概率会掉线，也不是网速问题，当时很多人也遇到同样的问题，看到个帖子说，把自己的MTU改成1480就行了，当时也不知道啥是MTU，就改了，发现还真的可以，就愉快地打游戏去了，多年以后我才知道MTU的重要性。</p>
+<h2 id="什么是MTU"><a href="#什么是MTU" class="headerlink" title="什么是MTU"></a>什么是MTU</h2><p>Maximum Transmission Unit，缩写MTU，中文名是：最大传输单元。</p>
+<h2 id="这是哪一层网络的概念？"><a href="#这是哪一层网络的概念？" class="headerlink" title="这是哪一层网络的概念？"></a>这是哪一层网络的概念？</h2><p>从下面这个表格中可以看到，在7层网络协议中，MTU是<strong>数据链路层</strong>的概念。MTU限制的是数据链路层的<strong>上层协议</strong>的payload的大小，例如IP，ICMP等。</p>
+<table>
+<thead>
+<tr>
+<th>OSI中的层</th>
+<th>功能</th>
+<th>TCP/IP协议族</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>应用层</td>
+<td>文件传输，电子邮件，文件服务，虚拟终端</td>
+<td>TFTP，HTTP，SNMP，FTP，SMTP，DNS，Telnet</td>
+</tr>
+<tr>
+<td>表示层</td>
+<td>数据格式化，代码转换，数据加密</td>
+<td>没有协议</td>
+</tr>
+<tr>
+<td>会话层</td>
+<td>解除或建立与别的接点的联系</td>
+<td>没有协议</td>
+</tr>
+<tr>
+<td>传输层</td>
+<td>提供端对端的接口</td>
+<td>TCP，UDP</td>
+</tr>
+<tr>
+<td>网络层</td>
+<td>为数据包选择路由</td>
+<td>IP，ICMP，RIP，OSPF，BGP，IGMP</td>
+</tr>
+<tr>
+<td>数据链路层</td>
+<td>传输有地址的帧以及错误检测功能</td>
+<td>SLIP，CSLIP，PPP，ARP，RARP，MTU</td>
+</tr>
+<tr>
+<td>物理层</td>
+<td>以二进制数据形式在物理媒体上传输数据</td>
+<td>ISO2110，IEEE802，IEEE802.2</td>
+</tr>
+</tbody>
+</table>
+<h2 id="MTU有什么用？"><a href="#MTU有什么用？" class="headerlink" title="MTU有什么用？"></a>MTU有什么用？</h2><p>举一个最简单的场景，你在家用自己的笔记本上网，用的是路由器，路由器连接电信网络，然后访问了<code>www.baidu.com</code>，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<p>其中，每个节点都有一个MTU值，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151;  -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<p>假设现在我把笔记本的MTU最大值设置成了1700，然后发送了一个超大的ip数据包（2000），这时候在以外网传输的时候会被拆成2个包，一个1700，一个300，然后加上头信息进行传输。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
+<h2 id="为什么是1500？"><a href="#为什么是1500？" class="headerlink" title="为什么是1500？"></a>为什么是1500？</h2><p>其实一个标准的以太网数据帧大小是：<code>1518</code>，头信息有14字节，尾部校验和FCS占了4字节，所以真正留给上层协议传输数据的大小就是：1518 - 14 - 4 = 1500，那么，1518这个值又是从哪里来的呢？</p>
+<h2 id="假设取一个更大的值"><a href="#假设取一个更大的值" class="headerlink" title="假设取一个更大的值"></a>假设取一个更大的值</h2><p>假设MTU值和IP数据包大小一致，一个IP数据包的大小是：65535，那么加上以太网帧头和为，一个以太网帧的大小就是：<code>65535 + 14 + 4 = 65553</code>，看起来似乎很完美，发送方也不需要拆包，接收方也不需要组合。那么假设我们现在的带宽是：<code>100Mbps</code>，因为以太网帧是传输中的最小可识别单元，再往下就是0101所对应的光信号了，所以我们的一条带宽同时只能发送一个以太网帧，如果同时发送多个，那么对端就无法重组成一个以太网帧，所以在<code>100Mbps</code>的带宽中（假设中间没有损耗），那么发送一个以太网帧所需要的时间就是：<code>( 65553 * 8 ) / ( 100 * 1024 * 1024 ) ≈ 0.005(s)</code>，也就是说一个包传输就需要<code>5ms</code>，这还是最理想的情况，100Mbps的宽带也只是近几年才开始普及，早先了电话拨号上网，最大速率也就2Mbps，那么一个包传输时间就需要：<code>100ms</code>，这100MS内别的进程或者别的PC就无法发送数据了，简直是噩耗。</p>
+<h2 id="既然大了不行，那设置小一点可以么？"><a href="#既然大了不行，那设置小一点可以么？" class="headerlink" title="既然大了不行，那设置小一点可以么？"></a>既然大了不行，那设置小一点可以么？</h2><p>假设MTU值设置为100，那么单个帧传输的时间，在2Mbps带宽下需要：<code>( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 ≈ 5(ms)</code>，时间上已经能接受了，问题在于，不管MTU设置为多少，以太网头帧尾大小是固定的，都是14 + 4，所以在MTU为100的时候，一个以太网帧的传输效率为：<code>( 100 - 14 - 4 ) / 100 = 82%</code>， 写成公式就是：<code>( T - 14 - 4 ) / T</code>，当T趋于无穷大的时候，效率接近<code>100%</code>，也就是MTU的值越大，传输效率最高，但是基于上一点传输时间的问题，来个折中的选择吧，既然头加尾是18，那就凑个整来个1500，总大小就是1518，传输效率：<code>1500 / 1518 =  98.8%</code>，100Mbps传输时间：<code>( 1518 * 8 ) / ( 100 * 1024 * 1024 ) * 1000 = 0.11(ms)</code>，0.1毫秒，时间上也能接受。</p>
+<h3 id="最小值被限制在64"><a href="#最小值被限制在64" class="headerlink" title="最小值被限制在64"></a>最小值被限制在64</h3><p>为什么是64呢？</p>
+<p>这个其实和以太网帧在半双工下的碰撞有关，感兴趣的同学可以自行去搜索。</p>
+<h2 id="在我玩游戏的时候，为什么把MTU改成1480就不卡了？"><a href="#在我玩游戏的时候，为什么把MTU改成1480就不卡了？" class="headerlink" title="在我玩游戏的时候，为什么把MTU改成1480就不卡了？"></a>在我玩游戏的时候，为什么把MTU改成1480就不卡了？</h2><p>路由器默认值大多都是1500，理论上是没有问题的，那为什么我玩游戏的时候改成1480才能流畅呢？原因在于当时我使用的是ADSL上网的方式，ADSL使用的PPPoE协议。</p>
+<h3 id="PPPoE"><a href="#PPPoE" class="headerlink" title="PPPoE"></a>PPPoE</h3><p>PPPoE协议介于以太网和IP之间，协议分为两部分，PPP( Point to Point Protocol )和oE( over Ethernet )，也就是以太网上的PPP协议，而PPPoE协议头信息为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| VER(4bit) | TYPE(4bit) | CODE(8bit) | SESSION-ID(16bit) | LENGTH(16bit) |</span><br></pre></td></tr></table></figure>
+<p>这里总共是48位，也就是6个字节，那么另外2个字节是什么呢？答案是PPP协议的ID号，占用两个字节，所以在PPPoE环境下，最佳MTU值应该是：1500 - 4 - 2 = 1492。</p>
+<h3 id="我的上网方式"><a href="#我的上网方式" class="headerlink" title="我的上网方式"></a>我的上网方式</h3><p>当时我的上网路径如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PC -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;</span><br></pre></td></tr></table></figure>
+<p>我在路由器进行拨号，然后PC连接路由器进行上网。</p>
+<h3 id="最根本原因"><a href="#最根本原因" class="headerlink" title="最根本原因"></a>最根本原因</h3><p>问题就出在路由器拨号，如果是PC拨号，那么PC会进行PPPoE的封装，会按照MTU:1492来进行以太网帧的封装，即使通过路由器，路由器这时候也只是转发而已，不会进行拆包。</p>
+<p>而当用路由器拨号时，PC并不知道路由器的通信方式，会以网卡的设置，默认1500的MTU来进行以太网帧的封装，到达路由器时，由于路由器需要进行PPPoE协议的封装，加上8字节的头信息，这样一来，就必须进行拆包，路由器把这一帧的内容拆成两帧发送，一帧是1492，一帧是8，然后分别加上PPPoE的头进行发送。</p>
+<p>平时玩游戏不卡，是因为数据量路由器还处理得过来，而当进行群怪AOE的时候，由于短时间数据量过大，路由器处理不过来，就会发生丢包卡顿的情况，也就掉线了。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>1518这个值是考虑到传输效率以及传输时间而折中选择的一个值，并且由于目前网络链路中的MTU值太多，其中某个节点的MTU值如果和别的节点不一样，就很容易带来问题，特别是中间链路MTU过小的情况，很容易导致大数据量类似文件传输的时候直接无法发送。</p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/计算机网络/">计算机网络</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/mtu/">mtu</a>, <a href="/tags/tcp-ip/">tcp/ip</a>, <a href="/tags/计算机网络/">计算机网络</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2017/09/04/main-host/"  title="前端如何获取主域名(根域名)">
+ <span>前端如何获取主域名(根域名)
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">留言</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2017/09/12/why-MTU-equals-1500/" data-title="什么是MTU？为什么MTU值普遍都是1500？" data-url="http://yoursite.com2017/09/12/why-MTU-equals-1500/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
+      </li>
+    
+      <li>
+        <a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">分類</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/JavaScript/">JavaScript</a><small>1</small></li>
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+  
+    <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/https/">https</a><small>5</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>4</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
+  
+    <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
+  
+    <li><a href="/categories/node/">node</a><small>1</small></li>
+  
+    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+  
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+    <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">標籤</h3>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/JavaScript/">JavaScript<small>1</small></a>
+  
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
+  
+    <a href="/tags/bdd/">bdd<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/cocoaTouch/">cocoaTouch<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/complicating/">complicating<small>1</small></a>
+  
+    <a href="/tags/computer/">computer<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/dataplus/">dataplus<small>1</small></a>
+  
+    <a href="/tags/ddd/">ddd<small>1</small></a>
+  
+    <a href="/tags/decimal/">decimal<small>1</small></a>
+  
+    <a href="/tags/drive/">drive<small>1</small></a>
+  
+    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+  
+    <a href="/tags/float/">float<small>1</small></a>
+  
+    <a href="/tags/freak/">freak<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>2</small></a>
+  
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
+    <a href="/tags/host/">host<small>1</small></a>
+  
+    <a href="/tags/http/">http<small>5</small></a>
+  
+    <a href="/tags/https/">https<small>5</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>5</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/javascript/">javascript<small>1</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/kaggle/">kaggle<small>1</small></a>
+  
+    <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
+  
+    <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/mainHost/">mainHost<small>1</small></a>
+  
+    <a href="/tags/members/">members<small>1</small></a>
+  
+    <a href="/tags/microwave/">microwave<small>1</small></a>
+  
+    <a href="/tags/mtu/">mtu<small>1</small></a>
+  
+    <a href="/tags/mysql/">mysql<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>3</small></a>
+  
+    <a href="/tags/number/">number<small>1</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
+  
+    <a href="/tags/package/">package<small>1</small></a>
+  
+    <a href="/tags/pai/">pai<small>1</small></a>
+  
+    <a href="/tags/physical/">physical<small>1</small></a>
+  
+    <a href="/tags/pixel/">pixel<small>1</small></a>
+  
+    <a href="/tags/poodle/">poodle<small>1</small></a>
+  
+    <a href="/tags/precision/">precision<small>1</small></a>
+  
+    <a href="/tags/quantum/">quantum<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/rsa/">rsa<small>4</small></a>
+  
+    <a href="/tags/setRootViewController/">setRootViewController<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
+  
+    <a href="/tags/tcp-ip/">tcp/ip<small>1</small></a>
+  
+    <a href="/tags/tdd/">tdd<small>1</small></a>
+  
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
+    <a href="/tags/tls/">tls<small>1</small></a>
+  
+    <a href="/tags/unittest/">unittest<small>1</small></a>
+  
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/url/">url<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/对称加密/">对称加密<small>4</small></a>
+  
+    <a href="/tags/扩展欧几里德/">扩展欧几里德<small>1</small></a>
+  
+    <a href="/tags/数字证书/">数字证书<small>3</small></a>
+  
+    <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
+    <a href="/tags/计算机网络/">计算机网络<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2017 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

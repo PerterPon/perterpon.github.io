@@ -118,6 +118,64 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2016/04/13/the-crazy-adblock/">丧心病狂的adblock</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2016-04-13T03:06:00.000Z">2016-04-13</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2016/04/13/the-crazy-adblock/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/04/13/the-crazy-adblock/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h4 id="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse-data-service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net-ERR-BLOCKED-BY-CLIENT。"><a href="#有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse-data-service，分析型数据服务，图片名字就取了一个ads-png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net-ERR-BLOCKED-BY-CLIENT。" class="headerlink" title="有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是analyse data service，分析型数据服务，图片名字就取了一个ads.png，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示net::ERR_BLOCKED_BY_CLIENT。"></a>有天在开发一个页面，里面用到了一张图片，图片对应的是一个名字叫ads的数据服务，全称大概是<code>analyse data service</code>，分析型数据服务，图片名字就取了一个<code>ads.png</code>，一开始也觉得没啥，就这么开发了，但是测试的时候发现，这张图片死活加载不出来，控制台提示<code>net::ERR_BLOCKED_BY_CLIENT</code>。</h4><h4 id="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。"><a href="#一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。" class="headerlink" title="一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。"></a>一开始以为是图片格式有问题，于是重新转了一下图片，发现问题依旧，单独在新TAB打开这个图片又能正常显示，所以把图片格式问题排除了。</h4><h4 id="于是就把问题放到这个报错信息上net-ERR-BLOCKED-BY-CLIENT，blocked-by-client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。"><a href="#于是就把问题放到这个报错信息上net-ERR-BLOCKED-BY-CLIENT，blocked-by-client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。" class="headerlink" title="于是就把问题放到这个报错信息上net::ERR_BLOCKED_BY_CLIENT，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。"></a>于是就把问题放到这个报错信息上<code>net::ERR_BLOCKED_BY_CLIENT</code>，blocked by client，被客户端，也就是浏览器给拒绝了，难道是返回的头信息有什么问题？server端是webpack起的一个静态文件服务，看了看浏览器的请求记录，发现只有request，都没有response，看来请求都没有走出浏览器。</h4><h4 id="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。"><a href="#为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。" class="headerlink" title="为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。"></a>为了验证上述问题，我把服务停了，然后然后手动更改图片的URL链接，使得重新加载，发现任然报错了，那么就可以确定问题在浏览器端。</h4><h4 id="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。"><a href="#各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。" class="headerlink" title="各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。"></a>各种google，stackoverflow，baidu，都没有找到一个合适的解答，而且其他图片全都没问题，唯独这张图片加载不出来，尝试用命令行起chrome，然后看看控制台输出，也没看到什么有价值的log。心如死灰之际，起身去了趟厕所，尿尿过程中，想到，不如把图片上传到CDN或者一些云服务试试看。</h4><h4 id="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶-adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。"><a href="#回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶-adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。" class="headerlink" title="回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名ads，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: adblock，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。"></a>回来立马就传到了OTS上，因为传上去之后文件名会被改变，变成了一些自动生成的信息，然后把网址拿过来，放到了页面上，居然神奇得发现图片能正常显示了，看来找对了方向，和之前的一对比，马上就发现了文件名上有一些不一样，再一看之前的文件名<code>ads</code>，不就是广告么，一下就想到了adblock，至此，折腾了这么久，总算是找到原因了，也找到元凶: <code>adblock</code>，不过这也算是adblock的一个策略吧，从文件名上入手，去搜索了一下adblock的一些别的策略，谨防再次入坑。</h4>
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2016/04/13/the-crazy-adblock/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2016/04/12/nodejs-in-the-world/">nodejs在世界范围内的大型应用</a></h1>
     
   
@@ -786,6 +844,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a>
+      </li>
+    
+      <li>
         <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
       </li>
     
@@ -799,10 +861,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a>
-      </li>
-    
-      <li>
-        <a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a>
       </li>
     
   </ul>
@@ -837,6 +895,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <li><a href="/categories/physical/">physical</a><small>2</small></li>
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+    <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
   
   </ul>
 </div>
@@ -926,6 +986,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/microwave/">microwave<small>1</small></a>
   
+    <a href="/tags/mtu/">mtu<small>1</small></a>
+  
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
@@ -958,6 +1020,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/tcp/">tcp<small>1</small></a>
   
+    <a href="/tags/tcp-ip/">tcp/ip<small>1</small></a>
+  
     <a href="/tags/tdd/">tdd<small>1</small></a>
   
     <a href="/tags/timer/">timer<small>1</small></a>
@@ -981,6 +1045,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/数字证书/">数字证书<small>3</small></a>
   
     <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
+    <a href="/tags/计算机网络/">计算机网络<small>1</small></a>
   
     <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
   

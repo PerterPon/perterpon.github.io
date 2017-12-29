@@ -118,6 +118,118 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-11-24T06:35:00.000Z">2017-11-24</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/11/24/thinking-of-lazy-load/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/11/24/thinking-of-lazy-load/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>记得我刚毕业那会，前端还是jQuery的天下，没有什么项目是一个jQuery搞不定的，如果有，那就再加个插件。</p>
+<p>后来慢慢出现了一些前端模块化工具，直至seajs的出现，把模块化推向了一个高潮，期间听说了gmail前端有44万行的JS代码，也是非常震惊。</p>
+<p>现在的前端为了更好的用户体验，更快地适应业务，逻辑正在变得越来越复杂，同时也带来越来越多的问题。</p>
+<h2 id="体积臃肿的前端"><a href="#体积臃肿的前端" class="headerlink" title="体积臃肿的前端"></a>体积臃肿的前端</h2><p>使用webpack的同学对下面这张图很熟悉了，一般我们用webpack打出来的包，都会包含一大堆东西，node_modules文件内容甚至能占到90%以上。</p>
+<p><img src="https://img.alicdn.com/tfs/TB16QLWksbI8KJjy1zdXXbe1VXa-909-922.png" alt=""></p>
+<h3 id="冰山效应"><a href="#冰山效应" class="headerlink" title="冰山效应"></a>冰山效应</h3><p>很多时候，用户打开一个页面，同时也加载了很多在这个页面上并不会运行的代码，甚至是永远都不会运行的代码，页面上的这些代码就像海洋里的冰山，运行的只是海平面上很小一部分，很大一部分在海平面下的代码，仅仅只会拖慢我们首页的打开时间。</p>
+<p><img src="https://img.alicdn.com/tfs/TB1GbDfktzJ8KJjSspkXXbF7VXa-1576-832.png" alt=""></p>
+<h2 id="按需加载"><a href="#按需加载" class="headerlink" title="按需加载"></a>按需加载</h2><p>从有模块化起，貌似就有了按需加载功能，很多工具都提供了按需加载的功能，以webpack为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const&#160;jQuery&#160;=&#160;await&#160;import(&#160;&#39;jQuery&#39;&#160;);&#10;&#160;&#10;const&#160;model&#160;=&#160;await&#160;import(&#160;&#39;./model/data.js&#39;&#160;);</span><br></pre></td></tr></table></figure>
+<p>webpack内置函数<code>import</code>很容易就可以实现按需加载的功能，看起来似乎问题就已经解了？然而这只是问题的第一步，仅仅有了按需加载的能力，问题也会随之而来。</p>
+<h2 id="预加载"><a href="#预加载" class="headerlink" title="预加载"></a>预加载</h2><p>按需加载必然会带来一次网络请求，假设一个场景：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#29992;&#25143;&#28857;&#20987;&#19968;&#20010;&#25353;&#38062;&#65292;&#28982;&#21518;&#36339;&#20986;&#19968;&#20010;&#24377;&#26694;&#12290;</span><br></pre></td></tr></table></figure>
+<p>普通情况下，点击按钮之后发生的事情如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#28857;&#20987;&#25353;&#38062;(ms) -&#62; &#28210;&#26579;&#24377;&#26694;(ms)</span><br></pre></td></tr></table></figure>
+<p>如果我们把弹框做按需加载，那么点击按钮之后发生的事情如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#28857;&#20987;&#25353;&#38062;(ms) -&#62; &#21152;&#36733;&#24377;&#26694;&#20195;&#30721;(s) -&#62; &#28210;&#26579;&#24377;&#26694;(ms)</span><br></pre></td></tr></table></figure>
+<p>中间多了一个步骤，并且是按秒计算的从网络加载代码，点击一个按钮之后需要等待一段时间，才会弹出弹框，用户操作非常不流畅，如果存在大量这种场景，体验或许还不如不用按需加载。</p>
+<p>有什么办法能解这个问题么？一种方案是：<code>预加载</code>，请看下图：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1AZZjkxPI8KJjSspfXXcCFXXa-1548-1202.png" alt=""></p>
+<h3 id="预加载步骤"><a href="#预加载步骤" class="headerlink" title="预加载步骤"></a>预加载步骤</h3><ol>
+<li>首先页面上收集用户的点击行为日志。</li>
+<li>拿到点击行为日志，得出用户最常用的操作路径，这部分数据在静态打包的时候注入到前端。</li>
+<li>每个人的操作路径会有区别，这里可以在前端也记录一份当前用户的点击数据，这里很多时候虽然本地都已经有缓存了，不过提前把缓存加载到内存，也可以节省很多时间。</li>
+<li>在浏览器空闲时，按照第二步和第三步的数据计算权重，最终决定加载顺序。</li>
+<li>同时，前端可以根据鼠标运动轨迹，实时地来预测下一步可能会加载的内容，作为一个旁路辅助。这里目前并没有想到一个很好的办法。</li>
+</ol>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>鉴于目前前端代码普遍存在于CDN的情况，按需加载带来的另外一个非常有优势的地方在于CDN缓存，假设我们有一份<code>jQuery</code>，有两个文件分别依赖了jQuery，情况如下：</p>
+<p><strong><em>a.js</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery&#20195;&#30721;*/ &#125;&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<p><strong><em>b.js</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery&#20195;&#30721;*/ &#125;&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<p>用户在打开A页面和B页面的时候，分别需要下载<code>a.js</code>和<code>b.js</code>，这时候重复下载了两份<code>jQuery</code>，即使他们是一样的，同时在用户的磁盘，也缓存了两份<code>jQuery</code>。</p>
+<h3 id="按需加载后的CDN缓存"><a href="#按需加载后的CDN缓存" class="headerlink" title="按需加载后的CDN缓存"></a>按需加载后的CDN缓存</h3><p>那么如果我们用按需加载的方式呢？</p>
+<p><strong><em><a href="http://cdn.com/jquery.js" target="_blank" rel="external">http://cdn.com/jquery.js</a></em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery&#20195;&#30721;*/ &#125;</span><br></pre></td></tr></table></figure>
+<p><strong><em>a.js</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = import( &#39;http://cdn.com/jquery.js&#39; );&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<p><strong><em>b.js</em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = import( &#39;http://cdn.com/jquery.js&#39; );&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<p><code>jQuery.js</code>只会被下载一次，所有页面如果用的都是一个cdn地址，那么只要用户打开过任何一个页面，之后的页面即使用户从未打开过，<code>jQuery</code>也已经被缓存，这带来的是一个<code>1+1&gt;2</code>的效果。</p>
+<h2 id="理想中的按需加载"><a href="#理想中的按需加载" class="headerlink" title="理想中的按需加载"></a>理想中的按需加载</h2><p>最后说一说我理想中的按需加载，看下图：</p>
+<p><img src="https://img.alicdn.com/tfs/TB18SAfkvDH8KJjy1XcXXcpdXXa-1986-1182.png" alt=""></p>
+<ol>
+<li>逻辑层和展示层完全剥离。</li>
+<li>用户操作一个页面的顺序，一定是：<ol>
+<li>眼睛看到展示层，发现有一个按钮。</li>
+<li>大脑告诉你，这个是一个按钮，是可以点击的。</li>
+<li>用手控制鼠标去点击按钮。</li>
+<li>执行点击按钮之后事情。</li>
+</ol>
+</li>
+<li>首屏加载的时候，我们可以只加载展示层，逻辑层代码一定是在用户点击按钮之后才会执行。</li>
+<li>首屏加载完成，利用用户看页面，并点击按钮的时间，预加载逻辑层代码，实现最快速的首屏展示。</li>
+</ol>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/11/24/thinking-of-lazy-load/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a></h1>
     
   
@@ -1152,76 +1264,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/03/29/set-root-view-controller/">多次setRootViewController导致view无限叠加的问题</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-03-29T03:26:00.000Z">2017-03-29</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/03/29/set-root-view-controller/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/03/29/set-root-view-controller/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近在开发一个iOS项目，有这么几个页面：登录页、引导页、主页。因为这几个页面之间几乎没有关联，所以就做成了3个不同的viewController，然后通过直接<code>[UIWindow setRootViewController:]</code>的方式来进行页面切换，其中，引导页和主页是单例，登陆页因为某些原因每次使用都会实例化。</p>
-<h2 id="出现的问题"><a href="#出现的问题" class="headerlink" title="出现的问题"></a>出现的问题</h2><p>正常使用流程是：引导页-&gt; 登录页 -&gt; 主页，流程很顺，但是在退出后就出问题了，在主页退出后，重新展示登录页，然后在登陆页登陆完了之后，调用<code>[UIWindow setRootViewController:]</code>设置主页单例，打了断点发现逻辑已经调用，但是发现无论怎么设置，都没用，屏幕上依然是登录页，主页并没有显示出来，非常疑惑。</p>
-<h2 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h2><p>打开xcode的调试功能：<code>View UI Hierarchy</code>，就能看到类似如下的场景了。（保密需要没有用自己的图）</p>
-<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2l1FTbY_0UKFjy1XaXXbKfXXa_!!99218453.jpg" alt=""></p>
-<p>最下面是引导页，然后中间是登录页，然后最上面是主页，然后因为退出之后又显示了登陆页，而登录页不是单例，所以在主页上又覆盖了一层登录页，而因为主页是单例，所以在第二次<code>setRootViewController</code>之后，并没有生效。而看了一下<code>setRootViewController</code>的作用，主要逻辑就是把要添加的viewController的view添加到window上，<code>UIWindow</code>本身就是一个view。</p>
-<h2 id="危害"><a href="#危害" class="headerlink" title="危害"></a>危害</h2><p>这个问题其实还是挺有风险的，如果我的主页不是单例，那么我甚至都发现不了这个问题，只会一层一层往上叠加，就会造成内存泄露了。</p>
-<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>知道了原因，解决起来就轻松了，两种解法：</p>
-<ol>
-<li>不使用<code>setRootViewController</code>的方式，而且采用<code>pushViewController</code>或者<code>presentViewController</code>的之类的方式去显示页面。</li>
-<li>修改<code>setRootViewController</code>，在每次调用之前先删掉<code>UIWindow</code>上所有的view，然后在添加。</li>
-</ol>
-<p>其实正常来说，还是推荐使用第一种方式来切换页面，而我因为改动比较大，而且时间比较急，所以采用了第二种方式，代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)setRootViewController:(UIViewController *)rootViewController&#10;&#123;&#10;    //remove old rootViewController&#39;s sub views&#10;    for (UIView* subView in self.rootViewController.view.subviews)&#10;    &#123;&#10;        [subView removeFromSuperview];&#10;    &#125;&#10;    &#10;    //remove old rootViewController&#39;s view&#10;    [self.rootViewController.view removeFromSuperview];&#10;    &#10;    //remove empty UILayoutContainerView(s) remaining on root window&#10;    for (UIView *subView in self.subviews)&#10;    &#123;&#10;        if (subView.subviews.count == 0)&#10;        &#123;&#10;            [subView removeFromSuperview];&#10;        &#125;&#10;    &#125;&#10;    &#10;    //set new rootViewController&#10;    [self addSubview:rootViewController.view];&#10;    [super setRootViewController:rootViewController];&#10;&#125;</span><br></pre></td></tr></table></figure>
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/03/29/set-root-view-controller/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1245,6 +1287,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a>
+      </li>
+    
+      <li>
         <a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a>
       </li>
     
@@ -1260,10 +1306,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
       </li>
     
-      <li>
-        <a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -1273,7 +1315,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <h3 class="title">分類</h3>
   <ul class="entry">
   
-    <li><a href="/categories/JavaScript/">JavaScript</a><small>1</small></li>
+    <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
   
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
   
@@ -1325,6 +1367,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/blog/">blog<small>1</small></a>
   
+    <a href="/tags/browser/">browser<small>1</small></a>
+  
     <a href="/tags/canvas/">canvas<small>1</small></a>
   
     <a href="/tags/co/">co<small>1</small></a>
@@ -1367,7 +1411,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/id2/">id2<small>1</small></a>
   
-    <a href="/tags/javascript/">javascript<small>1</small></a>
+    <a href="/tags/javascript/">javascript<small>2</small></a>
   
     <a href="/tags/js/">js<small>1</small></a>
   
@@ -1378,6 +1422,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/knn/">knn<small>1</small></a>
   
     <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
+  
+    <a href="/tags/lazyload/">lazyload<small>1</small></a>
   
     <a href="/tags/lock/">lock<small>1</small></a>
   
@@ -1436,6 +1482,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/uploadify/">uploadify<small>1</small></a>
   
     <a href="/tags/url/">url<small>1</small></a>
+  
+    <a href="/tags/web/">web<small>1</small></a>
   
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   

@@ -118,6 +118,165 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2015/01/29/node-cover/">node cover</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2015-01-29T12:30:00.000Z">2015-01-29</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2015/01/29/node-cover/#ds-thread"><span class="ds-thread-count" data-thread-key="2015/01/29/node-cover/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="nodejs-的三大特色"><a href="#nodejs-的三大特色" class="headerlink" title="nodejs 的三大特色:"></a>nodejs 的三大特色:</h2><p><img src="/image/image.jpg" alt="nodejs"></p>
+<h2 id="异步解决方案历史变迁"><a href="#异步解决方案历史变迁" class="headerlink" title="异步解决方案历史变迁"></a>异步解决方案历史变迁</h2><p>回调嵌套 -&gt;  event-pipe, async -&gt; co -&gt; fibjs</p>
+<h2 id="koa"><a href="#koa" class="headerlink" title="koa"></a>koa</h2><p>基于co, 使用generator来使得异步代码使用起来同步化。</p>
+<h2 id="需求来了"><a href="#需求来了" class="headerlink" title="需求来了"></a>需求来了</h2><ol>
+<li><p><code>koa</code>封装了大量逻辑, 只想使用类似<code>connect</code>的提供原始<code>IncomingMessage</code>和<code>ServerResponse</code>对象.</p>
+</li>
+<li><p>很多中间件都是采用connect中间件方式写的, 如果切换到koa, 必定要对原先的代码做修改.</p>
+</li>
+</ol>
+<h3 id="node-cover"><a href="#node-cover" class="headerlink" title="node-cover"></a>node-cover</h3><ol>
+<li><p>只提供基础的http server服务.</p>
+</li>
+<li><p>兼容connect中间件, 不兼容koa中间件, 但是可以使用ES6写的各种模块.</p>
+</li>
+<li><p>无缝切换现有项目, 同时使用co写同步代码.</p>
+</li>
+</ol>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a><a href="https://www.npmjs.com/package/node-cover" target="_blank" rel="external">使用方法</a></h4><h2 id="coffee-script-v1-8"><a href="#coffee-script-v1-8" class="headerlink" title="coffee-script v1.8"></a>coffee-script v1.8</h2><p>一. coffee-script的github master分支已经是1.8版本, 对es6很多语法都做了支持, 其中就包括generator.</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># Function&#10;( test ) -&#62;&#10;  ....&#10;&#10;# GeneratorFuntion&#10;( test ) -&#62;&#10;  yield -&#62;</span><br></pre></td></tr></table></figure>
+<p>二. 使用git地址安装npm包</p>
+<p>package.json<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#10;  .......&#10;  dependencies : &#123;&#10;    &#34;coffee-script&#34; : &#34;git+ssh://git@github.com:jashkenas/coffeescript.git&#34;&#10;  &#125;&#10;&#125;&#10;&#10;//git://github.com/user/project.git#commit-ish&#10;//git+ssh://user@hostname:project.git#commit-ish&#10;//git+ssh://user@hostname/project.git#commit-ish&#10;//git+http://user@hostname/project/blah.git#commit-ish&#10;//git+https://user@hostname/project/blah.git#commit-ish</span><br></pre></td></tr></table></figure></p>
+<p>三. 同时, 1.8的coffee修正了一些逻辑, 偷懒的同学注意了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( @server ) -&#62;</span><br></pre></td></tr></table></figure>
+<p>对于如上代码，1.8 版本以前的coffee会编译成<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">  fucntion( server )&#123;&#10;  @server = server&#10;.....&#10;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是对于1.8版本coffee会编译成:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function( _at_server )&#123;&#10;  @server = _at_server&#10;  .....&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果直接在函数中使用server变量的话，1.8版本之前是可以的，但是在1.8版本之后就会报错了。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2015/01/29/node-cover/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2014/12/25/how-to-use-hexo/">如何使用hexo搭建一个个人博客</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2014-12-25T13:01:00.000Z">2014-12-25</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2014/12/25/how-to-use-hexo/#ds-thread"><span class="ds-thread-count" data-thread-key="2014/12/25/how-to-use-hexo/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>如何快速搭建一个hexo博客。</p>
+<p>一. 安装hexo</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo -g</span><br></pre></td></tr></table></figure>
+<p>二. 初始化hexo目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir hexo&#10;cd hexo &#10;hexo init&#10;npm install</span><br></pre></td></tr></table></figure>
+<p>三. 所有的博客文章都在<code>source-&gt;_posts</code>文件夹下面, 一个markdown文件就是一篇博客, 执行一下命令, 就能够在本地起一个服务预览一下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># &#23558;markdown&#25991;&#20214;&#32534;&#35793;&#25104;html&#10;hexo generate&#10;# &#21551;&#21160;&#26381;&#21153;&#10;hexo server</span><br></pre></td></tr></table></figure>
+<p>然后访问: <code>http://127.0.0.1:4000</code>, 就可以查看博客预览了。</p>
+<p>四. 注册一个github账号, 创建一个一下名字的项目:#{github name}.github.io, 例如<code>perterpon.github.io</code>.</p>
+<p>五. 修改hexo配置文件, 配置文件位于<code>/_config.yml</code></p>
+<p>e.g</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deploy: &#10;  # type &#36873;&#25321;github&#10;  type: github&#10;  # &#22635;&#20889;github&#22320;&#22336;&#10;  repository: https://github.com/zippera/zippera.github.io.git&#10;  # &#36873;&#25321;&#30456;&#24212;&#20998;&#25903;, &#20351;&#29992;github pages&#30340;&#26102;&#20505;&#19968;&#33324;&#40664;&#35748;&#26159;&#20351;&#29992;gh-pages&#20998;&#25903;&#20316;&#20026;&#20351;&#29992;&#30340;&#20998;&#25903;, &#21487;&#20197;&#22312;github&#19978;&#35774;&#32622;.&#10;  branch: master</span><br></pre></td></tr></table></figure>
+<p>六. 创建github pages, 在之前创建好<code>perterpon.github.io</code>项目中, 点击<code>settings-
+  Automatic page generator</code>按钮, 跟着提示一路确定就能完成创建了。</p>
+<p>七. 在hexo文件夹中, 执行<code>hexo deploy</code>, 提示成功后等待几分钟访问<a href="http://perterpon.github.io" target="_blank" rel="external">http://perterpon.github.io</a>, 就能访问自己的博客了。</p>
+<p>八. 大量主题样式等等, 评论系统: 多说.</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2014/12/25/how-to-use-hexo/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2014/11/21/get-uuid-and-mac-addr/">OSX 中获取UID和MAC地址的方法</a></h1>
     
   
@@ -197,6 +356,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/19/typescript-skill/"></a>
+      </li>
+    
+      <li>
         <a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a>
       </li>
     
@@ -206,14 +373,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
-      </li>
-    
-      <li>
-        <a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a>
-      </li>
-    
-      <li>
-        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
       </li>
     
   </ul>
@@ -249,6 +408,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
+    <li><a href="/categories/前端/">前端</a><small>1</small></li>
+  
     <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
   
   </ul>
@@ -279,7 +440,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/browser/">browser<small>1</small></a>
   
+    <a href="/tags/cache/">cache<small>1</small></a>
+  
     <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/cdn/">cdn<small>1</small></a>
+  
+    <a href="/tags/chunkid/">chunkid<small>1</small></a>
   
     <a href="/tags/co/">co<small>1</small></a>
   
@@ -395,6 +562,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/web/">web<small>1</small></a>
   
+    <a href="/tags/webpack/">webpack<small>1</small></a>
+  
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   
     <a href="/tags/对称加密/">对称加密<small>4</small></a>
@@ -418,7 +587,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2017 PerterPon
+	  &copy; 2018 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

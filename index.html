@@ -118,6 +118,166 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-02-28T11:49:00.000Z">2018-02-28</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2018/02/28/webpack-chunk-id-with-cdn/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/02/28/webpack-chunk-id-with-cdn/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>之前项目中引入了一个插件，把webpack的chunk id使用md5代替，使得其无序化，开发环境没有问题，但是在配合CDN使用的时候，却发现每次发布新版本之后，页面直接报错打不开，提示加载某某chunk的时候无法找到，清除缓存之后问题解决，然而把id无序化插件去掉之后就没问题了，看来问题和缓存和chunk id有关。</p>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><h3 id="webpack-chunk"><a href="#webpack-chunk" class="headerlink" title="webpack chunk"></a>webpack chunk</h3><p>先说说webpack的chunk是怎么一回事，如下图：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1PQuNbgmTBuNjy1XbXXaMrVXa-343-390.png" alt=""></p>
+<p>有四个项目文件，分别为：file1.js, file2.js, file3.js, file4.js.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js&#10;file2.js&#10;&#10;file3.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<p>其中，<code>file1</code>依赖了<code>file2</code>，<code>file3</code>依赖了<code>file4</code>，在webpack里面，通常情况下一个文件就是一个module，有时候也有一个文件多个module的情况，不过不多见，webpack会给每一个module分配一个id，这个id是自增的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js -&#62; module1, id: 1&#10;file2.js -&#62; module2, id: 2&#10;&#10;file3.js -&#62; module3, id: 3&#10;file4.js -&#62; module4, id: 4</span><br></pre></td></tr></table></figure>
+<p>因为<code>file1</code>和<code>file2</code>对于<code>file3</code>和<code>file4</code>都没有什么依赖关系，所以webpack把这四个文件分成了两个<code>chunk</code>，同时分别给了一个id，也是自增的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chunkA: ChunkId1&#10;&#9;-&#62; module1&#10;&#9;-&#62; module2&#10;&#10;chunkB: ChunkId2&#10;&#9;-&#62; module3&#10;&#9;-&#62; module4</span><br></pre></td></tr></table></figure>
+<p>一个chunk就对应于webpack打包之后的文件，于是，打包之后我们现在有两个文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;file1.js&#10;            filea.hash.js&#10;file2.js&#10;&#10;----------------------------------&#10;&#10;file3.js&#10;            fileb.hash.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<p>两个chunk所对应的打包后的文件名为: <code>${fileName}.${md5}.js</code>.</p>
+<h3 id="CDN缓存"><a href="#CDN缓存" class="headerlink" title="CDN缓存"></a>CDN缓存</h3><p>项目中使用了覆盖式的CDN缓存方式，也就是不同发布之间没有版本概念，而是直接覆盖原来的文件，因为文件名中有MD5值，所以只要文件内容改变，那么文件名也就改变。</p>
+<p>好处是如果新版本没有变更的文件，可以让浏览器复用之前的缓存，达到最小更新目的。</p>
+<h2 id="问题出现"><a href="#问题出现" class="headerlink" title="问题出现"></a>问题出现</h2><p>原本这一切都运行得不错，直到后来在项目中加入了一个webpack插件，用来做chunk id的无序化，至于加入这个插件的原因，是因为webpack自带的chunk id的生成规则：</p>
+<h3 id="webpack-chunk-id生成方式"><a href="#webpack-chunk-id生成方式" class="headerlink" title="webpack chunk id生成方式"></a>webpack chunk id生成方式</h3><p>webpack的chunk id是从1开始自增的，具体有自己的规则，比如根据引用顺序来给chunk id给定一个id，文件内容的改变并不会影响id，只要引用顺序不变，那么即使文件内容如何改变，都不会影响chunk id，多次打包之后的值都是一样的。</p>
+<h3 id="chunk-id无序化"><a href="#chunk-id无序化" class="headerlink" title="chunk id无序化"></a>chunk id无序化</h3><p>上面说chunk id从1开始自增，也就是不同项目之间，chunk id可能都是一样的，这就导致跨项目间调用chunk变得困难了，为了解决这个问题，就引入了一个插件，可以让chunk id无序化，实质上就是用MD5值来代替了chunk id。</p>
+<h2 id="为何在CDN场景下发布新版本会导致找不到chunk呢？"><a href="#为何在CDN场景下发布新版本会导致找不到chunk呢？" class="headerlink" title="为何在CDN场景下发布新版本会导致找不到chunk呢？"></a>为何在CDN场景下发布新版本会导致找不到chunk呢？</h2><p>把chunk id用MD5值代替，看起来确实没有问题，在版本化的CDN场景下使用或者说在本地开发环境中使用确实是没有问题的，问题出在和覆盖式的CDN同时使用时候的问题。</p>
+<h3 id="问题根源"><a href="#问题根源" class="headerlink" title="问题根源"></a>问题根源</h3><p>首先我们看chunka和chunkb打包之后的代码：</p>
+<p>chunka:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;1&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<p>chunkb:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([1],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<p>chunka中代码，打包前的代码为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import( &#39;./file3&#39; );</span><br></pre></td></tr></table></figure>
+<p>chunka中需要引用id为<code>1</code>的chunk，然后chunkb的代码中，首先用<code>webpackJsonp</code>方法定义了自己的chunk id为：<code>1</code>，这样，整个代码就联系起来了，也就能正常运行了。</p>
+<h3 id="MD5替代chunk-id"><a href="#MD5替代chunk-id" class="headerlink" title="MD5替代chunk id"></a>MD5替代chunk id</h3><p>如果使用MD5来替换原先的chunk id呢？</p>
+<p>chunka:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md51&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<p>chunkb:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md51&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<p>看起来也没什么问题，反正只要引用的chunk id和声明的chunk id对应上就可以了。尝试修改了一些file3的内容，也就是chunkb的内容有了变更之后：</p>
+<p>chunka:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md52&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<p>chunkb:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md52&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<p>chunkb的chunk id变成了: md52，同时引用和声明的chunk id都能对应上，运行没问题，那么问题出在哪里呢？我们看看webpack生成文件的文件名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;fileName&#125;.$&#123;md5&#125;.js</span><br></pre></td></tr></table></figure>
+<p>因为文件名中有MD5值，所以当修改了chunkb之后，那么chunkb对应的文件名肯定就变更了，这个没问题，而chunka其实内容并没有变更，所以chunka的md5没有变化，也就是说chunka的文件名不变。</p>
+<p>然而在引入chunk id无序化插件之前，chunkb的内容变化了，chunk id是不会变的，所以chunk b变化之后，打包后的chunka的文件名和内容都是没有变化的，使用浏览器缓存也不会有任何问题。</p>
+<h3 id="缓存带来的问题"><a href="#缓存带来的问题" class="headerlink" title="缓存带来的问题"></a>缓存带来的问题</h3><p>chunk id变成MD5之后，chunkb的改变，会导致chunka的文件名没有变，然而chuna的代码其实是变化了的，因为引用chunkb的时候是要填写chunkb的chunk id的，因为chunk b的内容改变，其chunk id也跟着改变，浏览器根据文件名缓存，因为文件名没有变化，所以一直读取的都是以前的文件，也就导致了找不到某某chunk的根源，以前因为内容变化了，chunk id是不会变化的，所以使用并没有问题。</p>
+<h3 id="webpack-MD5生成"><a href="#webpack-MD5生成" class="headerlink" title="webpack MD5生成"></a>webpack MD5生成</h3><p>也许你会说chunka的内容其实是变化了，为啥md5没有改变？其实一开始我也是这么想的，后来看过webpack代码之后就知道原因了:</p>
+<p><img src="https://img.alicdn.com/tfs/TB19pb_bkyWBuNjy0FpXXassXXa-768-819.png" alt=""></p>
+<p>上面是生成hash的事件，而替换代码则远远在这之后，其实之前也猜到个大概，从业务上讲其实chunka的内容并没有任何变更，hash也是不应该改变的。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2018/02/28/webpack-chunk-id-with-cdn/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2018/01/19/typescript-skill/"></a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-01-19T08:53:08.000Z">2018-01-19</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2018/01/19/typescript-skill/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/01/19/typescript-skill/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="keyof"><a href="#keyof" class="headerlink" title="keyof"></a>keyof</h2><h2 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h2><h2 id="react-泛型组件继承和使用"><a href="#react-泛型组件继承和使用" class="headerlink" title="react 泛型组件继承和使用"></a>react 泛型组件继承和使用</h2><h2 id="声明文件的使用"><a href="#声明文件的使用" class="headerlink" title="声明文件的使用"></a>声明文件的使用</h2><h2 id="void不能省略"><a href="#void不能省略" class="headerlink" title="void不能省略"></a>void不能省略</h2>
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2018/01/19/typescript-skill/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a></h1>
     
   
@@ -1119,151 +1279,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/05/16/https-1/">零门槛学习https--(1)为什么我们要用https</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-16T11:46:00.000Z">2017-05-16</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/05/16/https-1/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/16/https-1/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>目前几乎主流的所有网站都使用了https，而且苹果也强制要求开发者使用https要传输数据，我们先不说什么是https，以及为什么需要https，因为任何技术的诞生都是因为现实中遇到的问题，而诞生了这个技术去解决问题，那么，https是为了解决什么问题呢？</p>
-<h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>http是一个非常伟大的协议，几乎承载了整个互联网，它有一个特点，那就是明文传输，如今家用的一个最简单的网络情况往往是，你连着路由器，路由器连着一个猫，然后接入电信运营商，这时候，我们就遇到了两个问题：</p>
-<ol>
-<li>路由器被人动了手脚，跟女神聊天的聊天记录全被别人看到了。</li>
-<li>随便打开一个网页，右下角都会弹出一些诡异的广告。</li>
-</ol>
-<p>也许你不知道也不在乎自己的聊天记录被人看到了，那么当你兴致勃勃打开115准备欣赏大片的时候，右下角的广告一定能让你炸毛了，比如下面这样子：</p>
-<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2Fbz4pSxjpuFjSszeXXaeMVXa_!!99218453.jpg" alt=""></p>
-<p>因为http是明文传输，那么想查看别人的信息，也就很容易了，同样，在你返回的http页面插入一个js脚本也是轻而易举，运营商的广告就是这么来的，非常无耻。</p>
-<h2 id="http有多不安全？"><a href="#http有多不安全？" class="headerlink" title="http有多不安全？"></a>http有多不安全？</h2><p>打开Wireshark随便抓一个包看看</p>
-<p><code>cookie</code>轻松就拿到了，在一些安全性不是很高的网站，有了cookie，你就相当于在短时间内登陆了这个账号，甚至都不用账号密码。</p>
-<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2suGMtdRopuFjSZFtXXcanpXa_!!99218453.png" alt=""></p>
-<p>返回的<code>html</code>也完整得能被解析出来，运营商插入一段广告JS还好，在一些安全性不是很高的网站插入监听键盘的脚本，然后就能拿到账号密码了，再通过撞库等方式，你在很多网站或许都不安全了。</p>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2Y._Wp9hlpuFjSspkXXa1ApXa_!!99218453.png" alt=""></p>
-<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>聪明的你肯定想到了，既然都是明文传输惹得祸，那么我加密就行了呀。的确，加密就行了，但是这么简单的一句话，里面可是包含了无数革命先烈的研究成果，造就了https的由来。</p>
-<h2 id="加密方法"><a href="#加密方法" class="headerlink" title="加密方法"></a>加密方法</h2><p>既然提到了加密，那么无非就是三种加密方法：</p>
-<ul>
-<li><p>摘要算法。摘要算法严格意义上来说其实也不算是加密方法，最大的特点是不可逆，并且普遍防碰撞性较好。典型的有MD5，sha256等算法。现在有一些彩虹表，存储了大量的摘要信息以及其原文，并且还在不断增加，加上一些暴力破解技术，例如<code>ophcrack</code>等工具，几秒内即可破解<code>windows</code>登陆密码。</p>
-</li>
-<li><p>对称加密。典型的一个对称加密算法就是凯撒加密，比如原文是：<code>1234</code>，那么约定一个密钥<code>1</code>，加密的时候每一位都<code>+1</code>，所以密文就是：<code>2345</code>，解密的时候很简单，只要每一位都<code>-1</code>即可，运算速度很快，唯一的缺点是，两个人之间的密钥有一个人的泄露了，那么所有的通信都不安全了，并且传递密钥的时候除非当面给，不然都不安全。</p>
-</li>
-<li><p>非对称加密。最大的特点是通信双方的密钥是不一样的，并且加密者的密钥只能用于加密，无法解密，只有解密者的密钥能解密。典型的一个是RSA，几乎是奠定了现代互联网安全的基石，在HTTPS中被大量采用，其他例如椭圆曲线加密算法(ECC)，以及ElGamal等算法。RSA三个字母取自三位发明者的首字母：Ron Rivest、Adi Shamir、Leonard Adleman，由这三位数学家在1977年提出。</p>
-</li>
-</ul>
-<p>对称加密虽然也很有多种方式，但是相对来说还是比较好理解，但是非对称加密用一个密钥加密，却能用另外一个密钥解密，这个可能就不大好理解了，下面跟大家主要聊一聊非对称加密中的<code>RSA</code>具体是如何实现的。</p>
-<p><a href="/2017/05/19/https-2/">零门槛学习https–(2)https中s的秘密</a></p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/05/16/https-1/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-04-17T13:01:00.000Z">2017-04-17</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/04/17/launch-screen/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/04/17/launch-screen/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>使用<code>StoreBoard</code>来作为<code>Launch Screen</code>的时候，通常做法是在<code>Store Board</code>里面加一个<code>UIImageView</code>，然后里面设置相应的图片就OK了，例如下面这样：</p>
-<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB25mgUlYtlpuFjSspfXXXLUpXa_!!99218453.png" alt=""></p>
-<p>我把<code>app-starpup</code>这张图片放到了<code>Assets.xcassets</code>里面，然后在<code>storyboard</code>里面引用了一下，一切都很简单，看起来也毫无问题，但是编译完到启动的时候，发现无论如何这样图片都显示不出来，我以为是同时设置了<code>Launch Image</code>的问题，然后调试了差不多一个小时，最后终于意识到了问题所在：<strong><code>Assets.xcassets</code>里面的文件在启动的时候还没有被加载</strong>，把图片放到某个文件夹里面，然后再引用文件夹里面的图片，问题就解决了。</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/04/17/launch-screen/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1287,6 +1302,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/19/typescript-skill/"></a>
+      </li>
+    
+      <li>
         <a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a>
       </li>
     
@@ -1296,14 +1319,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
-      </li>
-    
-      <li>
-        <a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a>
-      </li>
-    
-      <li>
-        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
       </li>
     
   </ul>
@@ -1339,6 +1354,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
+    <li><a href="/categories/前端/">前端</a><small>1</small></li>
+  
     <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
   
   </ul>
@@ -1369,7 +1386,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/browser/">browser<small>1</small></a>
   
+    <a href="/tags/cache/">cache<small>1</small></a>
+  
     <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/cdn/">cdn<small>1</small></a>
+  
+    <a href="/tags/chunkid/">chunkid<small>1</small></a>
   
     <a href="/tags/co/">co<small>1</small></a>
   
@@ -1485,6 +1508,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/web/">web<small>1</small></a>
   
+    <a href="/tags/webpack/">webpack<small>1</small></a>
+  
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   
     <a href="/tags/对称加密/">对称加密<small>4</small></a>
@@ -1508,7 +1533,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2017 PerterPon
+	  &copy; 2018 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

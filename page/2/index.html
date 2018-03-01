@@ -118,6 +118,151 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/05/16/https-1/">零门槛学习https--(1)为什么我们要用https</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-16T11:46:00.000Z">2017-05-16</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/16/https-1/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/16/https-1/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>目前几乎主流的所有网站都使用了https，而且苹果也强制要求开发者使用https要传输数据，我们先不说什么是https，以及为什么需要https，因为任何技术的诞生都是因为现实中遇到的问题，而诞生了这个技术去解决问题，那么，https是为了解决什么问题呢？</p>
+<h2 id="http"><a href="#http" class="headerlink" title="http"></a>http</h2><p>http是一个非常伟大的协议，几乎承载了整个互联网，它有一个特点，那就是明文传输，如今家用的一个最简单的网络情况往往是，你连着路由器，路由器连着一个猫，然后接入电信运营商，这时候，我们就遇到了两个问题：</p>
+<ol>
+<li>路由器被人动了手脚，跟女神聊天的聊天记录全被别人看到了。</li>
+<li>随便打开一个网页，右下角都会弹出一些诡异的广告。</li>
+</ol>
+<p>也许你不知道也不在乎自己的聊天记录被人看到了，那么当你兴致勃勃打开115准备欣赏大片的时候，右下角的广告一定能让你炸毛了，比如下面这样子：</p>
+<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2Fbz4pSxjpuFjSszeXXaeMVXa_!!99218453.jpg" alt=""></p>
+<p>因为http是明文传输，那么想查看别人的信息，也就很容易了，同样，在你返回的http页面插入一个js脚本也是轻而易举，运营商的广告就是这么来的，非常无耻。</p>
+<h2 id="http有多不安全？"><a href="#http有多不安全？" class="headerlink" title="http有多不安全？"></a>http有多不安全？</h2><p>打开Wireshark随便抓一个包看看</p>
+<p><code>cookie</code>轻松就拿到了，在一些安全性不是很高的网站，有了cookie，你就相当于在短时间内登陆了这个账号，甚至都不用账号密码。</p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2suGMtdRopuFjSZFtXXcanpXa_!!99218453.png" alt=""></p>
+<p>返回的<code>html</code>也完整得能被解析出来，运营商插入一段广告JS还好，在一些安全性不是很高的网站插入监听键盘的脚本，然后就能拿到账号密码了，再通过撞库等方式，你在很多网站或许都不安全了。</p>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2Y._Wp9hlpuFjSspkXXa1ApXa_!!99218453.png" alt=""></p>
+<h2 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h2><p>聪明的你肯定想到了，既然都是明文传输惹得祸，那么我加密就行了呀。的确，加密就行了，但是这么简单的一句话，里面可是包含了无数革命先烈的研究成果，造就了https的由来。</p>
+<h2 id="加密方法"><a href="#加密方法" class="headerlink" title="加密方法"></a>加密方法</h2><p>既然提到了加密，那么无非就是三种加密方法：</p>
+<ul>
+<li><p>摘要算法。摘要算法严格意义上来说其实也不算是加密方法，最大的特点是不可逆，并且普遍防碰撞性较好。典型的有MD5，sha256等算法。现在有一些彩虹表，存储了大量的摘要信息以及其原文，并且还在不断增加，加上一些暴力破解技术，例如<code>ophcrack</code>等工具，几秒内即可破解<code>windows</code>登陆密码。</p>
+</li>
+<li><p>对称加密。典型的一个对称加密算法就是凯撒加密，比如原文是：<code>1234</code>，那么约定一个密钥<code>1</code>，加密的时候每一位都<code>+1</code>，所以密文就是：<code>2345</code>，解密的时候很简单，只要每一位都<code>-1</code>即可，运算速度很快，唯一的缺点是，两个人之间的密钥有一个人的泄露了，那么所有的通信都不安全了，并且传递密钥的时候除非当面给，不然都不安全。</p>
+</li>
+<li><p>非对称加密。最大的特点是通信双方的密钥是不一样的，并且加密者的密钥只能用于加密，无法解密，只有解密者的密钥能解密。典型的一个是RSA，几乎是奠定了现代互联网安全的基石，在HTTPS中被大量采用，其他例如椭圆曲线加密算法(ECC)，以及ElGamal等算法。RSA三个字母取自三位发明者的首字母：Ron Rivest、Adi Shamir、Leonard Adleman，由这三位数学家在1977年提出。</p>
+</li>
+</ul>
+<p>对称加密虽然也很有多种方式，但是相对来说还是比较好理解，但是非对称加密用一个密钥加密，却能用另外一个密钥解密，这个可能就不大好理解了，下面跟大家主要聊一聊非对称加密中的<code>RSA</code>具体是如何实现的。</p>
+<p><a href="/2017/05/19/https-2/">零门槛学习https–(2)https中s的秘密</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/16/https-1/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2017/04/17/launch-screen/">一个使用Launch-Screen但是无法显示图片的坑</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-04-17T13:01:00.000Z">2017-04-17</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/04/17/launch-screen/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/04/17/launch-screen/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>使用<code>StoreBoard</code>来作为<code>Launch Screen</code>的时候，通常做法是在<code>Store Board</code>里面加一个<code>UIImageView</code>，然后里面设置相应的图片就OK了，例如下面这样：</p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB25mgUlYtlpuFjSspfXXXLUpXa_!!99218453.png" alt=""></p>
+<p>我把<code>app-starpup</code>这张图片放到了<code>Assets.xcassets</code>里面，然后在<code>storyboard</code>里面引用了一下，一切都很简单，看起来也毫无问题，但是编译完到启动的时候，发现无论如何这样图片都显示不出来，我以为是同时设置了<code>Launch Image</code>的问题，然后调试了差不多一个小时，最后终于意识到了问题所在：<strong><code>Assets.xcassets</code>里面的文件在启动的时候还没有被加载</strong>，把图片放到某个文件夹里面，然后再引用文件夹里面的图片，问题就解决了。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/04/17/launch-screen/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/03/29/set-root-view-controller/">多次setRootViewController导致view无限叠加的问题</a></h1>
     
   
@@ -906,191 +1051,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/07/19/dataplus-pai/">数加Pai（机器学习平台）的上手体验</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-07-19T03:21:00.000Z">2016-07-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/07/19/dataplus-pai/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/07/19/dataplus-pai/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="数加pai"><a href="#数加pai" class="headerlink" title="数加pai"></a>数加pai</h2><p>数加pai是一个机器学习平台，提供可视化界面来操作算法，无需自己编写任何代码即可计算自己的数据。<br>如果你没有那么多数据也没有这种场景，那么选择一个外部算法平台也是一个不错的选择。</p>
-<h2 id="kaggle"><a href="#kaggle" class="headerlink" title="kaggle"></a>kaggle</h2><p>一个类似阿里云天池的算法开发大赛平台，会定时发布各种任务，前几名有奖金，第一名$10W。</p>
-<p>我们用这个平台上练手的项目来体验一下PAI。</p>
-<p>找到首页中标着101的那一组，这些题目都是给你练手的，相对来说会比较简单一点，就选第一个，<code>Digit Recognizer</code>。</p>
-<h3 id="题目分析"><a href="#题目分析" class="headerlink" title="题目分析"></a>题目分析</h3><p>这个题目的主要任务的数字识别，很多手写的数字，左边导航栏<code>home</code>-<code>data</code>，进去可以下载本次的训练数据: <code>train.csv</code>和测试数据: <code>test.csv</code>。</p>
-<p>打开<code>train.csv</code>文件，主办方已经把需要识别的图片提取成像素值，直接训练就行了。</p>
-<p>其中，一行代表一个数字的图片，第一列<code>lable</code>代表的是已经识别出来的具体的数字。</p>
-<table>
-<thead>
-<tr>
-<th>label</th>
-<th>pixel0</th>
-<th>pixel1</th>
-<th>…..</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>0</td>
-<td>186</td>
-<td>0</td>
-</tr>
-<tr>
-<td>0</td>
-<td>0</td>
-<td>186</td>
-<td>100</td>
-</tr>
-<tr>
-<td>…..</td>
-<td>……</td>
-<td>……</td>
-<td>…..</td>
-</tr>
-</tbody>
-</table>
-<h3 id="寻找合适算法"><a href="#寻找合适算法" class="headerlink" title="寻找合适算法"></a>寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
-<p>选择<code>kNN</code>是因为<code>kNN</code>算法比较好理解，对于我这种新手也比较容易看懂，缺点是<code>kNN</code>算法是惰性算法，计算时间会比较长。</p>
-<h3 id="开始解题"><a href="#开始解题" class="headerlink" title="开始解题"></a>开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
-<h3 id="上传数据"><a href="#上传数据" class="headerlink" title="上传数据"></a>上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
-<p>首先下载<a href="https://help.aliyun.com/document_detail/27991.html?spm=5176.product27797.6.217.2hjJzR" target="_blank" rel="external">MaxCompute CMD</a>，这里点击<code>新版客户端下载</code>，下载完成后，配置AK以及运行CMD，关于如何建表，请查看帮助文档，注意要把所有字段也建了，和<code>CSV</code>文件相对应，这里字段有段多，可以用一个脚本生成sql. 然后使用 <code>MaxCompute CMD</code>的<code>tunnel</code>命令上传CSV文件建表<code>odps@ my_test_project&gt; tunnel upload train.csv pai_test_train;</code>，还有测试数据表<code>odps@ my_test_project&gt; tunnel upload test.csv pai_test_data;</code></p>
-<h3 id="使用pai来解题"><a href="#使用pai来解题" class="headerlink" title="使用pai来解题"></a>使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
-<ol>
-<li>新建一个实验，取名pai_test，这时候我们会得到一个空的实验，接下来就是往实验上拖组件。</li>
-<li>首先选择数据源，在左侧表列表中选择刚刚新建的<code>pai_test_train</code>，<code>pai_test_data</code>，分别拖到右侧的实验图上。这里表同步机制有延迟，如果在所有表中找不到新建的表，可以尝试一下搜索。</li>
-<li>这时候我们的训练表和测试表已经在实验中ready了，就需要去找我们的算法组件了，在<code>组件-机器学习-多分类</code>中，<code>K近邻</code>就是我们需要的算法组件，同样拖拉到实验中。</li>
-<li>组件都已经准备好了，那么就需要告诉pai如果来运行你的组件了，同样采用拖拉的方式，在<code>pai_test_train</code>表的组件下方有个小白点，鼠标拖拉一下可以拉出一根线，把这个线连接到<code>K近邻</code>算法组件上方的右边白点上，两个组件已经关联完成，同理另外一个表连接到右边白点上。</li>
-<li>接下来就是配置算法组件了，要告诉算法，哪些是我的标签列，哪些是我的特征列，点击<code>K近邻</code>算法组件，在右侧的算法配置界面中，<code>选择训练表特征列</code>，这里把除了<code>label</code>字段外的所有字段都勾上，因为<code>lable</code>列是我们的标签列。</li>
-<li>在<code>选择训练表的标签列</code>中选择<code>label</code>字段，下面两个选项都是可选项，可以选择预测表的哪些特征别参与计算，还有产出表选择产出哪些字段，这些都可以选择默认，同理还有<code>参数设置</code>tab，如果对算法没什么研究，选择默认就可以了。</li>
-<li>全部选择好了，点击下方的<code>运行</code>来进行计算。</li>
-</ol>
-<h3 id="产出数据"><a href="#产出数据" class="headerlink" title="产出数据"></a>产出数据</h3><p>运行成功后，会产出一张新表，名字带有随机性，通常格式是<code>pai_temp_5052_75767_1</code>，因为<code>kaggle</code>没有和阿里云的产品进行打通，这里我们需要把数据下载成CSV文件，然后进行上传。</p>
-<ol>
-<li>首先依然是通过<code>tunnel</code>命令进行下载: <code>odps@ my_test_project&gt; tunnel download pai_temp_5052_75767_1 -h true result.csv;</code>,<code>-h true</code>命令表示带上表头。</li>
-<li>打开CSV文件，找到<code>prediction</code>字段，这个就是我们的预测结果了，然后就是上传<code>kaggle</code>了。</li>
-<li>因为<code>kaggle</code>对上传的字段有要求，这样他才能统计出分数，需要一个csv文件，有两列<code>imageId</code>和<code>label</code>，<code>imageId</code>就是一列自增列，从<code>1</code>开始，<code>label</code>列就是我们的结果列。</li>
-<li>打开<code>101</code>那个项目，找到<code>Make a submission</code>那一项，上传我们的CSV文件，就能得到分数了。</li>
-<li>后续可以调整算法参数，慢慢改善算法，提高分数，提高排名，也可以尝试一下别的算法。</li>
-</ol>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/07/19/dataplus-pai/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/06/06/hello-world/">Hello World</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-06-06T12:59:41.000Z">2016-06-06</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/06/06/hello-world/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/06/06/hello-world/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/06/06/hello-world/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1116,6 +1076,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/19/typescript-skill/"></a>
+      </li>
+    
+      <li>
         <a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a>
       </li>
     
@@ -1125,14 +1093,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
-      </li>
-    
-      <li>
-        <a href="/2017/07/27/ios-summary-1/">iOS大保健 - 基础信息的收集</a>
-      </li>
-    
-      <li>
-        <a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a>
       </li>
     
   </ul>
@@ -1168,6 +1128,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
+    <li><a href="/categories/前端/">前端</a><small>1</small></li>
+  
     <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
   
   </ul>
@@ -1198,7 +1160,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/browser/">browser<small>1</small></a>
   
+    <a href="/tags/cache/">cache<small>1</small></a>
+  
     <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/cdn/">cdn<small>1</small></a>
+  
+    <a href="/tags/chunkid/">chunkid<small>1</small></a>
   
     <a href="/tags/co/">co<small>1</small></a>
   
@@ -1314,6 +1282,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/web/">web<small>1</small></a>
   
+    <a href="/tags/webpack/">webpack<small>1</small></a>
+  
     <a href="/tags/yosemite/">yosemite<small>1</small></a>
   
     <a href="/tags/对称加密/">对称加密<small>4</small></a>
@@ -1337,7 +1307,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2017 PerterPon
+	  &copy; 2018 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

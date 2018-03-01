@@ -1,0 +1,588 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head>
+  <meta charset="utf-8">
+  
+  <title>webpack的chunk id和cdn缓存之间的坑 | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="webpack的chunk id和cdn缓存之间的坑">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="webpack的chunk id和cdn缓存之间的坑"/>
+  <meta property="og:site_name" content="PerterPon"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans"/>
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+    
+  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle" />
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>webpack的chunk id和cdn缓存之间的坑</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-02-28T11:49:00.000Z">2018-02-28</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2018/02/28/webpack-chunk-id-with-cdn/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <p>之前项目中引入了一个插件，把webpack的chunk id使用md5代替，使得其无序化，开发环境没有问题，但是在配合CDN使用的时候，却发现每次发布新版本之后，页面直接报错打不开，提示加载某某chunk的时候无法找到，清除缓存之后问题解决，然而把id无序化插件去掉之后就没问题了，看来问题和缓存和chunk id有关。</p>
+<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><h3 id="webpack-chunk"><a href="#webpack-chunk" class="headerlink" title="webpack chunk"></a>webpack chunk</h3><p>先说说webpack的chunk是怎么一回事，如下图：</p>
+<p><img src="https://img.alicdn.com/tfs/TB1PQuNbgmTBuNjy1XbXXaMrVXa-343-390.png" alt=""></p>
+<p>有四个项目文件，分别为：file1.js, file2.js, file3.js, file4.js.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js&#10;file2.js&#10;&#10;file3.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<p>其中，<code>file1</code>依赖了<code>file2</code>，<code>file3</code>依赖了<code>file4</code>，在webpack里面，通常情况下一个文件就是一个module，有时候也有一个文件多个module的情况，不过不多见，webpack会给每一个module分配一个id，这个id是自增的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js -&#62; module1, id: 1&#10;file2.js -&#62; module2, id: 2&#10;&#10;file3.js -&#62; module3, id: 3&#10;file4.js -&#62; module4, id: 4</span><br></pre></td></tr></table></figure>
+<p>因为<code>file1</code>和<code>file2</code>对于<code>file3</code>和<code>file4</code>都没有什么依赖关系，所以webpack把这四个文件分成了两个<code>chunk</code>，同时分别给了一个id，也是自增的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chunkA: ChunkId1&#10;&#9;-&#62; module1&#10;&#9;-&#62; module2&#10;&#10;chunkB: ChunkId2&#10;&#9;-&#62; module3&#10;&#9;-&#62; module4</span><br></pre></td></tr></table></figure>
+<p>一个chunk就对应于webpack打包之后的文件，于是，打包之后我们现在有两个文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;file1.js&#10;            filea.hash.js&#10;file2.js&#10;&#10;----------------------------------&#10;&#10;file3.js&#10;            fileb.hash.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<p>两个chunk所对应的打包后的文件名为: <code>${fileName}.${md5}.js</code>.</p>
+<h3 id="CDN缓存"><a href="#CDN缓存" class="headerlink" title="CDN缓存"></a>CDN缓存</h3><p>项目中使用了覆盖式的CDN缓存方式，也就是不同发布之间没有版本概念，而是直接覆盖原来的文件，因为文件名中有MD5值，所以只要文件内容改变，那么文件名也就改变。</p>
+<p>好处是如果新版本没有变更的文件，可以让浏览器复用之前的缓存，达到最小更新目的。</p>
+<h2 id="问题出现"><a href="#问题出现" class="headerlink" title="问题出现"></a>问题出现</h2><p>原本这一切都运行得不错，直到后来在项目中加入了一个webpack插件，用来做chunk id的无序化，至于加入这个插件的原因，是因为webpack自带的chunk id的生成规则：</p>
+<h3 id="webpack-chunk-id生成方式"><a href="#webpack-chunk-id生成方式" class="headerlink" title="webpack chunk id生成方式"></a>webpack chunk id生成方式</h3><p>webpack的chunk id是从1开始自增的，具体有自己的规则，比如根据引用顺序来给chunk id给定一个id，文件内容的改变并不会影响id，只要引用顺序不变，那么即使文件内容如何改变，都不会影响chunk id，多次打包之后的值都是一样的。</p>
+<h3 id="chunk-id无序化"><a href="#chunk-id无序化" class="headerlink" title="chunk id无序化"></a>chunk id无序化</h3><p>上面说chunk id从1开始自增，也就是不同项目之间，chunk id可能都是一样的，这就导致跨项目间调用chunk变得困难了，为了解决这个问题，就引入了一个插件，可以让chunk id无序化，实质上就是用MD5值来代替了chunk id。</p>
+<h2 id="为何在CDN场景下发布新版本会导致找不到chunk呢？"><a href="#为何在CDN场景下发布新版本会导致找不到chunk呢？" class="headerlink" title="为何在CDN场景下发布新版本会导致找不到chunk呢？"></a>为何在CDN场景下发布新版本会导致找不到chunk呢？</h2><p>把chunk id用MD5值代替，看起来确实没有问题，在版本化的CDN场景下使用或者说在本地开发环境中使用确实是没有问题的，问题出在和覆盖式的CDN同时使用时候的问题。</p>
+<h3 id="问题根源"><a href="#问题根源" class="headerlink" title="问题根源"></a>问题根源</h3><p>首先我们看chunka和chunkb打包之后的代码：</p>
+<p>chunka:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;1&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<p>chunkb:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([1],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<p>chunka中代码，打包前的代码为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import( &#39;./file3&#39; );</span><br></pre></td></tr></table></figure>
+<p>chunka中需要引用id为<code>1</code>的chunk，然后chunkb的代码中，首先用<code>webpackJsonp</code>方法定义了自己的chunk id为：<code>1</code>，这样，整个代码就联系起来了，也就能正常运行了。</p>
+<h3 id="MD5替代chunk-id"><a href="#MD5替代chunk-id" class="headerlink" title="MD5替代chunk id"></a>MD5替代chunk id</h3><p>如果使用MD5来替换原先的chunk id呢？</p>
+<p>chunka:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md51&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<p>chunkb:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md51&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<p>看起来也没什么问题，反正只要引用的chunk id和声明的chunk id对应上就可以了。尝试修改了一些file3的内容，也就是chunkb的内容有了变更之后：</p>
+<p>chunka:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md52&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<p>chunkb:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md52&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<p>chunkb的chunk id变成了: md52，同时引用和声明的chunk id都能对应上，运行没问题，那么问题出在哪里呢？我们看看webpack生成文件的文件名：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;fileName&#125;.$&#123;md5&#125;.js</span><br></pre></td></tr></table></figure>
+<p>因为文件名中有MD5值，所以当修改了chunkb之后，那么chunkb对应的文件名肯定就变更了，这个没问题，而chunka其实内容并没有变更，所以chunka的md5没有变化，也就是说chunka的文件名不变。</p>
+<p>然而在引入chunk id无序化插件之前，chunkb的内容变化了，chunk id是不会变的，所以chunk b变化之后，打包后的chunka的文件名和内容都是没有变化的，使用浏览器缓存也不会有任何问题。</p>
+<h3 id="缓存带来的问题"><a href="#缓存带来的问题" class="headerlink" title="缓存带来的问题"></a>缓存带来的问题</h3><p>chunk id变成MD5之后，chunkb的改变，会导致chunka的文件名没有变，然而chuna的代码其实是变化了的，因为引用chunkb的时候是要填写chunkb的chunk id的，因为chunk b的内容改变，其chunk id也跟着改变，浏览器根据文件名缓存，因为文件名没有变化，所以一直读取的都是以前的文件，也就导致了找不到某某chunk的根源，以前因为内容变化了，chunk id是不会变化的，所以使用并没有问题。</p>
+<h3 id="webpack-MD5生成"><a href="#webpack-MD5生成" class="headerlink" title="webpack MD5生成"></a>webpack MD5生成</h3><p>也许你会说chunka的内容其实是变化了，为啥md5没有改变？其实一开始我也是这么想的，后来看过webpack代码之后就知道原因了:</p>
+<p><img src="https://img.alicdn.com/tfs/TB19pb_bkyWBuNjy0FpXXassXXa-768-819.png" alt=""></p>
+<p>上面是生成hash的事件，而替换代码则远远在这之后，其实之前也猜到个大概，从业务上讲其实chunka的内容并没有任何变更，hash也是不应该改变的。</p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/前端/">前端</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/cache/">cache</a>, <a href="/tags/cdn/">cdn</a>, <a href="/tags/chunkid/">chunkid</a>, <a href="/tags/webpack/">webpack</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2018/01/19/typescript-skill/"  title="">
+ <span>(no title)
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">留言</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2018/02/28/webpack-chunk-id-with-cdn/" data-title="webpack的chunk id和cdn缓存之间的坑" data-url="http://yoursite.com2018/02/28/webpack-chunk-id-with-cdn/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a>
+      </li>
+    
+      <li>
+        <a href="/2018/01/19/typescript-skill/"></a>
+      </li>
+    
+      <li>
+        <a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a>
+      </li>
+    
+      <li>
+        <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">分類</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+  
+    <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/https/">https</a><small>5</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>4</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
+  
+    <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
+  
+    <li><a href="/categories/node/">node</a><small>1</small></li>
+  
+    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+  
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+    <li><a href="/categories/前端/">前端</a><small>1</small></li>
+  
+    <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">標籤</h3>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/JavaScript/">JavaScript<small>1</small></a>
+  
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
+  
+    <a href="/tags/bdd/">bdd<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/browser/">browser<small>1</small></a>
+  
+    <a href="/tags/cache/">cache<small>1</small></a>
+  
+    <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/cdn/">cdn<small>1</small></a>
+  
+    <a href="/tags/chunkid/">chunkid<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/cocoaTouch/">cocoaTouch<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/complicating/">complicating<small>1</small></a>
+  
+    <a href="/tags/computer/">computer<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/dataplus/">dataplus<small>1</small></a>
+  
+    <a href="/tags/ddd/">ddd<small>1</small></a>
+  
+    <a href="/tags/decimal/">decimal<small>1</small></a>
+  
+    <a href="/tags/drive/">drive<small>1</small></a>
+  
+    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+  
+    <a href="/tags/float/">float<small>1</small></a>
+  
+    <a href="/tags/freak/">freak<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>2</small></a>
+  
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
+    <a href="/tags/host/">host<small>1</small></a>
+  
+    <a href="/tags/http/">http<small>5</small></a>
+  
+    <a href="/tags/https/">https<small>5</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>5</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/javascript/">javascript<small>2</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/kaggle/">kaggle<small>1</small></a>
+  
+    <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
+  
+    <a href="/tags/lazyload/">lazyload<small>1</small></a>
+  
+    <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/mainHost/">mainHost<small>1</small></a>
+  
+    <a href="/tags/members/">members<small>1</small></a>
+  
+    <a href="/tags/microwave/">microwave<small>1</small></a>
+  
+    <a href="/tags/mtu/">mtu<small>1</small></a>
+  
+    <a href="/tags/mysql/">mysql<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>3</small></a>
+  
+    <a href="/tags/number/">number<small>1</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
+  
+    <a href="/tags/package/">package<small>1</small></a>
+  
+    <a href="/tags/pai/">pai<small>1</small></a>
+  
+    <a href="/tags/physical/">physical<small>1</small></a>
+  
+    <a href="/tags/pixel/">pixel<small>1</small></a>
+  
+    <a href="/tags/poodle/">poodle<small>1</small></a>
+  
+    <a href="/tags/precision/">precision<small>1</small></a>
+  
+    <a href="/tags/quantum/">quantum<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/rsa/">rsa<small>4</small></a>
+  
+    <a href="/tags/setRootViewController/">setRootViewController<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
+  
+    <a href="/tags/tcp-ip/">tcp/ip<small>1</small></a>
+  
+    <a href="/tags/tdd/">tdd<small>1</small></a>
+  
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
+    <a href="/tags/tls/">tls<small>1</small></a>
+  
+    <a href="/tags/unittest/">unittest<small>1</small></a>
+  
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/url/">url<small>1</small></a>
+  
+    <a href="/tags/web/">web<small>1</small></a>
+  
+    <a href="/tags/webpack/">webpack<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/对称加密/">对称加密<small>4</small></a>
+  
+    <a href="/tags/扩展欧几里德/">扩展欧几里德<small>1</small></a>
+  
+    <a href="/tags/数字证书/">数字证书<small>3</small></a>
+  
+    <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
+    <a href="/tags/计算机网络/">计算机网络<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2018 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>

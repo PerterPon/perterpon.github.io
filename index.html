@@ -118,7 +118,89 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
-      <h1 class="title transition"><a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a></h1>
+      <h1 class="title transition"><a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-06-20T11:39:00.000Z">2018-06-20</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2018/06/20/protocol-in-typescript/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/20/protocol-in-typescript/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="无处不在的耦合"><a href="#无处不在的耦合" class="headerlink" title="无处不在的耦合"></a>无处不在的耦合</h2><p>通常你写的一个React组件，如果需要和别的组件发生交互，那么你会怎么做？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public componentDidMount(): void &#123;&#10;&#9;this.refs.mycom.test();&#10;&#125;&#10;&#10;public render() &#123;&#10;&#9;return (&#10;&#9;&#9;&#60;MyCom ref=&#34;mycom&#34; /&#62;&#10;&#9;);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这种做法相对来说比较普遍，也比较合情合理，那么如果<code>MyCom</code>组件执行了什么操作之后需要通知到父组件呢？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public onNotify(): void &#123;&#10;&#10;&#125;&#10;&#10;public render() &#123;&#10;&#9;return (&#10;&#9;&#9;&#60;MyCom notify=&#123; this.onNotify.bind( this ) &#125; ref=&#34;mycom&#34; /&#62;&#10;&#9;);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>很多时候我们会选择传进去一个回调函数，当<code>MyCom</code>需要发送通知的时候再调用<code>props.notify</code>。</p>
+<p>虽然这种方式能实现我们的需求，但也仅仅是实现而已，你会发现这种方式并不是很优雅，而且当你的回调函数多了之后，那简直就是噩梦，后来来使用这个组件的人完全不知道需要传哪些回调函数进去，也不知道哪些回调是可选的，哪些是必选的。</p>
+<h2 id="protocol"><a href="#protocol" class="headerlink" title="protocol"></a>protocol</h2><p><code>Protocol</code>是<code>Oc</code>里面的概念，类似<code>Java</code>里面的<code>Interface</code>，和<code>TypeScript</code>中的<code>Interface</code>也比较类似，其中有一个用处就是用于两个类之间的通信解耦，而<code>delegate</code>更多的是一种约定俗成的规则，看看具体怎么用:</p>
+<p>首先我有一个A类，用</p>
+<p>A.h</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@protocol ADelegate&#10;&#9;- (void) methodFromA;&#10;@end&#10;&#10;@interface A : NSObject&#10;// &#22768;&#26126;&#22996;&#25176;&#21464;&#37327;&#10;@property (assign, nonatomic) id&#60;ADelegate&#62; delegate;&#10;    - (void) test;&#10;@end</span><br></pre></td></tr></table></figure>
+<p>A.m</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;// &#22312;A&#31867;&#30340;&#23454;&#29616;&#25991;&#20214;&#37324;&#38754;&#65292;&#22312;&#38656;&#35201;&#36827;&#34892;&#22238;&#35843;&#30340;&#26102;&#20505;&#65292;&#21482;&#38656;&#35201;&#35843;&#29992;&#24403;&#21069;&#23454;&#20363;&#30340;delegate&#23545;&#35937;&#65292;&#32780;&#19981;&#29992;&#29702;&#20250;&#21040;&#24213;&#26159;&#35841;&#35843;&#29992;&#20102;&#33258;&#24049;&#65292;&#32780;&#19988;&#23545;&#26041;&#32943;&#23450;&#23454;&#29616;&#20102;delegate&#25351;&#21521;&#30340;protocol&#10;// &#38656;&#35201;&#30340;&#26102;&#20505;&#35843;&#29992;&#10;[self.delegate methodFromA];</span><br></pre></td></tr></table></figure>
+<p>此时，我有一个B类，需要调用A类，同时需要监听回调函数：</p>
+<p>B.h</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#import &#34;A.h&#34;&#10;&#10;// &#36825;&#37324;&#23454;&#29616;&#20102;Adelegate Protocol&#10;@interface B : NSObject &#60;ADelegate&#62;&#10;...&#10;@end</span><br></pre></td></tr></table></figure>
+<p>B.m </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void) someMethod &#123;&#10;&#9;A *aInstance = [[A alloc] init];&#10;&#9;// &#36825;&#37324;&#25226;&#24403;&#21069;&#23454;&#20363;&#36171;&#20540;&#32473;A&#31867;&#23454;&#20363;&#30340;delegate&#23646;&#24615;&#10;&#9;aInstance.delegate = self;&#9;&#10;&#125;&#10;&#10;// &#23454;&#29616;&#20102;ADelegate&#10;- (void) methodFromA &#123;&#10;&#9;&#24403;A&#31867;&#35843;&#29992;self.delegate.methodFromA&#26102;&#65292;&#23601;&#21487;&#20197;&#22312;&#36825;&#37324;&#25191;&#34892;&#20320;&#33258;&#24049;&#30340;&#20195;&#30721;&#20102;&#10;&#9;// ...&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="TypeScript中的delegate"><a href="#TypeScript中的delegate" class="headerlink" title="TypeScript中的delegate"></a>TypeScript中的delegate</h2><p>上面可以看到其实<code>delegate</code>的使用非常简单，只是一种约定的规则，同时<code>delegate</code>其实也是一种设计模式，在JS中其实也可以使用，只是JS是弱类型语言，无法通过编译器来约束一些行为，所以依赖于<code>TypeScript</code>的强类型，我们也可以来使用一下<code>delegate</code>：</p>
+<p>组件A</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export interface ADelegate &#123;&#10;&#9;methodFromA();&#10;&#125;&#10;&#10;export class A extends React.Component&#60;any, any&#62; &#123;&#10;&#9;public delegate: ADelegate;&#10;&#10;&#9;public render() &#123;&#10;&#10;&#9;&#9;// &#35843;&#29992;delegate&#30340;&#26041;&#27861;&#10;&#9;&#9;this.delegate.methodFromA();&#10;&#10;&#9;&#9;return (&#10;&#9;&#9;&#9;&#60;div&#62;&#60;/div&#62;&#10;&#9;&#9;);&#10;&#10;&#9;&#125;&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>组件B</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import &#123; A, ADelegate &#125; from &#39;A&#39;;&#10;&#10;// &#36825;&#37324;&#23454;&#29616;&#20102;Interface: ADelegate&#10;export class B extends React.Component&#60;any, any&#62; implements ADelegate &#123;&#10;&#9;// &#20174;A&#23454;&#29616;&#30340;&#22238;&#35843;&#12290;&#10;&#9;public methodFromA(): void &#123;&#10;&#10;&#9;&#125;&#10;&#10;&#9;public componentDidMount(): void &#123;&#10;&#9;&#9;const aCom: A = &#60;A&#62;this.refs.acom;&#10;&#9;&#9;aCom.delegate = this;&#10;&#9;&#125;&#10;&#10;&#9;public render() &#123;&#10;&#9;&#9;return (&#10;&#9;&#9;&#9;&#60;A ref=&#34;acom&#34; /&#62;&#10;&#9;&#9;);&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>上面的代码可以看到，A组件面向的不是调用他的组件，而是他自己声明的<code>delegate</code>，完全无需关心是谁在调用自己，在什么场景下调用自己</p>
+<p>而B组件也完全不用关心A组件的具体实现，只要实现A组件提供的<code>Interface</code>:<code>ADelegate</code>，从中选择自己需要的方法即可，两者实现解耦，面向delegate编程。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2018/06/20/protocol-in-typescript/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的爱恨情仇</a></h1>
     
   
           <ul>
@@ -1105,180 +1187,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/05/19/https-2/">零门槛学习https--(2)https中s的秘密</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-19T11:46:00.000Z">2017-05-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/05/19/https-2/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-2/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>上一篇：<a href="/2017/05/16/https-1/">零门槛学习https–(1)为什么我们要用https</a></p>
-<p>非对称加密在目前的计算机领域内是非常安全的，主要还是受制于目前的计算能力，或许某天量子计算机的出现会改变这个局面。RSA的本质就是一个数学算法，所以本篇即使你不懂任何计算机知识，也能理解RSA算法的原理，但是其中会涉及到大量的数学知识。</p>
-<h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><p>前面已经介绍过RSA的名称由来，下面来介绍下RSA的安全本质：<code>大整数的因数分解</code>。</p>
-<p>举个例子：<code>求77的因数分解</code>，很简单，解是<code>7和11</code>，或许你在高中或者初中就学过这个，很诧异这能成为现代互联网安全的基础？那么你可以看看下面这个数字：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12301866845301177551304949&#10;58384962720772853569595334&#10;79219732245215172640050726&#10;36575187452021997864693899&#10;56474942774063845925192557&#10;32630345373154826850791702&#10;61221429134616704292143116&#10;02221240479274737794080665&#10;351419597459856902143413</span><br></pre></td></tr></table></figure>
-<p>这个就是人类目前破解过的最长的一个整数，在2009年才破解成功，转成二进制就是768位，而现在普遍都是2048位的加密，如果非要破解，那么所需时间是一个天文数字。如果有一天，有人发明了简单的因数分解的方式，那么RSA就很容易被破解了，目前，基本上只有暴力破解，也就是一个数一个数地测试。</p>
-<h2 id="RSA的思路"><a href="#RSA的思路" class="headerlink" title="RSA的思路"></a>RSA的思路</h2><p>上面那个数等于下面这两个数的乘积，计算这两个数的乘积很简单，计算机在瞬间就可以给出答案，但是只有两个数的乘积，而让你求出其因数，就几乎是不可能了，当然这是基于大整数的情况下，简单的整数，通过暴力破解，还是可以求出来的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">33478071698956898786044169&#10;84821269081770479498371376&#10;85689124313889828837938780&#10;02287614711652531743087737&#10;814467999489&#10;&#12288;&#12288;&#12288;&#12288;&#215;&#10;36746043666799590428244633&#10;79962795263227915816434308&#10;76426760322838157396665112&#10;79233373417143396810270092&#10;798736308917</span><br></pre></td></tr></table></figure>
-<p>我们把这两个数分别称为<code>p</code>和<code>q</code>，这两个数的乘积称为<code>n</code>，从这个角度出发，只要加密者拥有<code>p</code>和<code>q</code>，很容易算出乘积<code>n</code>，而尝试破解的人，只有<code>n</code>，就没法算出<code>p</code>和<code>q</code>了。</p>
-<h2 id="如何生成公私钥？"><a href="#如何生成公私钥？" class="headerlink" title="如何生成公私钥？"></a>如何生成公私钥？</h2><p>本质已经知道了，那么我们来生成RSA的公钥和私钥吧，生成公钥和私钥总共分为五步：</p>
-<h3 id="1-随机选择两个质数p和q"><a href="#1-随机选择两个质数p和q" class="headerlink" title="1. 随机选择两个质数p和q"></a>1. 随机选择两个质数p和q</h3><p>质数又称素数，具体的特性和定义请<a href="https://zh.wikipedia.org/zh/%E7%B4%A0%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
-<p>比如这里我选择了<code>p=17，q=23</code></p>
-<h3 id="2-将这个两个数相乘得到n"><a href="#2-将这个两个数相乘得到n" class="headerlink" title="2. 将这个两个数相乘得到n"></a>2. 将这个两个数相乘得到n</h3><p><code>17 * 23 = 391</code>，<code>391</code>换算成二进制就是<code>110001000</code>，这里的位数就是9位，这就是我们密钥的长度。选择RSA密钥长度的时候，其实就是选择这个n的长度，长度越大，安全性越高，当然加密和解密的时候耗费的计算量也更大。</p>
-<h3 id="3-计算n的欧拉函数φ-n"><a href="#3-计算n的欧拉函数φ-n" class="headerlink" title="3. 计算n的欧拉函数φ(n)"></a>3. 计算n的欧拉函数φ(n)</h3><p>欧拉函数的作用是求得大于1小于n的所有质数的个数，例如符合φ(8)的情况是：<code>2, 3, 5, 7</code>，也就是φ(8)的值为：<code>4</code>，具体有关欧拉函数的其他特性请<a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
-<p>我们这里φ(n)可以这么求值：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#966;(n) = (p-1)(q-1).&#10;&#10;&#36825;&#37324;&#65292;&#966;(n) = ( 17 -1 ) * ( 23 - 1 ) = 352</span><br></pre></td></tr></table></figure>
-<h3 id="4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质"><a href="#4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质" class="headerlink" title="4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质"></a>4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质</h3><p>也就是说，<code>e</code>和<code>φ(n)</code>不能有公约数，并且<code>φ(n)</code>不能是<code>e</code>的倍数。</p>
-<p>举个例子：<code>φ(n)</code> = 352，所以e可以选的数有<code>3, 5, 7, 11 ....</code>，这里我选择<strong><code>17</code></strong>。</p>
-<p>在现实场景中，通常<code>e</code>的选择是<code>65537</code>，为什么要选择这个数呢？请参看<a href="https://crypto.stackexchange.com/questions/3110/impacts-of-not-using-rsa-exponent-of-65537" target="_blank" rel="external">这篇文章</a>，解释得非常清楚，总的来说，比<code>65537</code>大的数，在现有的硬件和软件场景下，会造成计算变慢，而比<code>65537</code>小的数，在安全性上会有减弱，所以<code>65537</code>是一个折中的选择。</p>
-<h3 id="5-计算e对于φ-n-的模反元素d"><a href="#5-计算e对于φ-n-的模反元素d" class="headerlink" title="5. 计算e对于φ(n)的模反元素d"></a>5. 计算e对于<code>φ(n)</code>的模反元素<code>d</code></h3><h4 id="求模"><a href="#求模" class="headerlink" title="求模"></a>求模</h4><p>求模操作在大部分计算机语言中操作符都是<code>%</code>，比如：<code>10 % 3 = 1</code>，指的是余数。</p>
-<h4 id="同余≡"><a href="#同余≡" class="headerlink" title="同余≡"></a>同余<code>≡</code></h4><p>三横的等号，代表同余，两个整数<code>a</code>，<code>b</code>，若它们除以正整数<code>m</code>所得的余数相等，则称 <code>a</code>， <code>b</code>对于模 <code>m</code>同余，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 &#8801; 1 (mod 3)</span><br></pre></td></tr></table></figure>
-<p>10 和 1 对于 <code>3</code> 同余。</p>
-<h4 id="模反元素"><a href="#模反元素" class="headerlink" title="模反元素"></a>模反元素</h4><p>模反元素也成为<code>模逆元</code></p>
-<p>一整数a对同余n之模逆元是指满足以下公式的整数 b</p>
-<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/be54db4848231e9f72f61b746a27d6a0aeace369" alt=""></p>
-<p>也可以写成以下的式子</p>
-<p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/297023f006cd9486fa4192b391dbc819dd8f89e1" alt=""></p>
-<p>整数 a 对模数 n 之模逆元存在的充分必要条件是 a 和 n 互素，若此模逆元存在，在模数 n 下的除法可以用和对应模逆元的乘法来达成，此概念和实数除法的概念相同。</p>
-<p>以上是维基百科对于模反元素的介绍，将<code>e</code>和<code>φ(n)</code>代入公式就变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d &#8801; 1(mod &#966;(n))</span><br></pre></td></tr></table></figure>
-<p>也就是说<code>e * d</code>的结果除以<code>k * φ(n)</code>的余数是<code>1</code>，所以我们的公式就变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d - 1 = k * &#966;(n);</span><br></pre></td></tr></table></figure>
-<p>将<code>e</code>和<code>φ(n)</code>代入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231 * d - 1 = k * 352</span><br></pre></td></tr></table></figure>
-<p>转变一下位置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231x - 352y = 1</span><br></pre></td></tr></table></figure>
-<p>就变成了一个二元一次方程，初中时候就求过二元一次方程的解，但是必须得有两个二元一次方程才能求出解，不然就是一个直线方程了，这里我们采用<a href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95" target="_blank" rel="external">扩展欧几里得算法</a>来进行求解。</p>
-<h4 id="欧几里得算法"><a href="#欧几里得算法" class="headerlink" title="欧几里得算法"></a>欧几里得算法</h4><p>我们先看看欧几里得算法的定义：<code>欧几里得算法又称为辗转相除法，是一种求最大公约数的方法，其核心思想如下图：</code></p>
-<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2iDY8p4XlpuFjSsphXXbJOXXa_!!99218453.gif" alt=""></p>
-<p>假设我们要求<code>120</code>和<code>76</code>的最大公约数，可以这么计算：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39318;&#20808;&#36873;&#25321;&#22823;&#30340;&#25968;&#20943;&#21435;&#23567;&#30340;&#25968;&#10;&#10;120 - 76 = 44&#10;&#10;&#29616;&#22312;&#25105;&#20204;&#21097;&#19979;76 &#21644; 44&#20004;&#20010;&#25968;&#65292;&#32487;&#32493;&#31532;&#19968;&#27493;&#25805;&#20316;&#10;&#10;76 - 44 = 32&#10;&#10;44 - 32 = 12&#10;&#10;32 - 12  = 20&#10;&#10;20 - 12  = 8&#10;&#10;12 - 8  = 4&#10;&#10;8  - 4  = 4&#10;&#10;4  - 4  = 0</span><br></pre></td></tr></table></figure>
-<p>所以，我们就可以求出，<code>120</code>和<code>76</code>的最大公约数是<code>4</code>。</p>
-<h4 id="扩展欧几里得算法"><a href="#扩展欧几里得算法" class="headerlink" title="扩展欧几里得算法"></a>扩展欧几里得算法</h4><p>看名字就可以知道这是欧几里得算法的扩展，其核心思想如下：</p>
-<p>已知a和b，求解一组x, y使得<strong><code>ax+by=Gcd(a, b)=d</code></strong> <code>(Gcd(a, b) 表示a和b的最大公约数)</code>。</p>
-<p>用类似辗转相除法来求解这个等式<code>17x - 352y = 1</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">352 = 17 * 20 + 12&#10;17  = 12 * 1 + 5&#10;12  = 5 * 2 + 2&#10;5   = 2 * 2 + 1</span><br></pre></td></tr></table></figure>
-<p>改变一下等式两边</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12  = 352 - 17 * 20&#10;5   = 17 - 12&#10;2   = 12 - 5 * 2&#10;1   = 5 - 2 * 2</span><br></pre></td></tr></table></figure>
-<p>把等式代入上一个等式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1  = 5 - 2 * 2&#10;1  = 5 -&#65288; 12 - 5 * 2 &#65289;* 2 // &#20195;&#20837;&#31561;&#24335;&#65306;2 = 12 - 5 * 2&#10;1  = 5 - 12 * 2 + 5 * 4&#10;1  = 5 * 5 - 12 * 2&#10;1  = ( 17 - 12 ) * 5 - 12 * 2 // &#20195;&#20837;&#31561;&#24335;&#65306;5 = 17 - 12&#10;1  = 17 * 5 - 12 * 5 - 12 * 2&#10;1  = 17 * 5 - 12 * 7&#10;1  = 17 * 5 - ( 352 - 17 * 20 ) * 7 // &#20195;&#20837;&#31561;&#24335;&#65306;12 = 352 - 17 * 20&#10;1  = 17 * 5 - 352 * 7 + 17 * 140&#10;1  = 17 * 145 - 352 * 7</span><br></pre></td></tr></table></figure>
-<p>即可得出：<code>x = 145, y = 7</code></p>
-<h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p>在第五步中我们想要的<code>d</code>就是这里的x，所以，<code>d = 145</code>。</p>
-<p>作为一个直线方程，这里理论上这里会有无数个整数解，的确，尝试一下就发现，所有整数解都是能计算的，只是数字越大，计算量越大，但是要注意，这里的<code>d</code>不能小于0。</p>
-<h3 id="组合公钥和私钥"><a href="#组合公钥和私钥" class="headerlink" title="组合公钥和私钥"></a>组合公钥和私钥</h3><p>到这里，公钥和私钥所需要的东西都齐全了，<code>({n, e})</code>就是公钥，而<code>({n, d})</code>就是私钥，一般会使用<a href="https://zh.wikipedia.org/zh-cn/ASN.1" target="_blank" rel="external">ASN.1</a>来表达。</p>
-<h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><p>首先，我们用公钥加密。</p>
-<h3 id="要加密的数据m"><a href="#要加密的数据m" class="headerlink" title="要加密的数据m"></a>要加密的数据m</h3><p>m需要满足以下条件：</p>
-<ol>
-<li>m必须是正整数(字符串之类的可以取arcii)</li>
-<li>m必须小于n</li>
-</ol>
-<h3 id="加密公式"><a href="#加密公式" class="headerlink" title="加密公式"></a>加密公式</h3><p><strong><em>m<sup>e</sup> ≡ c (mod n)</em></strong></p>
-<p>这里的<code>c</code>就是我们的密文。</p>
-<p>上面我们计算的n是：<code>391</code>，e是：<code>17</code>， 那假设我们要加密的内容是：<code>11</code>，所以我们的密文就是：<code>198</code>。</p>
-<p>这里非常需要注意的一点就是，需要使用一些大数计算的方式，而不能使用普通的<code>double</code>之类的类型，因为<code>double</code>类型，还有js等语言的默认的数字类型尾数位只有52位，无法精确表达比<code>2的53次</code>更大的数字</p>
-<h3 id="解密公式"><a href="#解密公式" class="headerlink" title="解密公式"></a>解密公式</h3><p><strong><em>c<sup>d</sup> ≡ m (mod n)</em></strong></p>
-<p>c是：<code>198</code>，d是：<code>145</code>，n是：<code>391</code>，解出我们的明文是：<code>11</code>，至此，我们的整个加密和解密过程就结束了。也许你会好奇，为什么这么算就能算出相等的结果，下面就来证明一下。</p>
-<h2 id="公式证明"><a href="#公式证明" class="headerlink" title="公式证明"></a>公式证明</h2><p>我们的加密公式是：</p>
-<p><strong><em>m<sup>e</sup> ≡ c (mod n)</em></strong></p>
-<p>我们的解密公式是：</p>
-<p><strong><em>c<sup>d</sup> ≡ m (mod n)</em></strong></p>
-<p>根据上面的规则，<code>c</code>可以这么表达：</p>
-<p><strong><em>c = m<sup>e</sup> - kn</em></strong></p>
-<p>把<code>c</code>代入我们的解密方程：</p>
-<p><strong><em>(m<sup>e</sup> - kn)<sup>d</sup> ≡ m (mod n)</em></strong></p>
-<p>因为这是一个同余等式，等号左边加减<code>n</code>都不会影响等式，所以我们可以把等式简化为</p>
-<p><strong><em>m<sup>ed</sup> ≡ m (mod n)</em></strong></p>
-<p>当我们在求<code>d</code>的时候有同余等式：</p>
-<p><strong><em>ed ≡ 1 (mod φ(n))</em></strong></p>
-<p>这个等式也可以写成这个样子：</p>
-<p>ed = h * φ(n) + 1</p>
-<p>代入刚刚简化后的等式：</p>
-<p><strong><em>m<sup>hφ(n)+1</sup> ≡ m (mod n)</em></strong></p>
-<p>到这里，只要我们能够证明这个等式是成立的，那么就能够证明我们的加密和解密公式是成立的，这里就有两种情况了：</p>
-<h3 id="m和n是互质的关系"><a href="#m和n是互质的关系" class="headerlink" title="m和n是互质的关系"></a>m和n是互质的关系</h3><p><strong><a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86_(%E6%95%B0%E8%AE%BA" target="_blank" rel="external">欧拉定理</a>)</strong>：<code>如果两个正整数a和n互质，则n的欧拉函数 φ(n) 可以让下面的等式成立：</code></p>
-<p><strong><em>a<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
-<p>我们把<code>m</code>和<code>n</code>代入公式可以得到：</p>
-<p><strong><em>m<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
-<p>因为<code>m</code>和<code>n</code>互质，那么以下等式依然成立：</p>
-<p>(m<sup>φ(n)</sup>)<sup>h</sup> * m ≡ m (mod n)</p>
-<p>对指数稍微换算一下就能得到我们之前的等式了，<code>m</code>和<code>n</code>互质的情况下，我们很容易就能证明之前的等式成立。</p>
-<h3 id="m和n不是互质的关系"><a href="#m和n不是互质的关系" class="headerlink" title="m和n不是互质的关系"></a>m和n不是互质的关系</h3><p>首先我们有<code>n = p * q</code>，因为<code>m</code>和<code>n</code>不是互质的，而因为<code>n</code>是两个质数相乘的结果，也就是说<code>p</code>或者<code>q</code>就是<code>m</code>和<code>n</code>的一个公约数，所以有<code>m = p * k</code>，或者<code>m = q * k</code>。假设<code>p</code>是<code>m</code>和<code>n</code>的公约数，那么就有<code>m = p * k</code>。</p>
-<p>然后因为<code>p</code>和<code>q</code>都是质数，质数和除了是自己倍数之外的数都互质，又因为<code>m</code>必须小于<code>n</code>，所以这里<code>k</code>取值必然不能是<code>q</code>或者更大的数，所以我们有一个结论是：<code>k</code>必然和<code>q</code>互质。</p>
-<p><code>k * p</code>必然和<code>q</code>互质，把<code>k * p</code>和<code>q</code>代入，所以我们能够得出以下同余等式：</p>
-<p><strong><em>(kp)<sup>φ(q)</sup> ≡ 1 (mod q)</em></strong></p>
-<p>因为<code>k * p</code>和<code>q</code>互质，所以可以有：</p>
-<p>(kp)<sup>h * φ(q) + 1</sup> ≡ kp (mod q)</p>
-<p>而我们之前已经求出：</p>
-<p>ed = h * φ(n) + 1</p>
-<p>代入刚刚的式子：</p>
-<p><strong><em>kp<sup>ed</sup> ≡ kp (mod q)</em></strong></p>
-<p>假设有<code>t</code>，使得求模运算可以写成：</p>
-<p>kp<sup>ed</sup> = t <em> q + k </em> p</p>
-<p>转换一下等式：</p>
-<p>kp<sup>ed - 1</sup> = t * q</p>
-<p>先假设<code>k * p</code>和<code>t</code>互质，也就是说<code>k * p</code>能够整除<code>q</code>，因为<code>p</code>和<code>q</code>是互质关系，而上面我们也得出<code>k</code>必然和<code>q</code>互质，所以我们的假设<code>k * p</code>和<code>t</code>互质不成立，上方我们得出<code>k</code>必然和<code>q</code>互质，由此可得<code>p</code>必然能够整除<code>t</code>才能使得等式成立，也就是有：t = t<sup>‘</sup> * p，由此可得如下等式：</p>
-<p><strong><em>kp<sup>ed</sup> = t<sup>‘</sup> pq + kp</em></strong></p>
-<p>因为<code>m = kp</code>，而<code>n = pq</code>，所以：</p>
-<p><strong><em>m<sup>ed</sup> = t<sup>‘</sup>n + m</em></strong></p>
-<p>写成同余等式可得：</p>
-<p><strong><em>m<sup>ed</sup> ≡ m (mod n)</em></strong></p>
-<p>这里就得出了我们刚刚求出的等式。</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>到这里，我们已经证明了两种情况下等式都是成立了，也就是明文通过公钥加密之后，使用私钥也必然能够得到原本的结果，RSA算法也就成立了。</p>
-<h2 id="RSA中的对称性"><a href="#RSA中的对称性" class="headerlink" title="RSA中的对称性"></a>RSA中的对称性</h2><p>其实你会发现，RSA里面，公钥加密的东西私钥能够解密，同样的，从公式中发现，私钥加密的东西公钥也能解密，这也是非常重要的一个特性。那么，为什么不能把<code>({n, d})</code>作为公钥给用户呢？因为<code>({n, e})</code>中，<code>n</code>是公开的，<code>e</code>基本都使用常数<code>65537</code>，所以很容易就被猜到了，因此，虽然在算法上都能加密和解密，但是只把<code>({n, e})</code>作为公钥，公钥和私钥有非常严格的区分。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了这么安全的加密方式，那么我们就可以开始给HTTP加密了，那么https究竟是怎么做的呢，一起来看看：</p>
-<p><a href="/2017/05/19/https-3/">零门槛学习https–(3)https的安全策略</a></p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/05/19/https-2/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1302,7 +1210,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
-        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的坑</a>
+        <a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a>
+      </li>
+    
+      <li>
+        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的爱恨情仇</a>
       </li>
     
       <li>
@@ -1315,10 +1227,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
     
       <li>
         <a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a>
-      </li>
-    
-      <li>
-        <a href="/2017/09/04/main-host/">前端如何获取主域名(根域名)</a>
       </li>
     
   </ul>
@@ -1353,6 +1261,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <li><a href="/categories/physical/">physical</a><small>2</small></li>
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+    <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
   
     <li><a href="/categories/前端/">前端</a><small>1</small></li>
   
@@ -1403,6 +1313,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
     <a href="/tags/computer/">computer<small>1</small></a>
+  
+    <a href="/tags/coupling/">coupling<small>1</small></a>
   
     <a href="/tags/cover/">cover<small>1</small></a>
   
@@ -1478,6 +1390,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/precision/">precision<small>1</small></a>
   
+    <a href="/tags/protocol/">protocol<small>1</small></a>
+  
     <a href="/tags/quantum/">quantum<small>1</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
@@ -1497,6 +1411,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <a href="/tags/timer/">timer<small>1</small></a>
   
     <a href="/tags/tls/">tls<small>1</small></a>
+  
+    <a href="/tags/typescript/">typescript<small>1</small></a>
   
     <a href="/tags/unittest/">unittest<small>1</small></a>
   

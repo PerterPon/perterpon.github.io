@@ -118,6 +118,87 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2018/06/23/strong-type-weak-type/">强类型？弱类型？强类型！</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-06-23T07:42:00.000Z">2018-06-23</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2018/06/23/strong-type-weak-type/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/23/strong-type-weak-type/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <h2 id="“灵活”的JavaScript"><a href="#“灵活”的JavaScript" class="headerlink" title="“灵活”的JavaScript"></a>“灵活”的<code>JavaScript</code></h2><p>以前我很喜欢<code>JavaScript</code>，并不仅仅是因为他是我吃饭的工具，更多因为他非常灵活，从学校了写多了<code>C++</code>或者<code>Java</code>，遇到各种诡异的编译链接等等的错误，到<code>JavaScript</code>弱类型动态语言，简直就是满地撒欢。</p>
+<p>我可以使用各种奇淫巧技，虽然比不上<code>Python</code>，也足够让我用1行代码实现别人3行代码的功能，当时我以同样的功能下代码字符越少越牛逼为荣。</p>
+<p>然而慢慢地，别人开始接手我写的代码，包括自己开始看以前自己写的代码，虽然别人有三行代码，但是一眼就看明白了三行代码所表达的意思，而我的一行代码，看了好几分钟才能看明白所表达的意思，有时候还不一定正确，也许需要跑起来才能知道效果，我开始质疑自己的这种行为，比如以下行为：</p>
+<ul>
+<li><code>~~n</code>， 效果等同于<code>Math.floor( n )</code>，虽然运行更快，但是一眼并不能看出什么意思，而函数<code>Math.floor</code>一眼就能看出什么意思。</li>
+<li><code>n === n</code>，效果等同于<code>isNaN( n )</code>，因为<code>NaN</code>并不等于他自己。</li>
+<li><code>(![]+[])[+[]]+(![]+[])[+!+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]</code>甚至包括这种，我还真写过，只是没有这么夸张。</li>
+</ul>
+<h2 id="灵活的代价"><a href="#灵活的代价" class="headerlink" title="灵活的代价"></a>灵活的代价</h2><p>下面的代码是一个真实的例子，我调用了别人的代码，他的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;&#10;    ...&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>返回的是一个<code>Promise</code>，所以我用<code>await</code>去调用，到这里并没有问题。</p>
+<p>而出现问题来源于一次需求的增加，在执行这种函数时，需要判断一些意外情况，如果出现意外，就弹出一个对话框，让用户点击确认后才继续执行，于是他的代码变成了: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;function test( needConfirm ) &#123;&#10;&#10;    ...&#10;&#10;    if ( needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这么改动乍一看也没什么问题，如果需要确认，就弹出一个对话框，给用户确认，当用户点击确认的时候，在回调函数里面执行原本的操作。</p>
+<p>而对于我的代码来说，我依赖于<code>doSomeAsync</code>执行的结束，所以，当我任然使用<code>await test( true )</code>去调用时，我的代码就报错了，因为<code>true === needConfirm</code>的时候返回的是<code>undefined</code>，<code>await</code>并不会等待，而是继续执行下面的代码，所以导致了错误的出现。</p>
+<h2 id="“束缚”的TypeScript"><a href="#“束缚”的TypeScript" class="headerlink" title="“束缚”的TypeScript"></a>“束缚”的<code>TypeScript</code></h2><p>相信以上的代码绝大部分人都写过，我们再仔细看下，其实上面这段代码的问题在于函数的行为不一致，正常情况是返回一个<code>Promise</code>，而分支情况是返回一个<code>undefined</code>，我们看看在<code>TypeScript</code>下怎么写这段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#35748;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你任然这么写，那么<code>TypeScript</code>的编译阶段就会报错，因为你规定了函数需要返回一个<code>Promise</code>，但是却存在返回<code>undefined</code>的情况，你不得不去修改你的代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;functon test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;&#10;        let resolveFunc = null;&#10;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: async function(): Promise&#60;void&#62; &#123;&#10;                const result = await doSomeAsync();&#10;                resolveFunc( result );&#10;            &#125;&#10;        &#125; );&#10;&#10;        return new Promise( ( resolve, reject ) =&#62; &#123;&#10;            resolveFunc = resolve;&#10;        &#125; );&#10;    &#125;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>编译通过，函数行为一致，调用者也无需感知里面的逻辑。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>强类型写起来限制会更多，然而对于代码的可维护性，可运行性都有很大的提升。</p>
+<p>现在前端的复杂性提升地非常快，几年前也许前端仅仅只是更多作为展示型页面存在，但是现在的前端已经承载了太多的东西，用户的交互也发生了很大变化，<code>JavaScript</code>也可以写<code>ReactNative</code>的APP，可以写<code>NodeJs</code>服务，可以用<code>NodeWebkit</code>等工具写跨平台的客户端，使用<code>TypeScript</code>严格按照强类型语言去写你的应用，让你的应用具备更高的可读性和可维护性。</p>
+<p>当然事事无绝对，还是得看你的场景，杀鸡焉用牛刀，<code>JavaScript</code>自有存在的意义，至少是目前浏览器官方语言，当你的应用重逻辑时，放手用`TypeScript吧。 </p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2018/06/23/strong-type-weak-type/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a></h1>
     
   
@@ -1037,156 +1118,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/05/19/https-3/">零门槛学习https--(3)https的安全策略</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-19T13:46:00.000Z">2017-05-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/05/19/https-3/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-3/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>上一篇：<a href="/2017/05/19/https-2/">零门槛学习https–(2)https中s的秘密</a></p>
-<p>上一篇我们已经把非对称加密<code>RSA</code>算法的原理已经摸清楚了，有了加密算法，我们就能够开始加密了。当然非对称加密还有好几种，这里我们只讨论<code>RSA</code>。</p>
-<h2 id="RSA算法的局限性"><a href="#RSA算法的局限性" class="headerlink" title="RSA算法的局限性"></a>RSA算法的局限性</h2><p>在RSA的加密原理中，我们看到对明文<code>m</code>的要求是：</p>
-<ol>
-<li>m必须是整数。</li>
-<li>m必须小于n。</li>
-</ol>
-<p>第一个条件很容易满足，文字可以转成<code>arcii</code>，而二进制文件没有小数。问题在第二个条件，通常<code>n</code>的选择是<code>2048</code>位，所以这也就意味着我们每加密一次的数据，二进制长度不得超过2048位，这个局限性就比较大了，因为 <code>2048 / 8 = 256</code>，也就是一次最多只能加密<code>256 byte</code>的东西，所以超出部分就只能分片加密了，而每次加密其实涉及到的计算量还挺大的，都是大数的幂次方计算，所以，如果在一个<code>https</code>请求中，完全采用RSA加密，那么客户端和服务端的计算量简直不可想象，特别是服务端，会造成用户体验异常低下。</p>
-<h2 id="非对称加密的解决办法"><a href="#非对称加密的解决办法" class="headerlink" title="非对称加密的解决办法"></a>非对称加密的解决办法</h2><p>这里我们已经有了相对来说能够保证安全的方式，但是其计算量太大导致无法大规模应用，其他非对称加密的计算量同样非常大，那么，只能另寻他法了，剩下的算法就只有对称加密和摘要算法了，摘要算法不可逆，加密了之后就没法解了，肯定不适合，那么就只剩下对称加密了。</p>
-<h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a>对称加密</h3><p>之前我们没有直接用对称加密的原因是因为，如果对称加密的秘钥写死在客户端里面，那么很容易就被人拿到了，如果每次都随机生成，那么无法用加密的方式分发到对方手中。</p>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>聪明的革命先烈们这时候就想到了，那我们用非对称加密来加密对称加密的密钥，然后用对称加密不就行了么？这样既避免了非对称加密的庞大的计算量，又能够避免对称加密的密钥被泄露，完美地解决了这个问题。</p>
-<h2 id="新的问题出现"><a href="#新的问题出现" class="headerlink" title="新的问题出现"></a>新的问题出现</h2><p>上面的解决方案看起来似乎很完美，很快大家都开始实装，代码跑起来没有问题，加密解密也成功得运行了，而且当有人尝试拿到密文，也无从下手解密，突然，人们意识到一个问题：</p>
-<h3 id="MIM-man-in-the-middle-中间人攻击"><a href="#MIM-man-in-the-middle-中间人攻击" class="headerlink" title="MIM(man in the middle)中间人攻击"></a>MIM(man in the middle)中间人攻击</h3><p>有个很常见的场景，假设用户A通过B的网关上网，那么A的所有流量都会经过B，也就是B能看到A的所有进出的流量，RSA在算法层面虽然没法破解，但是有人想到，RSA任然存在一个传递公钥的过程，并且这是明文的，那么就有如下场景：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. A&#21644;&#26381;&#21153;&#22120;S&#36827;&#34892;&#36890;&#20449;&#65292;&#24182;&#19988;&#30001;S&#29983;&#25104;&#20844;&#38053;&#21644;&#31169;&#38053;&#65292;&#24182;&#22312;&#36830;&#25509;&#24314;&#31435;&#21518;&#65292;S&#25226;&#20844;&#38053;&#32473;A&#12290;&#10;2. &#22240;&#20026;A&#32463;&#30001;B&#19978;&#32593;&#65292;&#20063;&#23601;&#26159;&#35828;S&#30340;&#20844;&#38053;&#26159;&#32463;&#30001;B&#20132;&#32473;A&#30340;&#12290;&#10;3. &#36825;&#20010;&#26102;&#20505;&#65292;B&#21487;&#20197;&#20266;&#35013;&#25104;&#26381;&#21153;&#31471;S1&#25509;&#21463;A&#30340;&#36830;&#25509;&#65292;&#24182;&#29983;&#25104;&#33258;&#24049;&#30340;&#20844;&#38053;&#21644;&#31169;&#38053;&#65292;&#20877;&#20266;&#35013;&#25104;&#23458;&#25143;&#31471;C&#21521;S&#21457;&#36865;&#35831;&#27714;&#12290;&#10;4. S&#25226;&#20844;&#38053;&#32473;&#20102;B&#65292;B&#20877;&#25226;&#33258;&#24049;&#30340;&#20844;&#38053;&#32473;A&#65292;&#25152;&#20197;&#23601;&#21464;&#25104;&#20102;:&#10;5. A&#21644;B&#36890;&#20449;&#65292;B&#20877;&#21644;S&#36890;&#20449;&#65292;A&#34429;&#28982;&#21152;&#23494;&#20102;&#65292;&#20294;&#26159;&#26159;&#29992;&#30340;B&#30340;&#20844;&#38053;&#65292;&#25152;&#20197;B&#26377;&#31169;&#38053;&#33021;&#22815;&#35299;&#23494;&#65292;&#28982;&#21518;&#20877;&#29992;S&#30340;&#20844;&#38053;&#21152;&#23494;&#65292;&#21457;&#36865;&#32473;S&#65292;S&#20219;&#28982;&#33021;&#35299;&#23494;&#12290;&#10;6. &#25972;&#20010;&#36807;&#31243;&#31070;&#19981;&#30693;&#39740;&#19981;&#35273;&#65292;B&#23601;&#24708;&#24708;&#26597;&#30475;&#20102;&#25152;&#26377;&#30340;&#36890;&#20449;&#20869;&#23481;&#10;7. &#29978;&#33267;&#26377;&#21487;&#33021;&#22312;A&#30003;&#35831;&#25226;&#33258;&#24049;&#32593;&#38134;&#37324;&#38754;&#30340;&#38065;&#36716;&#32473;D&#26102;&#65292;B&#20063;&#21487;&#20197;&#20599;&#20599;&#25913;&#25104;&#33258;&#24049;&#30340;&#65292;S&#35748;&#20026;&#36825;&#26159;A&#21457;&#20986;&#30340;&#65292;&#23601;&#25226;&#38065;&#36716;&#32473;&#20102;B&#12290;</span><br></pre></td></tr></table></figure>
-<h3 id="问题的原因"><a href="#问题的原因" class="headerlink" title="问题的原因"></a>问题的原因</h3><p>显然，人们深刻地认识到，因为数据的可复制性，无论是什么算法，都无法改变数据会被中间人窥探甚至修改的问题（以后量子加密的出现或许能解决这个问题，因为量子一旦被观测，叠加态就会坍缩，接收者就能够知道自己接收到的数据是否被窥探了）。</p>
-<p>问题源于生活，那么在生活中一定可以找到答案。你把钱给了银行，银行给你承诺，你想用钱的时候一定会还给你，银行在这里承担了一个被所有人信任的角色，在计算机里面其实也一样，于是，人们为计算机通信引入了一个第三方：CA(Certificate Authority)。</p>
-<h2 id="数字证书"><a href="#数字证书" class="headerlink" title="数字证书"></a>数字证书</h2><p>CA又称为证书颁发机构，主要用于颁发数字证书，用一个无法篡改的数字证书来表明身份，防止数据在通讯过程中被篡改和窥探，数字证书通常分为以下几种：</p>
-<ol>
-<li>个人身份证书。</li>
-<li>企业或机构身份证书。</li>
-<li>支付网关证书。</li>
-<li>服务器证书。</li>
-<li>企业或机构代码签名证书。</li>
-<li>安全电子邮件证书。</li>
-<li>个人代码签名证书。</li>
-</ol>
-<h3 id="数字证书如何生成？"><a href="#数字证书如何生成？" class="headerlink" title="数字证书如何生成？"></a>数字证书如何生成？</h3><ol>
-<li>首先，CA要生成一个自己的公钥和私钥，这里通常只生成一次就行了。</li>
-<li>有人向CA申请证书，把自己的各种身份信息，营业执照，域名，到期时间等等的信息发给CA。</li>
-<li>CA严格审核申请者的信息，申请通过后，CA为申请者生成一对公钥和私钥（也可以自己生成），把CA的签发人、地址、签发时间、过期失效时间等信息，加上申请者的基本信息以及DNS、域名、公钥等基本信息整合到一起，生成一个证书，这里的证书还未签名，仅仅是很多信息的聚合而已。</li>
-<li>通过通用的摘要算法（通常是sha256）将信息摘要提取出来，然后用CA的私钥加密，这里因为私钥严格保存，所以别人无法伪造签名，除非拿到私钥。</li>
-<li>把上一步计算出来的信息摘要附加到第三步生成的证书中，之后，这个证书就称为了一个被CA签名过的证书了，因为私钥被CA严格保存，所以没有人能够模仿CA的签名，这也就是签名安全的根本了。</li>
-<li>服务端把这个证书挂到自己的服务器上去，就能够供人使用了。</li>
-</ol>
-<p>以上整个过程称为：Public Key Infrastructure（PKI，公开密钥基础建设）</p>
-<h3 id="如何验证证书的有效性呢？"><a href="#如何验证证书的有效性呢？" class="headerlink" title="如何验证证书的有效性呢？"></a>如何验证证书的有效性呢？</h3><ol>
-<li>客户端向服务端发起请求，服务端返回数字证书。</li>
-<li>客户端拿到证书之后，首先解析证书，拿到被私钥加密的摘要密文，然后再拿出证书的元数据。</li>
-<li>用CA的公钥进行解密，CA的公钥是公开的，任何人都可以获取（会内置在操作系统里面，或者在CA的官方网站中可以获取），解密后拿到摘要的原文。</li>
-<li>对元数据再次执行摘要算法，拿到摘要信息，然后和第三步的结果进行对比，只有当结果一致的时候，才认为证书是有效的。</li>
-</ol>
-<h3 id="整个过程可以理解为下图："><a href="#整个过程可以理解为下图：" class="headerlink" title="整个过程可以理解为下图："></a>整个过程可以理解为下图：</h3><p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB21kBQqMNlpuFjy0FfXXX3CpXa_!!99218453.png" alt=""></p>
-<h2 id="如果我们获取CA的公钥的时候，已经被替换了怎么办？"><a href="#如果我们获取CA的公钥的时候，已经被替换了怎么办？" class="headerlink" title="如果我们获取CA的公钥的时候，已经被替换了怎么办？"></a>如果我们获取CA的公钥的时候，已经被替换了怎么办？</h2><p>设想一下，当我们获取CA公钥的时候，已经被人替换了，这时候真正的证书反而没法解析，只有被伪造的证书才能被解析了，这里就有了证书链的概念。</p>
-<h3 id="证书链"><a href="#证书链" class="headerlink" title="证书链"></a>证书链</h3><p>通常在一个证书链中包含以下三种结构：</p>
-<ol>
-<li>end-user。终端用户，也就是https中真正用来加密通信的证书。</li>
-<li>intermediates。给end-user签发证书的CA的证书，主要用来校验end-user的证书是否合法的证书。</li>
-<li>root。root也是CA证书，区别在于，root证书是给intermediates签发证书的，用来校验intermediates的合法性。</li>
-</ol>
-<h3 id="证书链的签发。"><a href="#证书链的签发。" class="headerlink" title="证书链的签发。"></a>证书链的签发。</h3><ol>
-<li>首先，root自己先生成一对公钥和私钥，然后用自己的私钥给自己自签名，因为root的绝对信任。</li>
-<li>二级CA向root申请证书，root按照上面提到的数字证书的生成方式，先给CA生成一对公钥和私钥，然后</li>
-<li>把CA的各种信息算出摘要，再用自己的私钥加密，加上给二级CA生成的公钥，就组成了一张CA的证书。</li>
-<li>然后有用户向二级CA申请证书时，按照这个步骤一步步签发，就形成了证书链。</li>
-<li>证书一级一级签发，中间无法伪造，因为root证书的绝对安全，保证了整个证书链的安全。</li>
-<li>证书链是有长度限制的，root颁发证书的时候会添加此字段，所以证书申请者无法再为别人签发证书。</li>
-</ol>
-<h3 id="CA的类型"><a href="#CA的类型" class="headerlink" title="CA的类型"></a>CA的类型</h3><p>上面提到intermediates和root都是CA证书，所以CA其实也就分为root CAs和intermediates CAs，root CAs可以认为是一个品牌，而intermediates CAs则是真正使用这个品牌生产产品的企业，举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#21703;&#21704;&#21704;&#27597;&#20844;&#21496;&#65292;&#25317;&#26377;&#21703;&#21704;&#21704;&#21697;&#29260;&#65292;&#20294;&#26159;&#24182;&#27809;&#26377;&#33258;&#24049;&#30340;&#20135;&#21697;&#65292;&#20570;&#30340;&#21482;&#26159;&#32473;&#23376;&#20844;&#21496;&#25480;&#26435;&#21697;&#29260;&#65292;&#20063;&#23601;&#26159;root.&#10;&#23376;&#20844;&#21496;A&#65292;&#29983;&#20135;&#30719;&#27849;&#27700;&#65292;&#26159;&#19968;&#20010;intermediates.&#10;&#23376;&#20844;&#21496;B&#65292;&#29983;&#20135;&#20843;&#23453;&#31909;&#65292;&#26159;&#19968;&#20010;intermediates.&#10;&#23376;&#20844;&#21496;C&#65292;&#29983;&#20135;&#27225;&#27713;&#65292;&#20063;&#26159;&#19968;&#20010;intermediates.</span><br></pre></td></tr></table></figure>
-<h3 id="为什么不能用root-CA的私钥直接签名？"><a href="#为什么不能用root-CA的私钥直接签名？" class="headerlink" title="为什么不能用root CA的私钥直接签名？"></a>为什么不能用root CA的私钥直接签名？</h3><p>主要还是从安全性上考虑，私钥是需要放到服务器上去做签名用的，所以不可避免可能服务器会被人攻破，导致私钥泄露，所以root的私钥隔离得越远越好，如果某个intermediates的私钥被窃取了，那么用root的私钥再签发一个intermediates证书即可，不会威胁到整个root证书下所有人的安全。root CA的私钥一般锁在大金库里面，完全得物理隔离，以下是godaddy对这个的解释：</p>
-<p><strong><em>intermediate certificates are used as a stand-in for our root certificate. We use intermediate certificates as a proxy because we must keep our root certificate behind numerous layers of security, ensuring its keys are absolutely inaccessible.</em></strong></p>
-<h3 id="root证书的获取"><a href="#root证书的获取" class="headerlink" title="root证书的获取"></a>root证书的获取</h3><p>回到我们最初的问题，获取证书的时候就已经被替换了怎么办？这里我们只需要保证root证书的获取没有问题，那么只要其他中间证书被替换，最后校验root证书这里还是没法通过，那么如果保证root证书的获取是安全的呢？</p>
-<ol>
-<li>首先，成为一个CA的一个前提是你要向微软等操作系统厂商申请加入他们的白名单，就是把自己的root证书内置在操作系统里面，随着系统的安装和升级的过程就已经被安装到操作系统里面。</li>
-<li>浏览器等终端在验证的时候，就直接调用操作系统的接口，获取证书，用来验证，例如chrome和ie。</li>
-<li>有些浏览器类似firefox有一套自己的证书系统，是随着安装firefox的时候，安装到本地，这样，即使操作系统的证书被篡改了，firefox依然有能力验证证书的有效性。</li>
-</ol>
-<p>root证书并不会很多，目前主流的基本就只有：Symantec(VeriSign/GeoTrust)、Comodo、GoDaddy，也是被这几家垄断，签发证书躺着赚钱，所以现在也有一些公益的组织开始提供免费证书。</p>
-<h3 id="CRL（Certificate-Revocation-List）"><a href="#CRL（Certificate-Revocation-List）" class="headerlink" title="CRL（Certificate Revocation List）"></a>CRL（Certificate Revocation List）</h3><p>CRL是证书吊销列表，早先的浏览器通过这种方式把这个列表缓存在本地，用以验证证书是否有效。但是因为客户端时间不可控，所以这种方式还是存在一定的风险。</p>
-<h3 id="OCSP协议（Online-Certificate-Status-Protocol）"><a href="#OCSP协议（Online-Certificate-Status-Protocol）" class="headerlink" title="OCSP协议（Online Certificate Status Protocol）"></a>OCSP协议（Online Certificate Status Protocol）</h3><p>除了CRL的方式，还有一种在线证书状态协议OCSP，验证的时候会从CA直接获取验证结果，主要用于证书过期吊销等的验证，主流浏览器都已经支持，可以防止因为缓存或者客户端时间不正确导致的证书过期时间判断不准确的问题。</p>
-<h2 id="如何验证二级CA的证书？"><a href="#如何验证二级CA的证书？" class="headerlink" title="如何验证二级CA的证书？"></a>如何验证二级CA的证书？</h2><p>浏览器和操作系统里面只内置了根证书，那么那些二级CA的证书又该如何验证呢？</p>
-<p>这里有两种情况：</p>
-<h3 id="服务端没有返回中间证书"><a href="#服务端没有返回中间证书" class="headerlink" title="服务端没有返回中间证书"></a>服务端没有返回中间证书</h3><p>我们来看看谷歌的证书：</p>
-<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2SzdlustnpuFjSZFvXXbcTpXa_!!99218453.png" alt=""></p>
-<p><code>证书颁发机构信息访问</code>，这一栏里面标示了此证书的证书颁发机构如何访问和验证，标红框的地址就是CA的证书下载地址，下面还有OCSP协议的验证地址。</p>
-<h3 id="服务端返回了中间证书"><a href="#服务端返回了中间证书" class="headerlink" title="服务端返回了中间证书"></a>服务端返回了中间证书</h3><p>比较适用于实际情况，因为上一种情况会产生额外的http请求，访问速度就会比较慢了。</p>
-<p>这里返回了三个证书：</p>
-<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2C3E3u.hnpuFjSZFEXXX0PFXa_!!99218453.png" alt=""></p>
-<p>证书链类似下面这样，可以自由配置:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE-----&#10;&#33258;&#24049;&#30340;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----&#10;-----BEGIN CERTIFICATE-----&#10;&#29238;&#32423;&#30340;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----&#10;-----BEGIN CERTIFICATE-----&#10;&#29238;&#32423;&#30340;&#29238;&#32423;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----</span><br></pre></td></tr></table></figure>
-<h2 id="end-user证书的类型"><a href="#end-user证书的类型" class="headerlink" title="end-user证书的类型"></a>end-user证书的类型</h2><p>申请者能够申请的证书种类非常多，价格相差也很大，主要有以下几种：</p>
-<ol>
-<li><p>OV（Organization Validation SSL），以某个组织为维度签发证书，通常这都是一个公司，域名采用通配符的方式来签发，以适应组织业务的灵活发展，例如：<code>*.tmall.com</code><br>，也就是任何<code>tmall.com</code>的三级域名都可以使用这个证书，避免重复申请。使用OV证书的网站访问时候类似下面这样：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2y9fmtYBnpuFjSZFGXXX51pXa_!!99218453.png" alt=""></p>
-</li>
-<li><p>DV（Domain Validation SSL），一个域名对应一个证书，无法使用通配符，这是最便宜的证书，申请无需人工干预，不需要组织信息，因为价格便宜，由某CA最早推出来之后，很受欢迎，但是因为没有人工审核，很多犯罪网站都使用DV。</p>
-</li>
-<li>EV（Extended Validation Certificate），扩展验证证书，价格最高，审核最严，也是安全性最高的证书，能够使用一些安全性更高的加密算法，例如椭圆曲线算法，访问时还能在浏览器地址栏显示绿色，并且显示组织的名称，看起来非常高大上，如下图：<br> <img src="https://img.alicdn.com/imgextra/i3/99218453/TB2l43etYlmpuFjSZFlXXbdQXXa_!!99218453.png" alt=""></li>
-</ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目前整个互联网建立在对CA信任的基础上，要是CA作恶，那么整个互联网就会混乱了。之前就有发生过有CA误签发google证书，导致google差点被中间人攻击。</p>
-<p>至此，整个<code>https</code>的加密原理和安全认证机制理论知识我们都已经讲完了，我们来回顾一下：首先客户端先校验证书，从服务端证书到二级CA再到根证书，然后双方生成一个对称加密的密钥，用证书里面的公钥加密，发送给服务端，服务端用自己的私钥解密，拿到对称加密的密钥之后，双方开始通信。</p>
-<p>这套加密系统其实适用于所有客户端和服务端的通信，所以网景公司在1994年推出浏览器时，同时推出了ssl，应用到http就变成了https。后面咱们来看看https中，ssl协议的一些具体细节。</p>
-<p><a href="/2017/05/19/https-4/">零门槛学习https–(4)https协议详解</a></p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/05/19/https-3/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1210,6 +1141,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2018/06/23/strong-type-weak-type/">强类型？弱类型？强类型！</a>
+      </li>
+    
+      <li>
         <a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a>
       </li>
     
@@ -1225,10 +1160,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2017/11/24/thinking-of-lazy-load/">最近对于懒加载的一些思考</a>
       </li>
     
-      <li>
-        <a href="/2017/09/12/why-MTU-equals-1500/">什么是MTU？为什么MTU值普遍都是1500？</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -1241,6 +1172,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
     <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
   
     <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
     <li><a href="/categories/basis/">basis</a><small>1</small></li>
   
@@ -1278,11 +1211,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/Google/">Google<small>1</small></a>
   
-    <a href="/tags/JavaScript/">JavaScript<small>1</small></a>
+    <a href="/tags/JavaScript/">JavaScript<small>2</small></a>
   
     <a href="/tags/Javascript/">Javascript<small>1</small></a>
   
     <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/TypeScript/">TypeScript<small>1</small></a>
   
     <a href="/tags/adblock/">adblock<small>1</small></a>
   

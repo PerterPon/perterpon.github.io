@@ -5,13 +5,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>彙整：2017 | PerterPon</title>
+  <title>强类型？弱类型？强类型！ | PerterPon</title>
   <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="强类型和弱类型的抉择">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="强类型？弱类型？强类型！"/>
   <meta property="og:site_name" content="PerterPon"/>
 
   
@@ -101,334 +103,155 @@ body{ -webkit-animation: bugfix infinite 1s; }
   	<div class="inner">
       <div class="padding">
     		
-          <h2>Gone With the Wind</h2>
+          <h1>强类型？弱类型？强类型！</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-06-23T07:42:00.000Z">2018-06-23</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/23/strong-type-weak-type/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
         
       </div>
   	</div>
   </div>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper" class="padding">
-<h2 class="archive-title">2017</h2>
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <h2 id="“灵活”的JavaScript"><a href="#“灵活”的JavaScript" class="headerlink" title="“灵活”的JavaScript"></a>“灵活”的<code>JavaScript</code></h2><p>以前我很喜欢<code>JavaScript</code>，并不仅仅是因为他是我吃饭的工具，更多因为他非常灵活，从学校了写多了<code>C++</code>或者<code>Java</code>，遇到各种诡异的编译链接等等的错误，到<code>JavaScript</code>弱类型动态语言，简直就是满地撒欢。</p>
+<p>我可以使用各种奇淫巧技，虽然比不上<code>Python</code>，也足够让我用1行代码实现别人3行代码的功能，当时我以同样的功能下代码字符越少越牛逼为荣。</p>
+<p>然而慢慢地，别人开始接手我写的代码，包括自己开始看以前自己写的代码，虽然别人有三行代码，但是一眼就看明白了三行代码所表达的意思，而我的一行代码，看了好几分钟才能看明白所表达的意思，有时候还不一定正确，也许需要跑起来才能知道效果，我开始质疑自己的这种行为，比如以下行为：</p>
+<ul>
+<li><code>~~n</code>， 效果等同于<code>Math.floor( n )</code>，虽然运行更快，但是一眼并不能看出什么意思，而函数<code>Math.floor</code>一眼就能看出什么意思。</li>
+<li><code>n === n</code>，效果等同于<code>isNaN( n )</code>，因为<code>NaN</code>并不等于他自己。</li>
+<li><code>(![]+[])[+[]]+(![]+[])[+!+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]</code>甚至包括这种，我还真写过，只是没有这么夸张。</li>
+</ul>
+<h2 id="灵活的代价"><a href="#灵活的代价" class="headerlink" title="灵活的代价"></a>灵活的代价</h2><p>下面的代码是一个真实的例子，我调用了别人的代码，他的函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;&#10;    ...&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>返回的是一个<code>Promise</code>，所以我用<code>await</code>去调用，到这里并没有问题。</p>
+<p>而出现问题来源于一次需求的增加，在执行这种函数时，需要判断一些意外情况，如果出现意外，就弹出一个对话框，让用户点击确认后才继续执行，于是他的代码变成了: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;function test( needConfirm ) &#123;&#10;&#10;    ...&#10;&#10;    if ( needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>这么改动乍一看也没什么问题，如果需要确认，就弹出一个对话框，给用户确认，当用户点击确认的时候，在回调函数里面执行原本的操作。</p>
+<p>而对于我的代码来说，我依赖于<code>doSomeAsync</code>执行的结束，所以，当我任然使用<code>await test( true )</code>去调用时，我的代码就报错了，因为<code>true === needConfirm</code>的时候返回的是<code>undefined</code>，<code>await</code>并不会等待，而是继续执行下面的代码，所以导致了错误的出现。</p>
+<h2 id="“束缚”的TypeScript"><a href="#“束缚”的TypeScript" class="headerlink" title="“束缚”的TypeScript"></a>“束缚”的<code>TypeScript</code></h2><p>相信以上的代码绝大部分人都写过，我们再仔细看下，其实上面这段代码的问题在于函数的行为不一致，正常情况是返回一个<code>Promise</code>，而分支情况是返回一个<code>undefined</code>，我们看看在<code>TypeScript</code>下怎么写这段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#35748;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你任然这么写，那么<code>TypeScript</code>的编译阶段就会报错，因为你规定了函数需要返回一个<code>Promise</code>，但是却存在返回<code>undefined</code>的情况，你不得不去修改你的代码:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;functon test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;&#10;        let resolveFunc = null;&#10;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: async function(): Promise&#60;void&#62; &#123;&#10;                const result = await doSomeAsync();&#10;                resolveFunc( result );&#10;            &#125;&#10;        &#125; );&#10;&#10;        return new Promise( ( resolve, reject ) =&#62; &#123;&#10;            resolveFunc = resolve;&#10;        &#125; );&#10;    &#125;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<p>编译通过，函数行为一致，调用者也无需感知里面的逻辑。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>强类型写起来限制会更多，然而对于代码的可维护性，可运行性都有很大的提升。</p>
+<p>现在前端的复杂性提升地非常快，几年前也许前端仅仅只是更多作为展示型页面存在，但是现在的前端已经承载了太多的东西，用户的交互也发生了很大变化，<code>JavaScript</code>也可以写<code>ReactNative</code>的APP，可以写<code>NodeJs</code>服务，可以用<code>NodeWebkit</code>等工具写跨平台的客户端，使用<code>TypeScript</code>严格按照强类型语言去写你的应用，让你的应用具备更高的可读性和可维护性。</p>
+<p>当然事事无绝对，还是得看你的场景，杀鸡焉用牛刀，<code>JavaScript</code>自有存在的意义，至少是目前浏览器官方语言，当你的应用重逻辑时，放手用`TypeScript吧。 </p>
 
-
-  <div class="archive">
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/11/24/thinking-of-lazy-load/" target="_blank">最近对于懒加载的一些思考</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-11-24T06:35:00.000Z">2017-11-24</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/11/24/thinking-of-lazy-load/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/11/24/thinking-of-lazy-load/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/09/12/why-MTU-equals-1500/" target="_blank">什么是MTU？为什么MTU值普遍都是1500？</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-09-12T08:01:00.000Z">2017-09-12</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/09/12/why-MTU-equals-1500/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/09/12/why-MTU-equals-1500/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/09/04/main-host/" target="_blank">前端如何获取主域名(根域名)</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-09-04T07:01:00.000Z">2017-09-04</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/09/04/main-host/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/09/04/main-host/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/07/27/ios-summary-1/" target="_blank">iOS大保健 - 基础信息的收集</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-07-27T02:56:00.000Z">2017-07-27</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/07/27/ios-summary-1/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/07/27/ios-summary-1/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/05/21/https-5/" target="_blank">零门槛学习https--(5)常见的https攻击原理</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-21T03:09:00.000Z">2017-05-21</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/05/21/https-5/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/21/https-5/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/05/19/https-4/" target="_blank">零门槛学习https--(4)https协议详解</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-19T15:46:00.000Z">2017-05-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/05/19/https-4/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-4/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/05/19/https-3/" target="_blank">零门槛学习https--(3)https的安全策略</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-19T13:46:00.000Z">2017-05-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/05/19/https-3/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-3/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/05/19/https-2/" target="_blank">零门槛学习https--(2)https中s的秘密</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-19T11:46:00.000Z">2017-05-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/05/19/https-2/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/19/https-2/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/05/16/https-1/" target="_blank">零门槛学习https--(1)为什么我们要用https</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-16T11:46:00.000Z">2017-05-16</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/05/16/https-1/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/16/https-1/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2017/04/17/launch-screen/" target="_blank">一个使用Launch-Screen但是无法显示图片的坑</a></h1>
-            
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-04-17T13:01:00.000Z">2017-04-17</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-                <a href="/2017/04/17/launch-screen/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/04/17/launch-screen/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      </article>
-    
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/TypeScript/">TypeScript</a>
   </div>
 
+          
+  
+  <div class="tags">
+    <a href="/tags/JavaScript/">JavaScript</a>, <a href="/tags/TypeScript/">TypeScript</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2018/06/20/protocol-in-typescript/"  title="在typescript中使用delegate来进行解耦">
+ <span>在typescript中使用delegate来进行解耦
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
 
 
+<section id="comment">
+  <h2 class="title">留言</h2>
 
-   </div></div>
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2018/06/23/strong-type-weak-type/" data-title="强类型？弱类型？强类型！" data-url="http://yoursite.com2018/06/23/strong-type-weak-type/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
     <aside id="sidebar" class="alignright"><div class="padding">
 	
 	  <div class="search">

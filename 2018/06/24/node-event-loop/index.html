@@ -5,13 +5,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>彙整：2014/11 | PerterPon</title>
+  <title>一段有意思的Nodejs异步处理代码 | PerterPon</title>
   <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="一段有意思的Nodejs异步处理代码">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="一段有意思的Nodejs异步处理代码"/>
   <meta property="og:site_name" content="PerterPon"/>
 
   
@@ -101,29 +103,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
   	<div class="inner">
       <div class="padding">
     		
-          <h2>Gone With the Wind</h2>
-        
-      </div>
-  	</div>
-  </div>
-  <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper" class="padding">
-<h2 class="archive-title">2014/11</h2>
-
-
-  <div class="archive">
-    
-      <article class="post">
-        <div class="post-content-index">
-        <header>
-          <div class="icon"></div>
-            
-              <h1 class="title transition"><a href="/2014/11/21/get-uuid-and-mac-addr/" target="_blank">OSX 中获取UID和MAC地址的方法</a></h1>
-            
+          <h1>一段有意思的Nodejs异步处理代码</h1>
           <ul>
             <li>
               <span class="heading-span">Posted on: </span>
-              <time datetime="2014-11-21T05:57:00.000Z">2014-11-21</time>
+              <time datetime="2018-06-24T09:46:00.000Z">2018-06-24</time>
             </li>
             
               <li>
@@ -138,18 +122,150 @@ body{ -webkit-animation: bugfix infinite 1s; }
             <li>
               <span class="heading-span">With: </span>
               
-                <a href="/2014/11/21/get-uuid-and-mac-addr/#ds-thread"><span class="ds-thread-count" data-thread-key="2014/11/21/get-uuid-and-mac-addr/" data-count-type="comments"></span></a>
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/24/node-event-loop/" data-count-type="comments"></span></a>
               
+            </li>
           </ul>
-        </header>
-      </article>
-    
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <p>首先看下一段代码的输出是什么：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&#62; &#123;&#10;    console.log( 1 );&#10;&#125;, 1 );&#10;&#10;setImmediate( () =&#62; &#123;&#10;    console.log( 2 );&#10;&#125; );&#10;&#10;process.nextTick( () =&#62; &#123;&#10;    console.log( 3 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>我猜大概大部分人的电脑上的输出结果是：<code>3 1 2</code></p>
+<p>再看看下一段代码的执行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&#62; &#123;&#10;    console.log( 1 );&#10;&#125;, 1 );&#10;&#10;setImmediate( () =&#62; &#123;&#10;    console.log( 2 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<p>其实就是把<code>process.nextTick</code>调用去掉了，这时候你会发现输出开始变得较为随机：<code>1 2</code>或者<code>2 1</code>。</p>
+<p>那么第一段代码哪些人的电脑输出结果会不一样？土豪！没错就是土豪，土豪不仅仅在生活上碾压你，在代码上甚至都是如此。</p>
+<h2 id="NodeJs的EventLoop"><a href="#NodeJs的EventLoop" class="headerlink" title="NodeJs的EventLoop"></a>NodeJs的<code>EventLoop</code></h2><p>有关NodeJs的<code>EventLoop</code>不多说了，网上讲解文章非常多，官网就有一篇讲得非常好也通俗易懂的文章：<a href="https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/" target="_blank" rel="external">https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/</a></p>
+<p>看完上面的文章也许你对第二段代码的随机输出明白了，但是第一段为何始终都是<code>3 1 2</code>呢？</p>
+<h2 id="为什么是3-1-2"><a href="#为什么是3-1-2" class="headerlink" title="为什么是3 1 2?"></a>为什么是<code>3 1 2</code>?</h2><p>也许你会觉得结果应该会是在<code>3 2 1</code>和<code>3 1 2</code>之间随机，但是你可以在你自己的电脑上面试试看，基本永远都是<code>3 1 2</code>，那么为什么呢？</p>
+<p>上面的文章只介绍了事件循环相关的内容，但是对于<code>nextTick</code>以及整个NodeJs执行流程的介绍并不多，这里自己通过查看源码发现以下流程：</p>
+<ol>
+<li><p>NodeJs启动阶段</p>
+<ul>
+<li>准备Node环境</li>
+<li>执行代码</li>
+<li>检查<code>nextTickQueue</code>，如果有就执行。</li>
+</ul>
+</li>
+<li><p>开始事件循环，这一步一定是在启动阶段之后，因为事件循环的前提是得有事件触发，事件触发的前提就是执行了我们的代码，如果没有触发事件，那么Node进程就退出了。</p>
+<ul>
+<li>timer</li>
+<li>I/O </li>
+<li>…</li>
+</ul>
+</li>
+</ol>
+<p>看到这里，就已经能非常好地解释上面的代码了：</p>
+<ol>
+<li><p>首先我们的主程序执行完，<code>nextTickQueue</code>中有一个回调，首先执行这个回调，打印一个<code>console.log</code>。</p>
+</li>
+<li><p>然后开始事件循环，执行<code>Timer</code>、<code>I/O</code>等阶段，然而因为我们设置的<code>timer</code>的超时时间是1毫秒，而我们在<code>nextTick</code>里面的回调的<code>console.log</code>还是比较耗时间的，到了<code>Timer</code>阶段，1毫秒早就过去了，所以执行结果永远都是<code>3 1 2</code>。</p>
+</li>
+</ol>
+<p>其实我测试了一下，我的电脑设置为<code>setTimeout( ..., 4 )</code>，4毫秒的延迟后，就会开始出现随机结果，也就是一次<code>console.log</code>差不多花费3毫秒的时间，相当耗时啊，并且在<code>process.nextTick</code>回调里面把<code>console.log</code>去掉后，开始出现随机<code>1 2</code>或者<code>2 1</code>的结果。</p>
+<p>为什么土豪的执行结果可能不是<code>3 1 2</code>呢？土豪的电脑配置高，一个<code>console.log</code>也许花不了几微秒，<code>Timer</code>阶段检查1毫秒没到，就往下执行了，之后就到了<code>check</code>阶段，执行<code>setImmediate</code>的回调，输出就变成了<code>3 2 1</code>。</p>
+<p>所以，努力奋斗吧，争取买得起一台输出结果是<code>3 2 1</code>的电脑，哈哈。</p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/Node/">Node</a>
   </div>
 
+          
+  
+  <div class="tags">
+    <a href="/tags/Node/">Node</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2018/06/23/strong-type-weak-type/"  title="强类型？弱类型？强类型！">
+ <span>强类型？弱类型？强类型！
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
 
 
+<section id="comment">
+  <h2 class="title">留言</h2>
 
-   </div></div>
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2018/06/24/node-event-loop/" data-title="一段有意思的Nodejs异步处理代码" data-url="http://yoursite.com2018/06/24/node-event-loop/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
     <aside id="sidebar" class="alignright"><div class="padding">
 	
 	  <div class="search">

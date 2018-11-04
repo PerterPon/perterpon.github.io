@@ -5,15 +5,15 @@
 <head>
   <meta charset="utf-8">
   
-  <title>PerterPon</title>
+  <title>记一次Node和Go的性能测试 | PerterPon</title>
   <meta name="author" content="PerterPon">
   
-  <meta name="description" content="keyoftypeofreact 泛型组件继承和使用声明文件的使用void不能省略">
+  <meta name="description" content="记一次Node和Go的性能测试">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="记一次Node和Go的性能测试"/>
   <meta property="og:site_name" content="PerterPon"/>
 
   
@@ -103,11 +103,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
   	<div class="inner">
       <div class="padding">
     		
-          <h1></h1>
+          <h1>记一次Node和Go的性能测试</h1>
           <ul>
             <li>
               <span class="heading-span">Posted on: </span>
-              <time datetime="2018-01-19T08:53:08.000Z">2018-01-19</time>
+              <time datetime="2018-11-04T09:46:00.000Z">2018-11-04</time>
             </li>
             
               <li>
@@ -123,7 +123,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
               <span class="heading-span">With: </span>
               
 
-                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2018/01/19/typescript-skill/" data-count-type="comments"></span></a>
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2018/11/04/node-vs-go/" data-count-type="comments"></span></a>
               
             </li>
           </ul>
@@ -140,13 +140,124 @@ body{ -webkit-animation: bugfix infinite 1s; }
       
       <div class="entry">
         
-          <h2 id="keyof"><a href="#keyof" class="headerlink" title="keyof"></a>keyof</h2><h2 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h2><h2 id="react-泛型组件继承和使用"><a href="#react-泛型组件继承和使用" class="headerlink" title="react 泛型组件继承和使用"></a>react 泛型组件继承和使用</h2><h2 id="声明文件的使用"><a href="#声明文件的使用" class="headerlink" title="声明文件的使用"></a>声明文件的使用</h2><h2 id="void不能省略"><a href="#void不能省略" class="headerlink" title="void不能省略"></a>void不能省略</h2>
+          <p>以前简单测过go的性能，高并发场景下确实比node会好一些，一直想找个时间系统性地测一下，手头正好有一台前段时间买的游戏主机，装了ubuntu就开测了</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>测试机和试压机系统都是ubuntu 18.04.1</li>
+<li><p>首先安装node和go，版本分别如下：</p>
+<p>node 10.13.0</p>
+<p>go 1.11</p>
+</li>
+<li><p>测试机和试压机修改fd的限制​<code>ulimit -n 100000</code>​，否则fd很快就用完了。</p>
+</li>
+<li><p>如果是试压机是单机，并且QPS非常高的时候，也许你会经常见到试压机有N多的连接都是​TIME_WAIT​状态，具体原因可以在网上搜一下，执行以下命令即可：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sysctl -w net.ipv4.tcp_timestamps=1&#10;$ sysctl -w net.ipv4.tcp_tw_reuse=1 &#10;$ sysctl -w net.ipv4.tcp_tw_recycle=1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试工具我用的是siege，版本是​3.0.8​。</p>
+</li>
+<li>测试的js代码和go代码分别如下：</li>
+</ol>
+<p><strong>Node</strong>（官网的cluster示例代码）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const cluster = require(&#39;cluster&#39;);&#10;const http = require(&#39;http&#39;);&#10;const numCPUs = require(&#39;os&#39;).cpus().length;&#10;&#10;if (cluster.isMaster) &#123;&#10;    console.log(`Master $&#123;process.pid&#125; is running`);&#10;    &#10;    // Fork workers.&#10;    for (let i = 0; i &#60; numCPUs; i++) &#123;&#10;    cluster.fork();&#10;    &#125;&#10;    &#10;    cluster.on(&#39;exit&#39;, (worker, code, signal) =&#62; &#123;&#10;    console.log(`worker $&#123;worker.process.pid&#125; died`);&#10;&#125;);&#125; else &#123;&#10;    // Workers can share any TCP connection&#10;    // In this case it is an HTTP server&#10;    http.createServer((req, res) =&#62; &#123;&#10;    res.end(&#39;hello world\n&#39;);&#10;&#125;).listen(8000);&#10;    &#10;console.log(`Worker $&#123;process.pid&#125; started`);&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Go</strong>    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">package main&#10;&#10;import(&#10;    &#34;net/http&#34;&#10;    &#34;fmt&#34;&#10;)&#10;&#10;func hello(w http.ResponseWriter, r *http.Request) &#123;&#10;    fmt.Fprintf(w, &#34;hello world&#34;)&#10;&#125;&#10;&#10;func main() &#123;&#10;    http.HandleFunc(&#34;/&#34;, hello);&#10;    err := http.ListenAndServe(&#34;:8000&#34;, nil);&#10;    if err != nil &#123;&#10;            &#10;    &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="开始测试"><a href="#开始测试" class="headerlink" title="开始测试"></a>开始测试</h2><p>首先开始并发量的测试，然而。。。游戏主机的CPU是i7-8700K，性能太强，以至于拿了两台mac也没能压满。。。</p>
+<p>四处寻找一番，找到了好几年前花了千把块钱配的nas，上去一看是颗双核的i3-4170，妥了，这下肯定没问题</p>
+<h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><p>跳过了小插曲，直接开测</p>
+<h3 id="I-O密集型场景"><a href="#I-O密集型场景" class="headerlink" title="I/O密集型场景"></a>I/O密集型场景</h3><ul>
+<li>Node - 多进程模型，可以看到因为所有请求都由master进程转发，master进程成为了瓶颈，在CPU占用100%的情况下，worker进程仅仅只占了50%，因此整体CPU利用率只有70%。</li>
+<li>qps: 6700</li>
+</ul>
+<p><img src="http://wx2.sinaimg.cn/mw690/ba102d3egy1fww6lltt97j20f704vdgf.jpg" alt=""></p>
+<hr>
+<ul>
+<li>Go - 单进程多线程模型，系统剩余CPU差不多也有30%，查了一下原因是因为网卡已经被打满了，千兆网卡看了下已经扎扎实实被打满了。</li>
+<li>qps: 37000</li>
+</ul>
+<p><img src="http://wx1.sinaimg.cn/mw690/ba102d3egy1fww6ludknxj20gg06pq4k.jpg" alt=""></p>
+<p>千兆网卡已经被打满了<br><img src="http://wx3.sinaimg.cn/mw690/ba102d3egy1fww6lx0igvj20ia0cpjtc.jpg" alt=""></p>
+<hr>
+<p>在helloworld场景下，如果我们有万兆网卡，那么go的qps就是50000，go是node的7倍多，乍一看这个结果就非常有意思了，下面我们分析下原因：</p>
+<ol>
+<li>首先node官方给的cluster的例子去跑压测是有问题的，CPU物理核心双核，超线程成4核，姑且我们就认为有4核。</li>
+<li>cluster的方案，先起主进程，然后再起跟CPU数量一样的子进程，所以现在总共5个进程，4个核心，就会造成上下文频繁切换，QPS异常低下</li>
+<li>基于以上结论，我减少了一个worker进程的数量</li>
+</ol>
+<ul>
+<li>Node 多进程模型下，1个主进程，3个worker进程</li>
+<li>qps: 15000 (直接翻倍)</li>
+</ul>
+<p><img src="http://wx1.sinaimg.cn/mw690/ba102d3egy1fww6loubv7j20eg053mxy.jpg" alt=""></p>
+<hr>
+<p>以上的结果证明我们的想法是对的，并且这个场景下CPU利用率几乎达到了100%，不是很稳定，暂且我们可以认为压满了，所以我们可以认为1master4worker场景下，就是因为进程上下文频繁切换导致的qps低下</p>
+<p>那么进一步想，如果把进程和CPU绑定，是不是可以进一步提高qps?</p>
+<ul>
+<li>Node 多进程模型，并且用​taskset​命令把进程和CPU绑定了</li>
+<li>qps: 17000 (比不绑定cpu性能提高了10%多)</li>
+</ul>
+<p><img src="http://wx4.sinaimg.cn/mw690/ba102d3egy1fww6lrqra3j20f20600tp.jpg" alt=""></p>
+<hr>
+<p><strong>结论 ：node在把CPU压满的情况下，最高qps为：17000，而go在cpu利用率剩余30%的情况，qps已经达到了37000，如果网卡允许，那么go理论上可以达到50000左右的qps，是node的2.9倍左右。</strong></p>
+<h3 id="CPU密集场景"><a href="#CPU密集场景" class="headerlink" title="CPU密集场景"></a>CPU密集场景</h3><p>为了模拟CPU密集场景，并保证两边场景一致，我在node和go中，分别添加了一段如下代码，每次请求循环100W次，然后相加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var b int&#10;for a := 0; a &#60; 1000000; a ++ &#123;&#10;&#9; b = b + a&#10;&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>Node 多进程模型：这里我的测试方式是开了4个worker，因为在CPU密集场景下，瓶颈往往在woker进程，并且将4个进程分别和4个核绑定，master进程就让他随风飘摇吧</li>
+<li>qps: 3000</li>
+</ul>
+<p><img src="http://wx2.sinaimg.cn/mw690/ba102d3egy1fww6vntvhsj20ib04x0tm.jpg" alt=""></p>
+<hr>
+<ul>
+<li>go：go不用做特殊处理，不用感知进程数量，不用绑定cpu，改了代码直接走起</li>
+<li>qps: 6700，依然是node的两倍多</li>
+</ul>
+<p><img src="http://wx3.sinaimg.cn/mw690/ba102d3egy1fww6l56tyrj20i7055ab1.jpg" alt=""></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Node因为用了V8，从而继承了单进程单线程的特性，单进程单线程好处是逻辑简单，什么锁，什么信号量，什么同步，都是浮云，老夫都是await一把梭。</p>
+<p>而V8因为最初是使用在浏览器中，各种设置放在node上看起来就不是非常合理，比如最大使用内存在64位下才1.4G，虽然使用buffer可以避开这个问题，但始终是有这种限制，而且单线程的设计（磁盘I/0是多线程实现），注定了在如今的多核场景下必定要开多个进程，而多个进程又会带来进程间通信问题。</p>
+<p>Go不是很熟，但是前段时间小玩过几次，挺有意思的，一直听闻Go性能好，今天简单测了下果然不错，但是包管理和错误处理方式实在是让我有点不爽。</p>
+<p>总的来说在单机单应用的场景下，Go的性能总体在Node两倍左右，微服务场景下，Go也能起多进程，不过相比在机制上就没那么大优势了。</p>
+<p><strong>Node</strong></p>
+<p><strong><em>优点</em></strong></p>
+<ol>
+<li>单进程单线程，逻辑清晰 </li>
+<li>多进程间环境隔离，单个进程down掉不会影响其他进程 </li>
+<li>开发语言受众广，上手易 </li>
+</ol>
+<p><strong><em>缺点</em></strong></p>
+<ol>
+<li>多进程模型下，注定对于多核的利用会比较复杂，需要针对不同场景（cpu密集或者I/O密集）来设计程序 </li>
+<li>语言本身因为历史遗留问题，存在较多的坑。</li>
+</ol>
+<p><strong>Go</strong></p>
+<p><strong><em>优点</em></strong></p>
+<ol>
+<li>单进程多线程，单个进程即可利用N核 </li>
+<li>语言较为成熟，在语言层面就可以规避掉一些问题。 </li>
+<li>单从结果上来看，性能确实比node好。</li>
+</ol>
+<p><strong><em>缺点</em></strong></p>
+<ol>
+<li>包管理方案并不成熟，相对于npm来说，简直被按在地上摩擦 </li>
+<li>if err != nil …. </li>
+<li>多线程语言无法避开同步，锁，信号量等概念，如果对于锁等处理不当，会使性能大大降低，甚至死锁等。 </li>
+<li>本身就一个进程，稍有不慎，进程down了就玩完了。</li>
+</ol>
+
         
       </div>
       <footer>
         
           
+  
+  <div class="categories">
+    <a href="/categories/Go/">Go</a>
+  </div>
+
           
+  
+  <div class="tags">
+    <a href="/tags/Go/">Go</a>, <a href="/tags/Node/">Node</a>
+  </div>
+
           <div class="share">
   
 
@@ -175,18 +286,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
- <a href="/2018/02/28/webpack-chunk-id-with-cdn/" title="webpack的chunk id和cdn缓存之间的爱恨情仇">
-  <i class="fa fa-long-arrow-left"></i>
-  <span>
-  webpack的chunk id和cdn缓存之间的爱恨情仇</span>
-</a>
-</div>
-
 
 <div class="article-next">
-<a href="/2017/11/24/thinking-of-lazy-load/"  title="最近对于懒加载的一些思考">
- <span>最近对于懒加载的一些思考
+<a href="/2018/09/21/hello-world/"  title="Hello World">
+ <span>Hello World
 </span>
 <i class="fa fa-long-arrow-right"></i>
 </a>
@@ -207,7 +310,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
 
      <!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="2018/01/19/typescript-skill/" data-title="" data-url="http://yoursite.com2018/01/19/typescript-skill/"></div>
+	<div class="ds-thread" data-thread-key="2018/11/04/node-vs-go/" data-title="记一次Node和Go的性能测试" data-url="http://yoursite.com2018/11/04/node-vs-go/"></div>
 <!-- 多说评论框 end -->
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 <script type="text/javascript">
@@ -242,6 +345,14 @@ var duoshuoQuery = {short_name:"perterpon"};
   <ul class="entry">
     
       <li>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/21/hello-world/">Hello World</a>
+      </li>
+    
+      <li>
         <a href="/2018/06/24/node-event-loop/">一段有意思的Nodejs异步处理代码</a>
       </li>
     
@@ -253,14 +364,6 @@ var duoshuoQuery = {short_name:"perterpon"};
         <a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a>
       </li>
     
-      <li>
-        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的爱恨情仇</a>
-      </li>
-    
-      <li>
-        <a href="/2018/01/19/typescript-skill/"></a>
-      </li>
-    
   </ul>
 </div>
 
@@ -269,6 +372,8 @@ var duoshuoQuery = {short_name:"perterpon"};
 <div class="widget category">
   <h3 class="title">分類</h3>
   <ul class="entry">
+  
+    <li><a href="/categories/Go/">Go</a><small>1</small></li>
   
     <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
   
@@ -294,7 +399,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+    <li><a href="/categories/physical/">physical</a><small>0</small></li>
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
@@ -312,13 +417,15 @@ var duoshuoQuery = {short_name:"perterpon"};
 <div class="widget tag">
   <h3 class="title">標籤</h3>
   
+    <a href="/tags/Go/">Go<small>1</small></a>
+  
     <a href="/tags/Google/">Google<small>1</small></a>
   
     <a href="/tags/JavaScript/">JavaScript<small>2</small></a>
   
     <a href="/tags/Javascript/">Javascript<small>1</small></a>
   
-    <a href="/tags/Node/">Node<small>1</small></a>
+    <a href="/tags/Node/">Node<small>2</small></a>
   
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
@@ -364,9 +471,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/decimal/">decimal<small>1</small></a>
   
-    <a href="/tags/drive/">drive<small>1</small></a>
+    <a href="/tags/drive/">drive<small>0</small></a>
   
-    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+    <a href="/tags/emDrive/">emDrive<small>0</small></a>
   
     <a href="/tags/float/">float<small>1</small></a>
   
@@ -406,7 +513,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>1</small></a>
+    <a href="/tags/microwave/">microwave<small>0</small></a>
   
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
@@ -422,7 +529,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>1</small></a>
+    <a href="/tags/physical/">physical<small>0</small></a>
   
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
@@ -432,7 +539,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
   
-    <a href="/tags/quantum/">quantum<small>1</small></a>
+    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   

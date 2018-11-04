@@ -118,6 +118,232 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-11-04T09:46:00.000Z">2018-11-04</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2018/11/04/node-vs-go/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/11/04/node-vs-go/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>以前简单测过go的性能，高并发场景下确实比node会好一些，一直想找个时间系统性地测一下，手头正好有一台前段时间买的游戏主机，装了ubuntu就开测了</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><ol>
+<li>测试机和试压机系统都是ubuntu 18.04.1</li>
+<li><p>首先安装node和go，版本分别如下：</p>
+<p>node 10.13.0</p>
+<p>go 1.11</p>
+</li>
+<li><p>测试机和试压机修改fd的限制​<code>ulimit -n 100000</code>​，否则fd很快就用完了。</p>
+</li>
+<li><p>如果是试压机是单机，并且QPS非常高的时候，也许你会经常见到试压机有N多的连接都是​TIME_WAIT​状态，具体原因可以在网上搜一下，执行以下命令即可：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sysctl -w net.ipv4.tcp_timestamps=1&#10;$ sysctl -w net.ipv4.tcp_tw_reuse=1 &#10;$ sysctl -w net.ipv4.tcp_tw_recycle=1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>测试工具我用的是siege，版本是​3.0.8​。</p>
+</li>
+<li>测试的js代码和go代码分别如下：</li>
+</ol>
+<p><strong>Node</strong>（官网的cluster示例代码）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const cluster = require(&#39;cluster&#39;);&#10;const http = require(&#39;http&#39;);&#10;const numCPUs = require(&#39;os&#39;).cpus().length;&#10;&#10;if (cluster.isMaster) &#123;&#10;    console.log(`Master $&#123;process.pid&#125; is running`);&#10;    &#10;    // Fork workers.&#10;    for (let i = 0; i &#60; numCPUs; i++) &#123;&#10;    cluster.fork();&#10;    &#125;&#10;    &#10;    cluster.on(&#39;exit&#39;, (worker, code, signal) =&#62; &#123;&#10;    console.log(`worker $&#123;worker.process.pid&#125; died`);&#10;&#125;);&#125; else &#123;&#10;    // Workers can share any TCP connection&#10;    // In this case it is an HTTP server&#10;    http.createServer((req, res) =&#62; &#123;&#10;    res.end(&#39;hello world\n&#39;);&#10;&#125;).listen(8000);&#10;    &#10;console.log(`Worker $&#123;process.pid&#125; started`);&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Go</strong>    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">package main&#10;&#10;import(&#10;    &#34;net/http&#34;&#10;    &#34;fmt&#34;&#10;)&#10;&#10;func hello(w http.ResponseWriter, r *http.Request) &#123;&#10;    fmt.Fprintf(w, &#34;hello world&#34;)&#10;&#125;&#10;&#10;func main() &#123;&#10;    http.HandleFunc(&#34;/&#34;, hello);&#10;    err := http.ListenAndServe(&#34;:8000&#34;, nil);&#10;    if err != nil &#123;&#10;            &#10;    &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="开始测试"><a href="#开始测试" class="headerlink" title="开始测试"></a>开始测试</h2><p>首先开始并发量的测试，然而。。。游戏主机的CPU是i7-8700K，性能太强，以至于拿了两台mac也没能压满。。。</p>
+<p>四处寻找一番，找到了好几年前花了千把块钱配的nas，上去一看是颗双核的i3-4170，妥了，这下肯定没问题</p>
+<h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><p>跳过了小插曲，直接开测</p>
+<h3 id="I-O密集型场景"><a href="#I-O密集型场景" class="headerlink" title="I/O密集型场景"></a>I/O密集型场景</h3><ul>
+<li>Node - 多进程模型，可以看到因为所有请求都由master进程转发，master进程成为了瓶颈，在CPU占用100%的情况下，worker进程仅仅只占了50%，因此整体CPU利用率只有70%。</li>
+<li>qps: 6700</li>
+</ul>
+<p><img src="http://wx2.sinaimg.cn/mw690/ba102d3egy1fww6lltt97j20f704vdgf.jpg" alt=""></p>
+<hr>
+<ul>
+<li>Go - 单进程多线程模型，系统剩余CPU差不多也有30%，查了一下原因是因为网卡已经被打满了，千兆网卡看了下已经扎扎实实被打满了。</li>
+<li>qps: 37000</li>
+</ul>
+<p><img src="http://wx1.sinaimg.cn/mw690/ba102d3egy1fww6ludknxj20gg06pq4k.jpg" alt=""></p>
+<p>千兆网卡已经被打满了<br><img src="http://wx3.sinaimg.cn/mw690/ba102d3egy1fww6lx0igvj20ia0cpjtc.jpg" alt=""></p>
+<hr>
+<p>在helloworld场景下，如果我们有万兆网卡，那么go的qps就是50000，go是node的7倍多，乍一看这个结果就非常有意思了，下面我们分析下原因：</p>
+<ol>
+<li>首先node官方给的cluster的例子去跑压测是有问题的，CPU物理核心双核，超线程成4核，姑且我们就认为有4核。</li>
+<li>cluster的方案，先起主进程，然后再起跟CPU数量一样的子进程，所以现在总共5个进程，4个核心，就会造成上下文频繁切换，QPS异常低下</li>
+<li>基于以上结论，我减少了一个worker进程的数量</li>
+</ol>
+<ul>
+<li>Node 多进程模型下，1个主进程，3个worker进程</li>
+<li>qps: 15000 (直接翻倍)</li>
+</ul>
+<p><img src="http://wx1.sinaimg.cn/mw690/ba102d3egy1fww6loubv7j20eg053mxy.jpg" alt=""></p>
+<hr>
+<p>以上的结果证明我们的想法是对的，并且这个场景下CPU利用率几乎达到了100%，不是很稳定，暂且我们可以认为压满了，所以我们可以认为1master4worker场景下，就是因为进程上下文频繁切换导致的qps低下</p>
+<p>那么进一步想，如果把进程和CPU绑定，是不是可以进一步提高qps?</p>
+<ul>
+<li>Node 多进程模型，并且用​taskset​命令把进程和CPU绑定了</li>
+<li>qps: 17000 (比不绑定cpu性能提高了10%多)</li>
+</ul>
+<p><img src="http://wx4.sinaimg.cn/mw690/ba102d3egy1fww6lrqra3j20f20600tp.jpg" alt=""></p>
+<hr>
+<p><strong>结论 ：node在把CPU压满的情况下，最高qps为：17000，而go在cpu利用率剩余30%的情况，qps已经达到了37000，如果网卡允许，那么go理论上可以达到50000左右的qps，是node的2.9倍左右。</strong></p>
+<h3 id="CPU密集场景"><a href="#CPU密集场景" class="headerlink" title="CPU密集场景"></a>CPU密集场景</h3><p>为了模拟CPU密集场景，并保证两边场景一致，我在node和go中，分别添加了一段如下代码，每次请求循环100W次，然后相加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var b int&#10;for a := 0; a &#60; 1000000; a ++ &#123;&#10;&#9; b = b + a&#10;&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<ul>
+<li>Node 多进程模型：这里我的测试方式是开了4个worker，因为在CPU密集场景下，瓶颈往往在woker进程，并且将4个进程分别和4个核绑定，master进程就让他随风飘摇吧</li>
+<li>qps: 3000</li>
+</ul>
+<p><img src="http://wx2.sinaimg.cn/mw690/ba102d3egy1fww6vntvhsj20ib04x0tm.jpg" alt=""></p>
+<hr>
+<ul>
+<li>go：go不用做特殊处理，不用感知进程数量，不用绑定cpu，改了代码直接走起</li>
+<li>qps: 6700，依然是node的两倍多</li>
+</ul>
+<p><img src="http://wx3.sinaimg.cn/mw690/ba102d3egy1fww6l56tyrj20i7055ab1.jpg" alt=""></p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>Node因为用了V8，从而继承了单进程单线程的特性，单进程单线程好处是逻辑简单，什么锁，什么信号量，什么同步，都是浮云，老夫都是await一把梭。</p>
+<p>而V8因为最初是使用在浏览器中，各种设置放在node上看起来就不是非常合理，比如最大使用内存在64位下才1.4G，虽然使用buffer可以避开这个问题，但始终是有这种限制，而且单线程的设计（磁盘I/0是多线程实现），注定了在如今的多核场景下必定要开多个进程，而多个进程又会带来进程间通信问题。</p>
+<p>Go不是很熟，但是前段时间小玩过几次，挺有意思的，一直听闻Go性能好，今天简单测了下果然不错，但是包管理和错误处理方式实在是让我有点不爽。</p>
+<p>总的来说在单机单应用的场景下，Go的性能总体在Node两倍左右，微服务场景下，Go也能起多进程，不过相比在机制上就没那么大优势了。</p>
+<p><strong>Node</strong></p>
+<p><strong><em>优点</em></strong></p>
+<ol>
+<li>单进程单线程，逻辑清晰 </li>
+<li>多进程间环境隔离，单个进程down掉不会影响其他进程 </li>
+<li>开发语言受众广，上手易 </li>
+</ol>
+<p><strong><em>缺点</em></strong></p>
+<ol>
+<li>多进程模型下，注定对于多核的利用会比较复杂，需要针对不同场景（cpu密集或者I/O密集）来设计程序 </li>
+<li>语言本身因为历史遗留问题，存在较多的坑。</li>
+</ol>
+<p><strong>Go</strong></p>
+<p><strong><em>优点</em></strong></p>
+<ol>
+<li>单进程多线程，单个进程即可利用N核 </li>
+<li>语言较为成熟，在语言层面就可以规避掉一些问题。 </li>
+<li>单从结果上来看，性能确实比node好。</li>
+</ol>
+<p><strong><em>缺点</em></strong></p>
+<ol>
+<li>包管理方案并不成熟，相对于npm来说，简直被按在地上摩擦 </li>
+<li>if err != nil …. </li>
+<li>多线程语言无法避开同步，锁，信号量等概念，如果对于锁等处理不当，会使性能大大降低，甚至死锁等。 </li>
+<li>本身就一个进程，稍有不慎，进程down了就玩完了。</li>
+</ol>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2018/11/04/node-vs-go/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2018/09/21/hello-world/">Hello World</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2018-09-20T16:42:30.503Z">2018-09-21</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2018/09/21/hello-world/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/09/21/hello-world/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2018/09/21/hello-world/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2018/06/24/node-event-loop/">一段有意思的Nodejs异步处理代码</a></h1>
     
   
@@ -148,9 +374,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           
-            <p>首先看下一段代码的输出是什么：</p>
+            <p>首先看下这段代码的输出是什么：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&#62; &#123;&#10;    console.log( 1 );&#10;&#125;, 1 );&#10;&#10;setImmediate( () =&#62; &#123;&#10;    console.log( 2 );&#10;&#125; );&#10;&#10;process.nextTick( () =&#62; &#123;&#10;    console.log( 3 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
-<p>我猜大概大部分人的电脑上的输出结果是：<code>3 1 2</code></p>
+<p>我猜大概大部分人的电脑上的输出结果是：<code>3 1 2</code>，并且无论你执行多少次，结果永远是<code>3 1 2</code>。</p>
 <p>再看看下一段代码的执行结果：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&#62; &#123;&#10;    console.log( 1 );&#10;&#125;, 1 );&#10;&#10;setImmediate( () =&#62; &#123;&#10;    console.log( 2 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
 <p>其实就是把<code>process.nextTick</code>调用去掉了，这时候你会发现输出开始变得较为随机：<code>1 2</code>或者<code>2 1</code>。</p>
@@ -458,64 +684,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <div class="alignright">
             <a href="/2018/02/28/webpack-chunk-id-with-cdn/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2018/01/19/typescript-skill/"></a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2018-01-19T08:53:08.000Z">2018-01-19</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2018/01/19/typescript-skill/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/01/19/typescript-skill/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="keyof"><a href="#keyof" class="headerlink" title="keyof"></a>keyof</h2><h2 id="typeof"><a href="#typeof" class="headerlink" title="typeof"></a>typeof</h2><h2 id="react-泛型组件继承和使用"><a href="#react-泛型组件继承和使用" class="headerlink" title="react 泛型组件继承和使用"></a>react 泛型组件继承和使用</h2><h2 id="声明文件的使用"><a href="#声明文件的使用" class="headerlink" title="声明文件的使用"></a>声明文件的使用</h2><h2 id="void不能省略"><a href="#void不能省略" class="headerlink" title="void不能省略"></a>void不能省略</h2>
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2018/01/19/typescript-skill/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
           </div>
         
         <div class="clearfix"></div>
@@ -975,121 +1143,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2017-05-21T03:09:00.000Z">2017-05-21</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2017/05/21/https-5/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/21/https-5/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>上一篇：<a href="/2017/05/19/https-4/">零门槛学习https–(4)https协议详解</a></p>
-<p>看似毫无破绽的TLS协议，其实也存在着诸多漏洞，主要因为TLS协议太复杂了，复杂的东西必然会出现漏洞，下面我们来看看一些常见的攻击手段有哪些，以及一些攻击实例。</p>
-<h2 id="伪造证书"><a href="#伪造证书" class="headerlink" title="伪造证书"></a>伪造证书</h2><h3 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>这是一种中间人攻击，就是伪造网站证书，虽然浏览器会提示访问了不安全的网址，但是大部分对https没什么了解的人基本都会选择忽略问题继续浏览，这是一种简单，成本低，且效果还可以的攻击方式。</p>
-<h3 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h3><p>打开浏览器设置，如果证书不可信，那么就直接不能访问。这个其实也不能算是TLS的漏洞，只能说是浏览器为了做兼容而没有采取一些强制性措施，或许不久的将来，浏览器默认就会直接拒绝无效证书的连接。</p>
-<h2 id="POODLE"><a href="#POODLE" class="headerlink" title="POODLE"></a>POODLE</h2><h3 id="攻击原理-1"><a href="#攻击原理-1" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>上一章看TLS协议的时候，我们看到，因为要处理兼容性问题，客户端和服务端不得不支持很多种加密套件和TLS或者SSL版本，由此，衍生一个问题就是：一些老久的加密套件或者SSL版本通常在现在的计算能力下安全性没那么高，或者早先的协议是有安全漏洞的，所以，针对SSL降级，还有加密降级攻击就成了一种主流的攻击方式。</p>
-<p>POODLE的全称是<code>Padding Oracle On Downgraded Legacy Encryption</code>，由谷歌的工程师在2014年发现了这个问题，问题的主要原因在于分块加密。其原理是：</p>
-<p><strong>AES 分块加密在原文内容长度不满足时，会在原文后面填充一些内容，保证每个分块的长度一致，这就是Padding Oracle，也是攻击的关键，因为新版TLS不存在这个问题，所以我们需要对协议进行降级，而降级就是Downgraded Legacy Encryption，所以这也是这个漏洞名称的由来。</strong></p>
-<p>协议降级很简单，只要在客户端发送<code>Client Hello</code>消息的时候，把客户端支持的加密套件替换成SSL3.0，如果服务端支持，那么后续连接就会使用SSLV3来进行连接，具体的<code>Padding Oracle</code>攻击原理可以看一下<a href="http://www.freebuf.com/articles/web/15504.html" target="_blank" rel="external">这篇文章</a>，写得非常详细。</p>
-<h3 id="防御方法-1"><a href="#防御方法-1" class="headerlink" title="防御方法"></a>防御方法</h3><p>客户端禁用SSLV3协议，服务端也关闭SSLV3的连接。</p>
-<h2 id="FREAK"><a href="#FREAK" class="headerlink" title="FREAK"></a>FREAK</h2><p>这个攻击方式可以说到一个很有意思的事情，目前基本主流的加密算法都是由美国开发的，90年代的时候，NSA为了能够监听世界上所有的网络通信，出台了对于软件出口规定，规定只有美国境内能够使用高强度的RSA加密，对于出口国外的软件，最高允许512密钥长度的RSA，高安全级别的加密算法被认为是战争武器而禁止对外出口。2000年之后，美国逐渐放宽了这个限制，目前美国任然有一些带有加密算法和函数的软硬件受到出口管制。</p>
-<h3 id="攻击原理-2"><a href="#攻击原理-2" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>由于历史遗留原因，IE6，网景，甚至是手机上的安卓和iOS Safari 浏览器，都支持512密钥长度的RSA加密，这在2015年的时候才被法国工程师发现。据说在当时任然有38%的服务器还支持512长度的密钥，而且讽刺的是，美国一些政府部门网站也存在此漏洞。</p>
-<p>攻击者在<code>Client Hello</code>的时候，把高强度的密钥加密算法都剔除掉，留下低强度的算法，如果服务端也支持低强度的加密算法，那么就会选择这一算法。虽然在90年代一般的PC还无法破解512长度密钥，但是目前个人已经完全有能力破解了。</p>
-<h3 id="防御方法-2"><a href="#防御方法-2" class="headerlink" title="防御方法"></a>防御方法</h3><p>苹果已经在当时推出相应补丁，而安卓也在后续版本进行了升级。服务端应该禁止低强度加密算法。</p>
-<h2 id="HTTPS-Strip"><a href="#HTTPS-Strip" class="headerlink" title="HTTPS Strip"></a>HTTPS Strip</h2><p>也称为SSLStrip，是一种基于社会学的攻击方法，也是中间人攻击的一种，和任何加密方式都无关，和SSL也无关，也是目前为止我成功实施的一种攻击方式。</p>
-<h3 id="攻击原理-3"><a href="#攻击原理-3" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>通常，我们在浏览器访问一个网址的时候，会直接输入网址，而不会关注协议，比如我要访问天猫，那么我就会输入：<code>tmall.com</code>，而此时浏览器默认会使用http协议访问，因为浏览器并不知道服务端是否开启了https，所以，攻击者直接劫持http访问，然后自己去访问<code>https://www.tmall.com</code>，并把内容通过http协议返回给浏览器，浏览器成功收到数据，就直接开始渲染页面，浏览器端完全就是访问一个http站点。所以，这种攻击方式就叫做SSL剥离攻击。除了浏览器之外的场景，基本不会受到此攻击的影响。</p>
-<h3 id="防御方法-3"><a href="#防御方法-3" class="headerlink" title="防御方法"></a>防御方法</h3><p><a href="https://zh.wikipedia.org/zh-hans/HTTP%E4%B8%A5%E6%A0%BC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8" target="_blank" rel="external">HSTS</a>(HTTP Strict Transport Security)，这是一种浏览器技术，在客户端访问站点的时候，如果检测到当前域名在HSTS列表中，那么直接使用https协议访问，也就不会被攻击者劫持了。那么如何加入HSTS列表呢？在浏览器第一次访问站点的时候，站点可以在http返回头里面来标示是否启用HSTS，还有过期时间。</p>
-<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2V3vesbVkpuFjSspcXXbSMVXa_!!99218453.png" alt=""></p>
-<p><code>这是第一次访问www.taobao.com的场景，http返回头有个：Strict-Transport-Security属性，过期时间是一年。</code></p>
-<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2Z.rmsbRkpuFjSspmXXc.9XXa_!!99218453.png" alt=""></p>
-<p><code>这是第二次访问www.taobao.com时候，因为已经在HSTS列表中，就直接是一个Internal Redirect，不会请求服务端。</code></p>
-<p>其实你会发现，浏览器第一次访问网站的时候，也是有可能被劫持的，所以现在有些网址会内置在浏览器的HSTS列表中，防止第一次访问被劫持的情况发生。不久的将来，也许浏览器就默认使用https访问，这种攻击方式也就无法发挥作用了。</p>
-<h3 id="攻击实例"><a href="#攻击实例" class="headerlink" title="攻击实例"></a>攻击实例</h3><p>写个脚本就可以检测网站是否开启了HSTS，对于没有开启HSTS的网站都可以发动攻击。以下是我对<code>tmall.com</code>发起的一次http strip的攻击实例。</p>
-<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2dlQTvZtnpuFjSZFKXXalFFXa_!!99218453.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#19978;&#22270;&#20013;&#30475;&#21040;&#35775;&#38382;tmall.com&#30340;&#36339;&#36716;&#36923;&#36753;&#26159;&#65306;&#10;&#9;tmall.com --302--&#62; www.tmall.com --301--&#62; https://www.tmall.com&#12290;&#10;&#10;301&#36824;&#22909;&#65292;&#29616;&#20195;&#27983;&#35272;&#22120;&#20960;&#20046;&#20250;&#20316;&#20026;&#27704;&#20037;&#32531;&#23384;&#65292;&#36825;&#31181;&#24773;&#20917;&#19979;&#22914;&#26524;&#19981;&#28165;&#38500;&#32531;&#23384;&#65292;&#20854;&#23454;&#36319;HSTS&#25928;&#26524;&#24046;&#19981;&#22810;&#12290;&#10;302&#23601;&#22353;&#20102;&#65292;&#22522;&#26412;&#26159;&#19981;&#20250;&#32531;&#23384;&#30340;&#12290;</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2bYEjshdkpuFjy0FbXXaNnpXa_!!99218453.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#20174;&#19978;&#22270;&#20013;&#25105;&#20204;&#21487;&#20197;&#30475;&#21040;&#36820;&#22238;&#22836;&#20013;&#34429;&#28982;&#21253;&#21547;&#20102;STS&#22836;&#65292;&#20294;&#26159;&#36807;&#26399;&#26102;&#38388;&#20026;0&#10;&#10;&#20063;&#23601;&#26159;&#19981;&#24320;&#21551;HSTS&#65292;&#29992;&#20102;&#19968;&#20010;301&#36339;&#21040;&#20102;https&#31449;&#28857;</span><br></pre></td></tr></table></figure>
-<p>下面我开始准备需要的东西，当然一个前提是你要能捕获流量：</p>
-<ol>
-<li>为了方便我使用本机测试，可以建个DNS服务器，也可以使用更简单的host文件，我选择使用host文件，把<code>tmall.com</code>、<code>www.tmall.com</code>指向<code>127.0.0.1</code>。实际情况中，可以采用ARP欺骗等方式获取局域网流量。</li>
-<li>在本机建立一个<code>web server</code>，具体的代码就不贴了，后面贴一些关键代码。</li>
-</ol>
-<p>好，我们可以开始攻击了，具体步骤如下。</p>
-<ol>
-<li>首先使用浏览器访问<code>tmall.com</code>，因为没有开启HSTS，浏览器开始用http方式请求<code>tmall.com</code>。</li>
-<li>这时候本次请求已经到我的中间人<code>server</code>，然后<code>server</code>使用IP方式访问真实的<code>tmall.com</code>，这里不能用域名，因为域名已经指向本机了。</li>
-<li><p>拿到真实<code>tmall.com</code>的返回之后，添加如下代码：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">body += &#39;&#60;script&#62;alert( &#39;hello&#39; )&#60;/script&#62;&#39;;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>返回给浏览器，此时，浏览器看起来是这个样子，弹出了hello，并且仔细看会发现https标示没有了，如果不弹出alert，天猫那个具有强烈视觉冲击感的页面，很容易让你忽略https标示没有了这件事。<br> <img src="https://img.alicdn.com/imgextra/i1/99218453/TB2Cvu7v9FmpuFjSZFrXXayOXXa_!!99218453.png" alt="">    </p>
-</li>
-<li>再进一步看看，点击<code>登陆</code>按钮的跳转逻辑是：<code>&lt;a href=&quot;//:login.tmall.com&quot;&gt;登陆&lt;/a&gt;</code>，没有写死协议，如果写死了协议，在返回内容的时候，手动替换为<code>http</code>即可。登录页同样没有开启HSTS，我们试试看能不能拿到账号密码。简单分析一下天猫登录页，真正账号密码的输入框采用的是<code>login.taobao.com</code>提供的iframe登录框，有二维码和手动输入账号密码两个选项，二维码无能为力了，看看能不能拿到手动输入账号密码时的内容。</li>
-<li><p>看了看<code>login.taobao.com</code>，没有写死协议，并且发现同样没有开启HSTS，这就好办了，和<code>tmall.com</code>一样，拦截请求，并在返回内容添加如下代码，插入一个jQuery，并在在输入密码的时候获取输入事件：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">body += &#10; &#34;&#60;script src=\&#34;https://code.jquery.com/jquery-latest.js\&#34;&#62;&#60;/script&#62;&#34; +&#10; &#34;&#60;script&#62;&#34; +&#10;   &#34;$( &#39;#TPL_username_1&#39; ).on( &#39;input&#39;, function ()&#123;&#34; +&#10;     &#34;console.log( this.value );&#34; +&#10;   &#34;&#125; );&#34; + &#10;   &#34;$( &#39;#TPL_password_1&#39; ).on( &#39;input&#39;, function ()&#123;&#34; +&#10;     &#34;console.log( this.value );&#34; +&#10;   &#34;&#125; );&#34; +&#10; &#34;&#60;/script&#62;&#34;;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<ol>
-<li><p>运行脚本，看看效果：<br> <img src="https://img.alicdn.com/imgextra/i2/99218453/TB2j5WrvZtnpuFjSZFKXXalFFXa_!!99218453.png" alt=""></p>
-<p> <code>login.taobao.com</code>竟然是GBK编码的，导致乱码了，这里我懒得转编码了，可以看到左上角其实浏览器已经显示了<code>不安全</code>三个字，同样估计很少有人会看到这几个字。我们尝试输入一下账号密码试试看：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2Wp7Gsl0lpuFjSszdXXcdxFXa_!!99218453.png" alt=""><br> 已经打印出账号密码，发个请求就能发送到我自己的服务器了，后面再跳回到https站点就神不知鬼不觉了。</p>
-</li>
-<li><p>总的来说，本次攻击的需要的条件其实是比较多的，首先因为<code>http://www.tmall.com</code>跳转到<code>https://www.tmall.com</code>是301跳转，而chrome等浏览器把301几乎是当做永久缓存来处理的，除非手动清理缓存，当然很多浏览器对301也不缓存，或者重启就没了。其次，默认的登陆方式是二维码登陆，二维码登陆就无法实施此次攻击了。不过基于天猫访问量巨大，符合条件的流量估计也不少，而且<code>http://login.taobao.com</code>跳往https站点是302，也就是不会缓存了，这个有安全隐患。如果某天天猫开启了HSTS，那么这类攻击就几乎无法生效了，毕竟这对天猫来说也就是一个配置项的事。</p>
-</li>
-</ol>
-<h2 id="其他漏洞"><a href="#其他漏洞" class="headerlink" title="其他漏洞"></a>其他漏洞</h2><ol>
-<li>完全信任证书漏洞。很多android APP采取了不校验证书的方式，导致中间人攻击非常容易，比如早先的亚马逊官方APP、携程APP等。</li>
-<li>Heartbleed。OpenSSL在实现心跳的扩展没有对输入进行适当验证，导致过读，可以读取服务器内存中的内容，即使协议没问题，实现有问题同样也会造成漏洞的产生。</li>
-</ol>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>TLS因为比较复杂，所以或多或少总会有些漏洞，TLS也在慢慢地不断完善，因为很多东西基于数学原理，或者某天出现了快速因式分解等的方法，瞬间就可以破解TLS，也有人说美国安全局其实早就已经掌握某些技术能够监听全世界的加密流量了，加密和破解总是在不断地博弈，在博弈过程中进行自我升级，随着技术的发展以及大家对隐私和网络安全越来越关注，相信我们的网络环境一定会变得越来越安全。</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2017/05/21/https-5/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1113,6 +1166,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/21/hello-world/">Hello World</a>
+      </li>
+    
+      <li>
         <a href="/2018/06/24/node-event-loop/">一段有意思的Nodejs异步处理代码</a>
       </li>
     
@@ -1124,14 +1185,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a>
       </li>
     
-      <li>
-        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的爱恨情仇</a>
-      </li>
-    
-      <li>
-        <a href="/2018/01/19/typescript-skill/"></a>
-      </li>
-    
   </ul>
 </div>
 
@@ -1140,6 +1193,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget category">
   <h3 class="title">分類</h3>
   <ul class="entry">
+  
+    <li><a href="/categories/Go/">Go</a><small>1</small></li>
   
     <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
   
@@ -1165,7 +1220,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+    <li><a href="/categories/physical/">physical</a><small>0</small></li>
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
@@ -1183,13 +1238,15 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget tag">
   <h3 class="title">標籤</h3>
   
+    <a href="/tags/Go/">Go<small>1</small></a>
+  
     <a href="/tags/Google/">Google<small>1</small></a>
   
     <a href="/tags/JavaScript/">JavaScript<small>2</small></a>
   
     <a href="/tags/Javascript/">Javascript<small>1</small></a>
   
-    <a href="/tags/Node/">Node<small>1</small></a>
+    <a href="/tags/Node/">Node<small>2</small></a>
   
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
@@ -1235,9 +1292,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/decimal/">decimal<small>1</small></a>
   
-    <a href="/tags/drive/">drive<small>1</small></a>
+    <a href="/tags/drive/">drive<small>0</small></a>
   
-    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+    <a href="/tags/emDrive/">emDrive<small>0</small></a>
   
     <a href="/tags/float/">float<small>1</small></a>
   
@@ -1277,7 +1334,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>1</small></a>
+    <a href="/tags/microwave/">microwave<small>0</small></a>
   
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
@@ -1293,7 +1350,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>1</small></a>
+    <a href="/tags/physical/">physical<small>0</small></a>
   
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
@@ -1303,7 +1360,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
   
-    <a href="/tags/quantum/">quantum<small>1</small></a>
+    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   

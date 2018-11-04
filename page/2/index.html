@@ -118,6 +118,121 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
+      <h1 class="title transition"><a href="/2017/05/21/https-5/">零门槛学习https--(5)常见的https攻击原理</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2017-05-21T03:09:00.000Z">2017-05-21</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2017/05/21/https-5/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/05/21/https-5/" data-count-type="comments"></span></a>
+              
+          </ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>上一篇：<a href="/2017/05/19/https-4/">零门槛学习https–(4)https协议详解</a></p>
+<p>看似毫无破绽的TLS协议，其实也存在着诸多漏洞，主要因为TLS协议太复杂了，复杂的东西必然会出现漏洞，下面我们来看看一些常见的攻击手段有哪些，以及一些攻击实例。</p>
+<h2 id="伪造证书"><a href="#伪造证书" class="headerlink" title="伪造证书"></a>伪造证书</h2><h3 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>这是一种中间人攻击，就是伪造网站证书，虽然浏览器会提示访问了不安全的网址，但是大部分对https没什么了解的人基本都会选择忽略问题继续浏览，这是一种简单，成本低，且效果还可以的攻击方式。</p>
+<h3 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h3><p>打开浏览器设置，如果证书不可信，那么就直接不能访问。这个其实也不能算是TLS的漏洞，只能说是浏览器为了做兼容而没有采取一些强制性措施，或许不久的将来，浏览器默认就会直接拒绝无效证书的连接。</p>
+<h2 id="POODLE"><a href="#POODLE" class="headerlink" title="POODLE"></a>POODLE</h2><h3 id="攻击原理-1"><a href="#攻击原理-1" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>上一章看TLS协议的时候，我们看到，因为要处理兼容性问题，客户端和服务端不得不支持很多种加密套件和TLS或者SSL版本，由此，衍生一个问题就是：一些老久的加密套件或者SSL版本通常在现在的计算能力下安全性没那么高，或者早先的协议是有安全漏洞的，所以，针对SSL降级，还有加密降级攻击就成了一种主流的攻击方式。</p>
+<p>POODLE的全称是<code>Padding Oracle On Downgraded Legacy Encryption</code>，由谷歌的工程师在2014年发现了这个问题，问题的主要原因在于分块加密。其原理是：</p>
+<p><strong>AES 分块加密在原文内容长度不满足时，会在原文后面填充一些内容，保证每个分块的长度一致，这就是Padding Oracle，也是攻击的关键，因为新版TLS不存在这个问题，所以我们需要对协议进行降级，而降级就是Downgraded Legacy Encryption，所以这也是这个漏洞名称的由来。</strong></p>
+<p>协议降级很简单，只要在客户端发送<code>Client Hello</code>消息的时候，把客户端支持的加密套件替换成SSL3.0，如果服务端支持，那么后续连接就会使用SSLV3来进行连接，具体的<code>Padding Oracle</code>攻击原理可以看一下<a href="http://www.freebuf.com/articles/web/15504.html" target="_blank" rel="external">这篇文章</a>，写得非常详细。</p>
+<h3 id="防御方法-1"><a href="#防御方法-1" class="headerlink" title="防御方法"></a>防御方法</h3><p>客户端禁用SSLV3协议，服务端也关闭SSLV3的连接。</p>
+<h2 id="FREAK"><a href="#FREAK" class="headerlink" title="FREAK"></a>FREAK</h2><p>这个攻击方式可以说到一个很有意思的事情，目前基本主流的加密算法都是由美国开发的，90年代的时候，NSA为了能够监听世界上所有的网络通信，出台了对于软件出口规定，规定只有美国境内能够使用高强度的RSA加密，对于出口国外的软件，最高允许512密钥长度的RSA，高安全级别的加密算法被认为是战争武器而禁止对外出口。2000年之后，美国逐渐放宽了这个限制，目前美国任然有一些带有加密算法和函数的软硬件受到出口管制。</p>
+<h3 id="攻击原理-2"><a href="#攻击原理-2" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>由于历史遗留原因，IE6，网景，甚至是手机上的安卓和iOS Safari 浏览器，都支持512密钥长度的RSA加密，这在2015年的时候才被法国工程师发现。据说在当时任然有38%的服务器还支持512长度的密钥，而且讽刺的是，美国一些政府部门网站也存在此漏洞。</p>
+<p>攻击者在<code>Client Hello</code>的时候，把高强度的密钥加密算法都剔除掉，留下低强度的算法，如果服务端也支持低强度的加密算法，那么就会选择这一算法。虽然在90年代一般的PC还无法破解512长度密钥，但是目前个人已经完全有能力破解了。</p>
+<h3 id="防御方法-2"><a href="#防御方法-2" class="headerlink" title="防御方法"></a>防御方法</h3><p>苹果已经在当时推出相应补丁，而安卓也在后续版本进行了升级。服务端应该禁止低强度加密算法。</p>
+<h2 id="HTTPS-Strip"><a href="#HTTPS-Strip" class="headerlink" title="HTTPS Strip"></a>HTTPS Strip</h2><p>也称为SSLStrip，是一种基于社会学的攻击方法，也是中间人攻击的一种，和任何加密方式都无关，和SSL也无关，也是目前为止我成功实施的一种攻击方式。</p>
+<h3 id="攻击原理-3"><a href="#攻击原理-3" class="headerlink" title="攻击原理"></a>攻击原理</h3><p>通常，我们在浏览器访问一个网址的时候，会直接输入网址，而不会关注协议，比如我要访问天猫，那么我就会输入：<code>tmall.com</code>，而此时浏览器默认会使用http协议访问，因为浏览器并不知道服务端是否开启了https，所以，攻击者直接劫持http访问，然后自己去访问<code>https://www.tmall.com</code>，并把内容通过http协议返回给浏览器，浏览器成功收到数据，就直接开始渲染页面，浏览器端完全就是访问一个http站点。所以，这种攻击方式就叫做SSL剥离攻击。除了浏览器之外的场景，基本不会受到此攻击的影响。</p>
+<h3 id="防御方法-3"><a href="#防御方法-3" class="headerlink" title="防御方法"></a>防御方法</h3><p><a href="https://zh.wikipedia.org/zh-hans/HTTP%E4%B8%A5%E6%A0%BC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8" target="_blank" rel="external">HSTS</a>(HTTP Strict Transport Security)，这是一种浏览器技术，在客户端访问站点的时候，如果检测到当前域名在HSTS列表中，那么直接使用https协议访问，也就不会被攻击者劫持了。那么如何加入HSTS列表呢？在浏览器第一次访问站点的时候，站点可以在http返回头里面来标示是否启用HSTS，还有过期时间。</p>
+<p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2V3vesbVkpuFjSspcXXbSMVXa_!!99218453.png" alt=""></p>
+<p><code>这是第一次访问www.taobao.com的场景，http返回头有个：Strict-Transport-Security属性，过期时间是一年。</code></p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2Z.rmsbRkpuFjSspmXXc.9XXa_!!99218453.png" alt=""></p>
+<p><code>这是第二次访问www.taobao.com时候，因为已经在HSTS列表中，就直接是一个Internal Redirect，不会请求服务端。</code></p>
+<p>其实你会发现，浏览器第一次访问网站的时候，也是有可能被劫持的，所以现在有些网址会内置在浏览器的HSTS列表中，防止第一次访问被劫持的情况发生。不久的将来，也许浏览器就默认使用https访问，这种攻击方式也就无法发挥作用了。</p>
+<h3 id="攻击实例"><a href="#攻击实例" class="headerlink" title="攻击实例"></a>攻击实例</h3><p>写个脚本就可以检测网站是否开启了HSTS，对于没有开启HSTS的网站都可以发动攻击。以下是我对<code>tmall.com</code>发起的一次http strip的攻击实例。</p>
+<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2dlQTvZtnpuFjSZFKXXalFFXa_!!99218453.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#19978;&#22270;&#20013;&#30475;&#21040;&#35775;&#38382;tmall.com&#30340;&#36339;&#36716;&#36923;&#36753;&#26159;&#65306;&#10;&#9;tmall.com --302--&#62; www.tmall.com --301--&#62; https://www.tmall.com&#12290;&#10;&#10;301&#36824;&#22909;&#65292;&#29616;&#20195;&#27983;&#35272;&#22120;&#20960;&#20046;&#20250;&#20316;&#20026;&#27704;&#20037;&#32531;&#23384;&#65292;&#36825;&#31181;&#24773;&#20917;&#19979;&#22914;&#26524;&#19981;&#28165;&#38500;&#32531;&#23384;&#65292;&#20854;&#23454;&#36319;HSTS&#25928;&#26524;&#24046;&#19981;&#22810;&#12290;&#10;302&#23601;&#22353;&#20102;&#65292;&#22522;&#26412;&#26159;&#19981;&#20250;&#32531;&#23384;&#30340;&#12290;</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2bYEjshdkpuFjy0FbXXaNnpXa_!!99218453.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#20174;&#19978;&#22270;&#20013;&#25105;&#20204;&#21487;&#20197;&#30475;&#21040;&#36820;&#22238;&#22836;&#20013;&#34429;&#28982;&#21253;&#21547;&#20102;STS&#22836;&#65292;&#20294;&#26159;&#36807;&#26399;&#26102;&#38388;&#20026;0&#10;&#10;&#20063;&#23601;&#26159;&#19981;&#24320;&#21551;HSTS&#65292;&#29992;&#20102;&#19968;&#20010;301&#36339;&#21040;&#20102;https&#31449;&#28857;</span><br></pre></td></tr></table></figure>
+<p>下面我开始准备需要的东西，当然一个前提是你要能捕获流量：</p>
+<ol>
+<li>为了方便我使用本机测试，可以建个DNS服务器，也可以使用更简单的host文件，我选择使用host文件，把<code>tmall.com</code>、<code>www.tmall.com</code>指向<code>127.0.0.1</code>。实际情况中，可以采用ARP欺骗等方式获取局域网流量。</li>
+<li>在本机建立一个<code>web server</code>，具体的代码就不贴了，后面贴一些关键代码。</li>
+</ol>
+<p>好，我们可以开始攻击了，具体步骤如下。</p>
+<ol>
+<li>首先使用浏览器访问<code>tmall.com</code>，因为没有开启HSTS，浏览器开始用http方式请求<code>tmall.com</code>。</li>
+<li>这时候本次请求已经到我的中间人<code>server</code>，然后<code>server</code>使用IP方式访问真实的<code>tmall.com</code>，这里不能用域名，因为域名已经指向本机了。</li>
+<li><p>拿到真实<code>tmall.com</code>的返回之后，添加如下代码：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">body += &#39;&#60;script&#62;alert( &#39;hello&#39; )&#60;/script&#62;&#39;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>返回给浏览器，此时，浏览器看起来是这个样子，弹出了hello，并且仔细看会发现https标示没有了，如果不弹出alert，天猫那个具有强烈视觉冲击感的页面，很容易让你忽略https标示没有了这件事。<br> <img src="https://img.alicdn.com/imgextra/i1/99218453/TB2Cvu7v9FmpuFjSZFrXXayOXXa_!!99218453.png" alt="">    </p>
+</li>
+<li>再进一步看看，点击<code>登陆</code>按钮的跳转逻辑是：<code>&lt;a href=&quot;//:login.tmall.com&quot;&gt;登陆&lt;/a&gt;</code>，没有写死协议，如果写死了协议，在返回内容的时候，手动替换为<code>http</code>即可。登录页同样没有开启HSTS，我们试试看能不能拿到账号密码。简单分析一下天猫登录页，真正账号密码的输入框采用的是<code>login.taobao.com</code>提供的iframe登录框，有二维码和手动输入账号密码两个选项，二维码无能为力了，看看能不能拿到手动输入账号密码时的内容。</li>
+<li><p>看了看<code>login.taobao.com</code>，没有写死协议，并且发现同样没有开启HSTS，这就好办了，和<code>tmall.com</code>一样，拦截请求，并在返回内容添加如下代码，插入一个jQuery，并在在输入密码的时候获取输入事件：</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">body += &#10; &#34;&#60;script src=\&#34;https://code.jquery.com/jquery-latest.js\&#34;&#62;&#60;/script&#62;&#34; +&#10; &#34;&#60;script&#62;&#34; +&#10;   &#34;$( &#39;#TPL_username_1&#39; ).on( &#39;input&#39;, function ()&#123;&#34; +&#10;     &#34;console.log( this.value );&#34; +&#10;   &#34;&#125; );&#34; + &#10;   &#34;$( &#39;#TPL_password_1&#39; ).on( &#39;input&#39;, function ()&#123;&#34; +&#10;     &#34;console.log( this.value );&#34; +&#10;   &#34;&#125; );&#34; +&#10; &#34;&#60;/script&#62;&#34;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ol>
+<li><p>运行脚本，看看效果：<br> <img src="https://img.alicdn.com/imgextra/i2/99218453/TB2j5WrvZtnpuFjSZFKXXalFFXa_!!99218453.png" alt=""></p>
+<p> <code>login.taobao.com</code>竟然是GBK编码的，导致乱码了，这里我懒得转编码了，可以看到左上角其实浏览器已经显示了<code>不安全</code>三个字，同样估计很少有人会看到这几个字。我们尝试输入一下账号密码试试看：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2Wp7Gsl0lpuFjSszdXXcdxFXa_!!99218453.png" alt=""><br> 已经打印出账号密码，发个请求就能发送到我自己的服务器了，后面再跳回到https站点就神不知鬼不觉了。</p>
+</li>
+<li><p>总的来说，本次攻击的需要的条件其实是比较多的，首先因为<code>http://www.tmall.com</code>跳转到<code>https://www.tmall.com</code>是301跳转，而chrome等浏览器把301几乎是当做永久缓存来处理的，除非手动清理缓存，当然很多浏览器对301也不缓存，或者重启就没了。其次，默认的登陆方式是二维码登陆，二维码登陆就无法实施此次攻击了。不过基于天猫访问量巨大，符合条件的流量估计也不少，而且<code>http://login.taobao.com</code>跳往https站点是302，也就是不会缓存了，这个有安全隐患。如果某天天猫开启了HSTS，那么这类攻击就几乎无法生效了，毕竟这对天猫来说也就是一个配置项的事。</p>
+</li>
+</ol>
+<h2 id="其他漏洞"><a href="#其他漏洞" class="headerlink" title="其他漏洞"></a>其他漏洞</h2><ol>
+<li>完全信任证书漏洞。很多android APP采取了不校验证书的方式，导致中间人攻击非常容易，比如早先的亚马逊官方APP、携程APP等。</li>
+<li>Heartbleed。OpenSSL在实现心跳的扩展没有对输入进行适当验证，导致过读，可以读取服务器内存中的内容，即使协议没问题，实现有问题同样也会造成漏洞的产生。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>TLS因为比较复杂，所以或多或少总会有些漏洞，TLS也在慢慢地不断完善，因为很多东西基于数学原理，或者某天出现了快速因式分解等的方法，瞬间就可以破解TLS，也有人说美国安全局其实早就已经掌握某些技术能够监听全世界的加密流量了，加密和破解总是在不断地博弈，在博弈过程中进行自我升级，随着技术的发展以及大家对隐私和网络安全越来越关注，相信我们的网络环境一定会变得越来越安全。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2017/05/21/https-5/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
       <h1 class="title transition"><a href="/2017/05/19/https-4/">零门槛学习https--(4)https协议详解</a></h1>
     
   
@@ -1123,115 +1238,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
-      <h1 class="title transition"><a href="/2016/11/23/computer-number/">计算机眼中的数字</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2016-11-23T11:19:00.000Z">2016-11-23</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2016/11/23/computer-number/#ds-thread"><span class="ds-thread-count" data-thread-key="2016/11/23/computer-number/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <h2 id="0-1-0-2"><a href="#0-1-0-2" class="headerlink" title="0.1 + 0.2 = ?"></a>0.1 + 0.2 = ?</h2><p>即使是没上过学的人，也知道答案是0.3，但是，在看似无所不能，计算速度远超人类的计算机来说，答案就不是0.3了。看看chrome下的结果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.1 + 0.2&#10;&#10;0.30000000000000004</span><br></pre></td></tr></table></figure>
-<p>再看看python：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Python 2.7.10 (default, Jul 30 2016, 18:31:42) &#10;[GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.34)] on darwin&#10;Type &#34;help&#34;, &#34;copyright&#34;, &#34;credits&#34; or &#34;license&#34; for more information.&#10;&#62;&#62;&#62; 0.1 + 0.2&#10;0.30000000000000004&#10;&#62;&#62;&#62;</span><br></pre></td></tr></table></figure>
-<p>再试试C语言：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &#34;stdio.h&#34;&#10; &#10;  int main()&#123;&#10;&#10;  double a = 0.1 + 0.2;&#10;  printf( &#34;%.17lf&#34;, a );&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004</span><br></pre></td></tr></table></figure>
-<p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2hkIJc80kpuFjy1zdXXXuUVXa_!!99218453.jpg" alt="qustion"></p>
-<h2 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h2><p>对于数字的存储绝大多数语言遵循的都是<a href="http://grouper.ieee.org/groups/754/" target="_blank" rel="external">IEEE 754</a>规范，简单来说就是一些革命先烈告诉你当你在二进制计算机中想要一个浮点数的时候应该如何去表达。</p>
-<p>首先，内存是有限的，所以一个数字，当它声明好了之后所占的位数是固定的，比如在C语言中，<code>double</code>类型所占的字节数是8，那么总共就是64位(可能某些奇葩编译器会有些差异)，革命先烈们是怎么规定的呢？</p>
-<p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yn.NdH4npuFjSZFmXXXl4FXa_!!99218453.png" alt="double"></p>
-<p>有一个通用的计算公式：</p>
-<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2253xdUlnpuFjSZFjXXXTaVXa_!!99218453.png" alt="float-cal"></p>
-<ol>
-<li>(-1)^s表示符号位，当s=0，V为正数；当s=1，V为负数。</li>
-<li>M表示有效数字，大于等于1，小于2。</li>
-<li>2^E表示指数位。</li>
-</ol>
-<p>举例来说，十进制的5.0，写成二进制是101.0，相当于1.01×2^2。那么，按照上面V的格式，可以得出s=0，M=1.01，E=2。<br>十进制的-5.0，写成二进制是-101.0，相当于-1.01×2^2。那么，s=1，M=1.01，E=2。</p>
-<p>有几点需要注意：</p>
-<ul>
-<li><p>因为有效数字M的第一位必然是1，所以存储的时候就把这一位舍去了，可以空出一位用来存储，在计算的时候加回来就行了。</p>
-</li>
-<li><p>指数E没有符号位，无法表示负数，所以在计算的时候减去一个半数，比如：double是64位，11位用来存储指数，假设你要保存指数10，那么就必须存储<code>1023 + 10</code>，也就是<code>10000001001</code>。ps: 以上讨论的都是64位浮点数，如果是float，也就是32位的浮点数，指数位数是8，保存指数10就是:<code>127 + 10</code></p>
-</li>
-</ul>
-<p>对于指数E，还有一下三条更细的规则：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#65288;1&#65289;E&#19981;&#20840;&#20026;0&#25110;&#19981;&#20840;&#20026;1&#12290;&#36825;&#26102;&#65292;&#25351;&#25968;E&#30340;&#35745;&#31639;&#20540;&#20943;&#21435;127&#65288;&#25110;1023&#65289;&#65292;&#24471;&#21040;&#30495;&#23454;&#20540;&#65292;&#20877;&#23558;&#26377;&#25928;&#25968;&#23383;M&#21069;&#21152;&#19978;&#31532;&#19968;&#20301;&#30340;1&#12290;&#10;&#65288;2&#65289;E&#20840;&#20026;0&#12290;&#36825;&#26102;&#65292;&#28014;&#28857;&#25968;&#30340;&#25351;&#25968;E&#31561;&#20110;1-127&#65288;&#25110;&#32773;1-1023&#65289;&#65292;&#26377;&#25928;&#25968;&#23383;M&#19981;&#20877;&#21152;&#19978;&#31532;&#19968;&#20301;&#30340;1&#65292;&#32780;&#26159;&#36824;&#21407;&#20026;0.xxxxxx&#30340;&#23567;&#25968;&#12290;&#36825;&#26679;&#20570;&#26159;&#20026;&#20102;&#34920;&#31034;&#177;0&#65292;&#20197;&#21450;&#25509;&#36817;&#20110;0&#30340;&#24456;&#23567;&#30340;&#25968;&#23383;&#12290;&#10;&#65288;3&#65289;E&#20840;&#20026;1&#12290;&#36825;&#26102;&#65292;&#22914;&#26524;&#26377;&#25928;&#25968;&#23383;M&#20840;&#20026;0&#65292;&#34920;&#31034;&#177;&#26080;&#31351;&#22823;&#65288;&#27491;&#36127;&#21462;&#20915;&#20110;&#31526;&#21495;&#20301;s&#65289;&#65307;&#22914;&#26524;&#26377;&#25928;&#25968;&#23383;M&#19981;&#20840;&#20026;0&#65292;&#34920;&#31034;&#36825;&#20010;&#25968;&#19981;&#26159;&#19968;&#20010;&#25968;&#65288;NaN&#65289;&#12290;</span><br></pre></td></tr></table></figure>
-<h4 id="好了，说完了背景，那么就可以来看看到底是什么原因了。"><a href="#好了，说完了背景，那么就可以来看看到底是什么原因了。" class="headerlink" title="好了，说完了背景，那么就可以来看看到底是什么原因了。"></a>好了，说完了背景，那么就可以来看看到底是什么原因了。</h4><p>整数的二进制和十进制之间的相互转换，相信大家都会算，小数部分，很多人可能已经忘记如何计算了。</p>
-<p>总体来说就是 <strong>乘二取整</strong>，比如0.1</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.1 * 2&#10;0.2      &#62;&#62; 0&#10;0.2 * 2&#10;0.4      &#62;&#62; 0&#10;0.4 * 2&#10;0.8      &#62;&#62; 0&#10;0.8 * 2&#10;1.6      &#62;&#62; 1&#10;0.6 * 2&#10;1.2      &#62;&#62; 1&#10;&#10;0.2 * 2&#10;0.4      &#62;&#62; 0&#10;0.4 * 2&#10;0.8      &#62;&#62; 0&#10;0.8 * 2&#10;1.6      &#62;&#62; 1&#10;......</span><br></pre></td></tr></table></figure>
-<p>0.1 变成了 <code>0.0001 1001 1001 1001 ....</code> 1001无限循环<br>0.2 变成了 <code>0.0011 0011 0011 0011 ....</code> 0011无限循环</p>
-<p>对于计算机来说，0.1和0.2的二进制就变成了一个无尽数，其实大部分小数转换成二进制都是无穷数。于是，二进制的0.1和0.2就变成了：</p>
-<p>竖线后面代表存储位数之外   </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.0001 1001 1001 ...... 1001 | 1001   &#10;0.0011 0011 0011 ...... 0011 | 0011</span><br></pre></td></tr></table></figure>
-<p>二进制相加之后变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...... 1100 | 1100</span><br></pre></td></tr></table></figure>
-<p>由于存储位数限制，必须舍去竖线后面的有效数字，按照舍0进1的方式，就变成了 <code>.... 1101</code>，所以整个二进制数字就变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.0100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1100 1101</span><br></pre></td></tr></table></figure>
-<p>转换成十进制就是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0.30000000000000004440892098500626</span><br></pre></td></tr></table></figure>
-<p>就变成了我们最初所看到的结果。</p>
-<p>至此，我们开头的问题已经有了答案，那么下面有几个引申问题：</p>
-<ul>
-<li>JS中类型存储位是52位，那么可以准确表达最大的数字就是：Math.pow(2, 53), 也就是：<code>9007199254740992</code>，那么以下几个表达式的值是什么呢？</li>
-</ul>
-<p>9007199254740992 + 1<br>9007199254740992 + 2<br>9007199254740992 + 3<br>9007199254740992 + 4</p>
-<ul>
-<li>0.1, 0.2, 0.3, 0.4 转换成二进制小数都是无穷的，那么以下表达式的结果如何呢？</li>
-</ul>
-<p>0.1 + 0.2 === 0.3<br>0.1 + 0.3 === 0.4<br>0.2 + 0.4 === 0.6<br>0.2 + 0.3 === 0.5</p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2016/11/23/computer-number/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -1257,6 +1263,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <ul class="entry">
     
       <li>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+      </li>
+    
+      <li>
+        <a href="/2018/09/21/hello-world/">Hello World</a>
+      </li>
+    
+      <li>
         <a href="/2018/06/24/node-event-loop/">一段有意思的Nodejs异步处理代码</a>
       </li>
     
@@ -1268,14 +1282,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
         <a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a>
       </li>
     
-      <li>
-        <a href="/2018/02/28/webpack-chunk-id-with-cdn/">webpack的chunk id和cdn缓存之间的爱恨情仇</a>
-      </li>
-    
-      <li>
-        <a href="/2018/01/19/typescript-skill/"></a>
-      </li>
-    
   </ul>
 </div>
 
@@ -1284,6 +1290,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget category">
   <h3 class="title">分類</h3>
   <ul class="entry">
+  
+    <li><a href="/categories/Go/">Go</a><small>1</small></li>
   
     <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
   
@@ -1309,7 +1317,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>2</small></li>
+    <li><a href="/categories/physical/">physical</a><small>0</small></li>
   
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
@@ -1327,13 +1335,15 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <div class="widget tag">
   <h3 class="title">標籤</h3>
   
+    <a href="/tags/Go/">Go<small>1</small></a>
+  
     <a href="/tags/Google/">Google<small>1</small></a>
   
     <a href="/tags/JavaScript/">JavaScript<small>2</small></a>
   
     <a href="/tags/Javascript/">Javascript<small>1</small></a>
   
-    <a href="/tags/Node/">Node<small>1</small></a>
+    <a href="/tags/Node/">Node<small>2</small></a>
   
     <a href="/tags/OSX/">OSX<small>1</small></a>
   
@@ -1379,9 +1389,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/decimal/">decimal<small>1</small></a>
   
-    <a href="/tags/drive/">drive<small>1</small></a>
+    <a href="/tags/drive/">drive<small>0</small></a>
   
-    <a href="/tags/emDrive/">emDrive<small>1</small></a>
+    <a href="/tags/emDrive/">emDrive<small>0</small></a>
   
     <a href="/tags/float/">float<small>1</small></a>
   
@@ -1421,7 +1431,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>1</small></a>
+    <a href="/tags/microwave/">microwave<small>0</small></a>
   
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
@@ -1437,7 +1447,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>1</small></a>
+    <a href="/tags/physical/">physical<small>0</small></a>
   
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
@@ -1447,7 +1457,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
   
-    <a href="/tags/quantum/">quantum<small>1</small></a>
+    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   

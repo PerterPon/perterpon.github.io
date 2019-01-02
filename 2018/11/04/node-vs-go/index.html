@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>记一次Node和Go的性能测试 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="记一次Node和Go的性能测试"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="记一次Node和Go的性能测试">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -150,16 +150,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li><p>测试机和试压机修改fd的限制​<code>ulimit -n 100000</code>​，否则fd很快就用完了。</p>
 </li>
 <li><p>如果是试压机是单机，并且QPS非常高的时候，也许你会经常见到试压机有N多的连接都是​TIME_WAIT​状态，具体原因可以在网上搜一下，执行以下命令即可：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sysctl -w net.ipv4.tcp_timestamps=1&#10;$ sysctl -w net.ipv4.tcp_tw_reuse=1 &#10;$ sysctl -w net.ipv4.tcp_tw_recycle=1</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sysctl -w net.ipv4.tcp_timestamps=1</span><br><span class="line">$ sysctl -w net.ipv4.tcp_tw_reuse=1 </span><br><span class="line">$ sysctl -w net.ipv4.tcp_tw_recycle=1</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>测试工具我用的是siege，版本是​3.0.8​。</p>
 </li>
 <li>测试的js代码和go代码分别如下：</li>
 </ol>
 <p><strong>Node</strong>（官网的cluster示例代码）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const cluster = require(&#39;cluster&#39;);&#10;const http = require(&#39;http&#39;);&#10;const numCPUs = require(&#39;os&#39;).cpus().length;&#10;&#10;if (cluster.isMaster) &#123;&#10;    console.log(`Master $&#123;process.pid&#125; is running`);&#10;    &#10;    // Fork workers.&#10;    for (let i = 0; i &#60; numCPUs; i++) &#123;&#10;    cluster.fork();&#10;    &#125;&#10;    &#10;    cluster.on(&#39;exit&#39;, (worker, code, signal) =&#62; &#123;&#10;    console.log(`worker $&#123;worker.process.pid&#125; died`);&#10;&#125;);&#125; else &#123;&#10;    // Workers can share any TCP connection&#10;    // In this case it is an HTTP server&#10;    http.createServer((req, res) =&#62; &#123;&#10;    res.end(&#39;hello world\n&#39;);&#10;&#125;).listen(8000);&#10;    &#10;console.log(`Worker $&#123;process.pid&#125; started`);&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const cluster = require(&apos;cluster&apos;);</span><br><span class="line">const http = require(&apos;http&apos;);</span><br><span class="line">const numCPUs = require(&apos;os&apos;).cpus().length;</span><br><span class="line"></span><br><span class="line">if (cluster.isMaster) &#123;</span><br><span class="line">    console.log(`Master $&#123;process.pid&#125; is running`);</span><br><span class="line">    </span><br><span class="line">    // Fork workers.</span><br><span class="line">    for (let i = 0; i &lt; numCPUs; i++) &#123;</span><br><span class="line">    cluster.fork();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    cluster.on(&apos;exit&apos;, (worker, code, signal) =&gt; &#123;</span><br><span class="line">    console.log(`worker $&#123;worker.process.pid&#125; died`);</span><br><span class="line">&#125;);&#125; else &#123;</span><br><span class="line">    // Workers can share any TCP connection</span><br><span class="line">    // In this case it is an HTTP server</span><br><span class="line">    http.createServer((req, res) =&gt; &#123;</span><br><span class="line">    res.end(&apos;hello world\n&apos;);</span><br><span class="line">&#125;).listen(8000);</span><br><span class="line">    </span><br><span class="line">console.log(`Worker $&#123;process.pid&#125; started`);&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>Go</strong>    </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">package main&#10;&#10;import(&#10;    &#34;net/http&#34;&#10;    &#34;fmt&#34;&#10;)&#10;&#10;func hello(w http.ResponseWriter, r *http.Request) &#123;&#10;    fmt.Fprintf(w, &#34;hello world&#34;)&#10;&#125;&#10;&#10;func main() &#123;&#10;    http.HandleFunc(&#34;/&#34;, hello);&#10;    err := http.ListenAndServe(&#34;:8000&#34;, nil);&#10;    if err != nil &#123;&#10;            &#10;    &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import(</span><br><span class="line">    &quot;net/http&quot;</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func hello(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    fmt.Fprintf(w, &quot;hello world&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    http.HandleFunc(&quot;/&quot;, hello);</span><br><span class="line">    err := http.ListenAndServe(&quot;:8000&quot;, nil);</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">            </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="开始测试"><a href="#开始测试" class="headerlink" title="开始测试"></a>开始测试</h2><p>首先开始并发量的测试，然而。。。游戏主机的CPU是i7-8700K，性能太强，以至于拿了两台mac也没能压满。。。</p>
 <p>四处寻找一番，找到了好几年前花了千把块钱配的nas，上去一看是颗双核的i3-4170，妥了，这下肯定没问题</p>
 <h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><p>跳过了小插曲，直接开测</p>
@@ -198,7 +198,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <hr>
 <p><strong>结论 ：node在把CPU压满的情况下，最高qps为：17000，而go在cpu利用率剩余30%的情况，qps已经达到了37000，如果网卡允许，那么go理论上可以达到50000左右的qps，是node的2.9倍左右。</strong></p>
 <h3 id="CPU密集场景"><a href="#CPU密集场景" class="headerlink" title="CPU密集场景"></a>CPU密集场景</h3><p>为了模拟CPU密集场景，并保证两边场景一致，我在node和go中，分别添加了一段如下代码，每次请求循环100W次，然后相加：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var b int&#10;for a := 0; a &#60; 1000000; a ++ &#123;&#10;&#9; b = b + a&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var b int</span><br><span class="line">for a := 0; a &lt; 1000000; a ++ &#123;</span><br><span class="line">	 b = b + a</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
 <ul>
 <li>Node 多进程模型：这里我的测试方式是开了4个worker，因为在CPU密集场景下，瓶颈往往在woker进程，并且将4个进程分别和4个核绑定，master进程就让他随风飘摇吧</li>
@@ -255,7 +255,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/Go/">Go</a>, <a href="/tags/Node/">Node</a>
+    <a href="/tags/Node/">Node</a>, <a href="/tags/Go/">Go</a>
   </div>
 
           <div class="share">
@@ -286,10 +286,18 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
+ <div class="article-prev">
+ <a href="/2019/01/02/cal-when-number-overload/" title="double值失精之后的表现">
+  <i class="fa fa-long-arrow-left"></i>
+  <span>
+  double值失精之后的表现</span>
+</a>
+</div>
+
 
 <div class="article-next">
-<a href="/2018/09/21/hello-world/"  title="Hello World">
- <span>Hello World
+<a href="/2018/06/24/node-event-loop/" title="一段有意思的Nodejs异步处理代码">
+ <span>一段有意思的Nodejs异步处理代码
 </span>
 <i class="fa fa-long-arrow-right"></i>
 </a>
@@ -305,7 +313,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -334,22 +342,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -370,7 +378,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -383,7 +391,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -399,8 +407,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -415,7 +421,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -459,7 +465,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -469,13 +475,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -513,15 +515,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -529,17 +529,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -596,7 +592,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>PerterPon</title>
@@ -12,14 +12,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
   
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -66,16 +66,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -83,8 +83,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -108,6 +108,139 @@ body{ -webkit-animation: bugfix infinite 1s; }
   </div>
   <div id="content" class="inner">
     <div id="main-col" class="alignleft"><div id="wrapper" class="padding">
+  <article class="post">
+  
+  
+    <div class="post-content-index">
+  
+      
+        <header>
+          <div class="icon"></div>
+            
+    
+      <h1 class="title transition"><a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a></h1>
+    
+  
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2019-01-02T12:35:00.000Z">2019-01-02</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="/2019/01/02/cal-when-number-overload/#ds-thread"><span class="ds-thread-count" data-thread-key="2019/01/02/cal-when-number-overload/" data-count-type="comments"></span></a>
+              
+          </li></ul>
+        </header>
+      
+      <div class="entry">
+        
+          
+            <p>之前在<a href="/2016/11/23/computer-number/">这篇文章</a>中解释了<code>0.1+0.2</code>为什么不等于<code>0.3</code>而等于<code>0.30000000000000004</code>的原因，根源问题还在于存储精度的问题，当时只是简单觉得丢失精度后的行为是理所当然的，并没有丢失精度后是如何处理的，下面就来分析一下：</p>
+<h2 id="精度丢失加法"><a href="#精度丢失加法" class="headerlink" title="精度丢失加法"></a>精度丢失加法</h2><p>首先，JS，或者说double类型能精确表达的最大的数是<code>Math.pow(2, 53)</code>，那么下面表达式的值你肯定也知道了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(2, 53) + 1 === 9007199254740992</span><br><span class="line">Math.pow(2, 53) + 2 === 9007199254740994</span><br></pre></td></tr></table></figure>
+<p>那么下面表达式的值呢：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(2, 53) + 3 ?</span><br></pre></td></tr></table></figure>
+<p>可能一开始你会想当然得认为上面的值是：<code>9007199254740994</code>，因为精度不到，所以就把这位丢弃，然而，确切的结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">9007199254740996</span><br></pre></td></tr></table></figure>
+<h2 id="精度丢失算法"><a href="#精度丢失算法" class="headerlink" title="精度丢失算法"></a>精度丢失算法</h2><p>显然上面的运算都是在精度丢失的场景下进行的，那么，如何保证精度尽量正确就是必须要做的事，</p>
+<h3 id="0舍1进"><a href="#0舍1进" class="headerlink" title="0舍1进"></a>0舍1进</h3><p>舍0进1类似4舍5入，0就舍弃，1就向前进一位，举个例子</p>
+<p><strong><code>Math.pow(2, 53) - 1</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110011|1111111111111111111111111111111111111111111111111111</span><br></pre></td></tr></table></figure>
+<p>之前我们说到有这么一个公式（注意，这里是二进制运算，那个2的N次方可以理解为十进制的10的N次方）：</p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2253xdUlnpuFjSZFjXXXTaVXa_!!99218453.png" alt=""></p>
+<p>带入上述计算公式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 52</span><br><span class="line">整数位 M = 1.1111111111111111111111111111111111111111111111111111</span><br></pre></td></tr></table></figure>
+<p>所以最终结果就是<code>M</code>的小数点往右移动52位的结果。</p>
+<p><strong><code>Math.pow(2, 53)</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 1023 + 52 + 1 = 1077</span><br><span class="line">整数位 M = `1.0000000000000000000000000000000000000000000000000000`</span><br></pre></td></tr></table></figure>
+<p>最终结果为<code>M</code>往右移动53位</p>
+<p><strong><code>Math.pow(2, 53) + 1</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000000</span><br></pre></td></tr></table></figure>
+<p>可以看到和<code>Math.pow(2, 53)</code>一致</p>
+<p><strong><code>Math.pow(2, 53) + 2</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000001</span><br></pre></td></tr></table></figure>
+<p>可以看到最后一位多了一个1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 53</span><br><span class="line">整数位 M = 1.0000000000000000000000000000000000000000000000000001</span><br></pre></td></tr></table></figure>
+<p>最终结果也就是<code>M</code>往右移动53位，变成了<code>10000000000000000000000000000000000000000000000000001|0</code></p>
+<p>因为右边只有52位，而我们的指数位有53位，那么最后一位就变成0了，也就是竖线后面的那一位，所以这也是精度丢失的根本原因。</p>
+<p><strong><code>Math.pow(2, 53) + 3</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000010</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 53</span><br><span class="line">整数位 M = 1.0000000000000000000000000000000000000000000000000010</span><br></pre></td></tr></table></figure>
+<p>最终结果：<code>10000000000000000000000000000000000000000000000000010|0</code></p>
+<p><strong>结论</strong></p>
+<p>Math.pow(2, 53)的整数位：<code>0000000000000000000000000000000000000000000000000000|0</code></p>
+<p>后面那个<code>|</code>符号我们可以认为是小数点，来理解0舍1进</p>
+<ol>
+<li><p>[a]当<code>Math.pow(2, 53) + 1</code>时，变成<code>..000|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[b]当<code>Math.pow(2, 53) + 2</code>时，变成<code>..001|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[c]当<code>Math.pow(2, 53) + 3</code>时，变成<code>..001|1</code>，1的前值为1，舍0进1，变成，<code>..010|0</code></p>
+</li>
+<li>[c]当<code>Math.pow(2, 53) + 4</code>时，变成<code>..010|0</code>，舍弃尾部，值精确</li>
+<li><p>[c]当<code>Math.pow(2, 53) + 5</code>时，变成<code>..010|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[d]当<code>Math.pow(2, 53) + 6</code>时，变成<code>..011|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[e]当<code>Math.pow(2, 53) + 7</code>时，变成<code>..011|1</code>，1的前值为1，舍0进1，变成, <code>..100|0</code></p>
+</li>
+<li>[e]当<code>Math.pow(2, 53) + 8</code>时，变成<code>..100|0</code>，舍弃尾部，值精确</li>
+<li><p>[e]当<code>Math.pow(2, 53) + 9</code>时，变成<code>..100|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[f]当<code>Math.pow(2, 53) + 10</code>时，变成<code>..101|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[g]当<code>Math.pow(2, 53) + 11</code>时，变成<code>..101|1</code>，1的前值为1，舍0进1，变成, <code>..110|0</code></p>
+</li>
+<li>[g]当<code>Math.pow(2, 53) + 12</code>时，变成<code>..110|0</code>，舍弃尾部，值精确</li>
+<li><p>[g]当<code>Math.pow(2, 53) + 13</code>时，变成<code>..110|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[h]当<code>Math.pow(2, 53) + 14</code>时，变成<code>..111|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[h]当<code>Math.pow(2, 53) + 15</code>时，变成<code>..111|1</code>，1的前值为1，舍0进1，变成, <code>.1000|0</code></p>
+</li>
+<li>[h]当<code>Math.pow(2, 53) + 16</code>时，变成<code>..1000|0</code>，舍弃尾部，值精确</li>
+<li><p>[h]当<code>Math.pow(2, 53) + 17</code>时，变成<code>..1000|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[i]当<code>Math.pow(2, 53) + 18</code>时，变成<code>..1001|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[j]当<code>Math.pow(2, 53) + 19</code>时，变成<code>..1001|1</code>，1的前值为1，舍0进1，变成, <code>.1010|0</code></p>
+</li>
+<li>[j]当<code>Math.pow(2, 53) + 20</code>时，变成<code>..1010|0</code>，舍弃尾部，值精确</li>
+</ol>
+<p>好了，列举了20个，你大概也看出规律了，也看明白了，就不多列了。</p>
+<h3 id="恒1"><a href="#恒1" class="headerlink" title="恒1"></a>恒1</h3><p>恒1法总得来说就是在舍去的尾部总是置位1，计算方法比较简单，可以自行上网搜索。</p>
+
+          
+        
+      </div>
+      <footer>
+        
+          <div class="alignright">
+            <a href="/2019/01/02/cal-when-number-overload/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
+          </div>
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+
+
   <article class="post">
   
   
@@ -142,7 +275,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2018/11/04/node-vs-go/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/11/04/node-vs-go/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -158,16 +291,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li><p>测试机和试压机修改fd的限制​<code>ulimit -n 100000</code>​，否则fd很快就用完了。</p>
 </li>
 <li><p>如果是试压机是单机，并且QPS非常高的时候，也许你会经常见到试压机有N多的连接都是​TIME_WAIT​状态，具体原因可以在网上搜一下，执行以下命令即可：</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sysctl -w net.ipv4.tcp_timestamps=1&#10;$ sysctl -w net.ipv4.tcp_tw_reuse=1 &#10;$ sysctl -w net.ipv4.tcp_tw_recycle=1</span><br></pre></td></tr></table></figure>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sysctl -w net.ipv4.tcp_timestamps=1</span><br><span class="line">$ sysctl -w net.ipv4.tcp_tw_reuse=1 </span><br><span class="line">$ sysctl -w net.ipv4.tcp_tw_recycle=1</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>测试工具我用的是siege，版本是​3.0.8​。</p>
 </li>
 <li>测试的js代码和go代码分别如下：</li>
 </ol>
 <p><strong>Node</strong>（官网的cluster示例代码）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const cluster = require(&#39;cluster&#39;);&#10;const http = require(&#39;http&#39;);&#10;const numCPUs = require(&#39;os&#39;).cpus().length;&#10;&#10;if (cluster.isMaster) &#123;&#10;    console.log(`Master $&#123;process.pid&#125; is running`);&#10;    &#10;    // Fork workers.&#10;    for (let i = 0; i &#60; numCPUs; i++) &#123;&#10;    cluster.fork();&#10;    &#125;&#10;    &#10;    cluster.on(&#39;exit&#39;, (worker, code, signal) =&#62; &#123;&#10;    console.log(`worker $&#123;worker.process.pid&#125; died`);&#10;&#125;);&#125; else &#123;&#10;    // Workers can share any TCP connection&#10;    // In this case it is an HTTP server&#10;    http.createServer((req, res) =&#62; &#123;&#10;    res.end(&#39;hello world\n&#39;);&#10;&#125;).listen(8000);&#10;    &#10;console.log(`Worker $&#123;process.pid&#125; started`);&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">const cluster = require(&apos;cluster&apos;);</span><br><span class="line">const http = require(&apos;http&apos;);</span><br><span class="line">const numCPUs = require(&apos;os&apos;).cpus().length;</span><br><span class="line"></span><br><span class="line">if (cluster.isMaster) &#123;</span><br><span class="line">    console.log(`Master $&#123;process.pid&#125; is running`);</span><br><span class="line">    </span><br><span class="line">    // Fork workers.</span><br><span class="line">    for (let i = 0; i &lt; numCPUs; i++) &#123;</span><br><span class="line">    cluster.fork();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    cluster.on(&apos;exit&apos;, (worker, code, signal) =&gt; &#123;</span><br><span class="line">    console.log(`worker $&#123;worker.process.pid&#125; died`);</span><br><span class="line">&#125;);&#125; else &#123;</span><br><span class="line">    // Workers can share any TCP connection</span><br><span class="line">    // In this case it is an HTTP server</span><br><span class="line">    http.createServer((req, res) =&gt; &#123;</span><br><span class="line">    res.end(&apos;hello world\n&apos;);</span><br><span class="line">&#125;).listen(8000);</span><br><span class="line">    </span><br><span class="line">console.log(`Worker $&#123;process.pid&#125; started`);&#125;</span><br></pre></td></tr></table></figure>
 <p><strong>Go</strong>    </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">package main&#10;&#10;import(&#10;    &#34;net/http&#34;&#10;    &#34;fmt&#34;&#10;)&#10;&#10;func hello(w http.ResponseWriter, r *http.Request) &#123;&#10;    fmt.Fprintf(w, &#34;hello world&#34;)&#10;&#125;&#10;&#10;func main() &#123;&#10;    http.HandleFunc(&#34;/&#34;, hello);&#10;    err := http.ListenAndServe(&#34;:8000&#34;, nil);&#10;    if err != nil &#123;&#10;            &#10;    &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import(</span><br><span class="line">    &quot;net/http&quot;</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func hello(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    fmt.Fprintf(w, &quot;hello world&quot;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    http.HandleFunc(&quot;/&quot;, hello);</span><br><span class="line">    err := http.ListenAndServe(&quot;:8000&quot;, nil);</span><br><span class="line">    if err != nil &#123;</span><br><span class="line">            </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="开始测试"><a href="#开始测试" class="headerlink" title="开始测试"></a>开始测试</h2><p>首先开始并发量的测试，然而。。。游戏主机的CPU是i7-8700K，性能太强，以至于拿了两台mac也没能压满。。。</p>
 <p>四处寻找一番，找到了好几年前花了千把块钱配的nas，上去一看是颗双核的i3-4170，妥了，这下肯定没问题</p>
 <h2 id="正式开始"><a href="#正式开始" class="headerlink" title="正式开始"></a>正式开始</h2><p>跳过了小插曲，直接开测</p>
@@ -206,7 +339,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <hr>
 <p><strong>结论 ：node在把CPU压满的情况下，最高qps为：17000，而go在cpu利用率剩余30%的情况，qps已经达到了37000，如果网卡允许，那么go理论上可以达到50000左右的qps，是node的2.9倍左右。</strong></p>
 <h3 id="CPU密集场景"><a href="#CPU密集场景" class="headerlink" title="CPU密集场景"></a>CPU密集场景</h3><p>为了模拟CPU密集场景，并保证两边场景一致，我在node和go中，分别添加了一段如下代码，每次请求循环100W次，然后相加：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var b int&#10;for a := 0; a &#60; 1000000; a ++ &#123;&#10;&#9; b = b + a&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var b int</span><br><span class="line">for a := 0; a &lt; 1000000; a ++ &#123;</span><br><span class="line">	 b = b + a</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <hr>
 <ul>
 <li>Node 多进程模型：这里我的测试方式是开了4个worker，因为在CPU密集场景下，瓶颈往往在woker进程，并且将4个进程分别和4个核绑定，master进程就让他随风飘摇吧</li>
@@ -277,73 +410,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <div class="icon"></div>
             
     
-      <h1 class="title transition"><a href="/2018/09/21/hello-world/">Hello World</a></h1>
-    
-  
-          <ul>
-            <li>
-              <span class="heading-span">Posted on: </span>
-              <time datetime="2018-09-20T16:42:30.503Z">2018-09-21</time>
-            </li>
-            
-              <li>
-                <span class="heading-span">By: </span>
-
-                
-                  <a href="/">PerterPon</a>
-                
-
-              </li>
-            
-            <li>
-              <span class="heading-span">With: </span>
-              
-
-                <a href="/2018/09/21/hello-world/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/09/21/hello-world/" data-count-type="comments"></span></a>
-              
-          </ul>
-        </header>
-      
-      <div class="entry">
-        
-          
-            <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-          
-        
-      </div>
-      <footer>
-        
-          <div class="alignright">
-            <a href="/2018/09/21/hello-world/#more" class="more-link">Continue Reading<i class="fa fa-long-arrow-right fa-1"></i></a>
-          </div>
-        
-        <div class="clearfix"></div>
-      </footer>
-    </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  
-    <div class="post-content-index">
-  
-      
-        <header>
-          <div class="icon"></div>
-            
-    
       <h1 class="title transition"><a href="/2018/06/24/node-event-loop/">一段有意思的Nodejs异步处理代码</a></h1>
     
   
@@ -368,20 +434,20 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2018/06/24/node-event-loop/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/24/node-event-loop/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
         
           
             <p>首先看下这段代码的输出是什么：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&#62; &#123;&#10;    console.log( 1 );&#10;&#125;, 1 );&#10;&#10;setImmediate( () =&#62; &#123;&#10;    console.log( 2 );&#10;&#125; );&#10;&#10;process.nextTick( () =&#62; &#123;&#10;    console.log( 3 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&gt; &#123;</span><br><span class="line">    console.log( 1 );</span><br><span class="line">&#125;, 1 );</span><br><span class="line"></span><br><span class="line">setImmediate( () =&gt; &#123;</span><br><span class="line">    console.log( 2 );</span><br><span class="line">&#125; );</span><br><span class="line"></span><br><span class="line">process.nextTick( () =&gt; &#123;</span><br><span class="line">    console.log( 3 );</span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <p>我猜大概大部分人的电脑上的输出结果是：<code>3 1 2</code>，并且无论你执行多少次，结果永远是<code>3 1 2</code>。</p>
 <p>再看看下一段代码的执行结果：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&#62; &#123;&#10;    console.log( 1 );&#10;&#125;, 1 );&#10;&#10;setImmediate( () =&#62; &#123;&#10;    console.log( 2 );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">setTimeout( () =&gt; &#123;</span><br><span class="line">    console.log( 1 );</span><br><span class="line">&#125;, 1 );</span><br><span class="line"></span><br><span class="line">setImmediate( () =&gt; &#123;</span><br><span class="line">    console.log( 2 );</span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <p>其实就是把<code>process.nextTick</code>调用去掉了，这时候你会发现输出开始变得较为随机：<code>1 2</code>或者<code>2 1</code>。</p>
 <p>那么第一段代码哪些人的电脑输出结果会不一样？土豪！没错就是土豪，土豪不仅仅在生活上碾压你，在代码上甚至都是如此。</p>
-<h2 id="NodeJs的EventLoop"><a href="#NodeJs的EventLoop" class="headerlink" title="NodeJs的EventLoop"></a>NodeJs的<code>EventLoop</code></h2><p>有关NodeJs的<code>EventLoop</code>不多说了，网上讲解文章非常多，官网就有一篇讲得非常好也通俗易懂的文章：<a href="https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/" target="_blank" rel="external">https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/</a></p>
+<h2 id="NodeJs的EventLoop"><a href="#NodeJs的EventLoop" class="headerlink" title="NodeJs的EventLoop"></a>NodeJs的<code>EventLoop</code></h2><p>有关NodeJs的<code>EventLoop</code>不多说了，网上讲解文章非常多，官网就有一篇讲得非常好也通俗易懂的文章：<a href="https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/" target="_blank" rel="noopener">https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/</a></p>
 <p>看完上面的文章也许你对第二段代码的随机输出明白了，但是第一段为何始终都是<code>3 1 2</code>呢？</p>
 <h2 id="为什么是3-1-2"><a href="#为什么是3-1-2" class="headerlink" title="为什么是3 1 2?"></a>为什么是<code>3 1 2</code>?</h2><p>也许你会觉得结果应该会是在<code>3 2 1</code>和<code>3 1 2</code>之间随机，但是你可以在你自己的电脑上面试试看，基本永远都是<code>3 1 2</code>，那么为什么呢？</p>
 <p>上面的文章只介绍了事件循环相关的内容，但是对于<code>nextTick</code>以及整个NodeJs执行流程的介绍并不多，这里自己通过查看源码发现以下流程：</p>
@@ -463,7 +529,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2018/06/23/strong-type-weak-type/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/23/strong-type-weak-type/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -478,16 +544,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li><code>(![]+[])[+[]]+(![]+[])[+!+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]</code>甚至包括这种，我还真写过，只是没有这么夸张。</li>
 </ul>
 <h2 id="灵活的代价"><a href="#灵活的代价" class="headerlink" title="灵活的代价"></a>灵活的代价</h2><p>下面的代码是一个真实的例子，我调用了别人的代码，他的函数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;&#10;    ...&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // 这里返回是一个Promise</span><br><span class="line">    return doSomeAsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>返回的是一个<code>Promise</code>，所以我用<code>await</code>去调用，到这里并没有问题。</p>
 <p>而出现问题来源于一次需求的增加，在执行这种函数时，需要判断一些意外情况，如果出现意外，就弹出一个对话框，让用户点击确认后才继续执行，于是他的代码变成了: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;function test( needConfirm ) &#123;&#10;&#10;    ...&#10;&#10;    if ( needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function test( needConfirm ) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    if ( needConfirm ) &#123;</span><br><span class="line">        Dialog.show( &#123;</span><br><span class="line">            content: &apos;您确定要继续执行么？&apos;,</span><br><span class="line">            onOk: () =&gt; &#123;</span><br><span class="line">                doSomeAsync();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; );</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 这里返回是一个Promise</span><br><span class="line">    return doSomeAsync();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这么改动乍一看也没什么问题，如果需要确认，就弹出一个对话框，给用户确认，当用户点击确认的时候，在回调函数里面执行原本的操作。</p>
 <p>而对于我的代码来说，我依赖于<code>doSomeAsync</code>执行的结束，所以，当我任然使用<code>await test( true )</code>去调用时，我的代码就报错了，因为<code>true === needConfirm</code>的时候返回的是<code>undefined</code>，<code>await</code>并不会等待，而是继续执行下面的代码，所以导致了错误的出现。</p>
 <h2 id="“束缚”的TypeScript"><a href="#“束缚”的TypeScript" class="headerlink" title="“束缚”的TypeScript"></a>“束缚”的<code>TypeScript</code></h2><p>相信以上的代码绝大部分人都写过，我们再仔细看下，其实上面这段代码的问题在于函数的行为不一致，正常情况是返回一个<code>Promise</code>，而分支情况是返回一个<code>undefined</code>，我们看看在<code>TypeScript</code>下怎么写这段代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#35748;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">function test( needConfirm: boolean ): Promise&lt;void&gt; &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    if ( true === needConfirm ) &#123;</span><br><span class="line">        Dialog.show( &#123;</span><br><span class="line">            content: &apos;您确认要继续执行么？&apos;,</span><br><span class="line">            onOk: () =&gt; &#123;</span><br><span class="line">                doSomeAsync();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; );</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return doSomeAsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果你任然这么写，那么<code>TypeScript</code>的编译阶段就会报错，因为你规定了函数需要返回一个<code>Promise</code>，但是却存在返回<code>undefined</code>的情况，你不得不去修改你的代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;functon test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;&#10;        let resolveFunc = null;&#10;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: async function(): Promise&#60;void&#62; &#123;&#10;                const result = await doSomeAsync();&#10;                resolveFunc( result );&#10;            &#125;&#10;        &#125; );&#10;&#10;        return new Promise( ( resolve, reject ) =&#62; &#123;&#10;            resolveFunc = resolve;&#10;        &#125; );&#10;    &#125;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">functon test( needConfirm: boolean ): Promise&lt;void&gt; &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    if ( true === needConfirm ) &#123;</span><br><span class="line"></span><br><span class="line">        let resolveFunc = null;</span><br><span class="line"></span><br><span class="line">        Dialog.show( &#123;</span><br><span class="line">            content: &apos;您确定要继续执行么？&apos;,</span><br><span class="line">            onOk: async function(): Promise&lt;void&gt; &#123;</span><br><span class="line">                const result = await doSomeAsync();</span><br><span class="line">                resolveFunc( result );</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; );</span><br><span class="line"></span><br><span class="line">        return new Promise( ( resolve, reject ) =&gt; &#123;</span><br><span class="line">            resolveFunc = resolve;</span><br><span class="line">        &#125; );</span><br><span class="line">    &#125;</span><br><span class="line">    return doSomeAsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>编译通过，函数行为一致，调用者也无需感知里面的逻辑。</p>
 <h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>强类型写起来限制会更多，然而对于代码的可维护性，可运行性都有很大的提升。</p>
 <p>现在前端的复杂性提升地非常快，几年前也许前端仅仅只是更多作为展示型页面存在，但是现在的前端已经承载了太多的东西，用户的交互也发生了很大变化，<code>JavaScript</code>也可以写<code>ReactNative</code>的APP，可以写<code>NodeJs</code>服务，可以用<code>NodeWebkit</code>等工具写跨平台的客户端，使用<code>TypeScript</code>严格按照强类型语言去写你的应用，让你的应用具备更高的可读性和可维护性。</p>
@@ -544,34 +610,34 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2018/06/20/protocol-in-typescript/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/06/20/protocol-in-typescript/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
         
           
             <h2 id="无处不在的耦合"><a href="#无处不在的耦合" class="headerlink" title="无处不在的耦合"></a>无处不在的耦合</h2><p>通常你写的一个React组件，如果需要和别的组件发生交互，那么你会怎么做？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public componentDidMount(): void &#123;&#10;&#9;this.refs.mycom.test();&#10;&#125;&#10;&#10;public render() &#123;&#10;&#9;return (&#10;&#9;&#9;&#60;MyCom ref=&#34;mycom&#34; /&#62;&#10;&#9;);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public componentDidMount(): void &#123;</span><br><span class="line">	this.refs.mycom.test();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public render() &#123;</span><br><span class="line">	return (</span><br><span class="line">		&lt;MyCom ref=&quot;mycom&quot; /&gt;</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这种做法相对来说比较普遍，也比较合情合理，那么如果<code>MyCom</code>组件执行了什么操作之后需要通知到父组件呢？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public onNotify(): void &#123;&#10;&#10;&#125;&#10;&#10;public render() &#123;&#10;&#9;return (&#10;&#9;&#9;&#60;MyCom notify=&#123; this.onNotify.bind( this ) &#125; ref=&#34;mycom&#34; /&#62;&#10;&#9;);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public onNotify(): void &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public render() &#123;</span><br><span class="line">	return (</span><br><span class="line">		&lt;MyCom notify=&#123; this.onNotify.bind( this ) &#125; ref=&quot;mycom&quot; /&gt;</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>很多时候我们会选择传进去一个回调函数，当<code>MyCom</code>需要发送通知的时候再调用<code>props.notify</code>。</p>
 <p>虽然这种方式能实现我们的需求，但也仅仅是实现而已，你会发现这种方式并不是很优雅，而且当你的回调函数多了之后，那简直就是噩梦，后来来使用这个组件的人完全不知道需要传哪些回调函数进去，也不知道哪些回调是可选的，哪些是必选的。</p>
 <h2 id="protocol"><a href="#protocol" class="headerlink" title="protocol"></a>protocol</h2><p><code>Protocol</code>是<code>Oc</code>里面的概念，类似<code>Java</code>里面的<code>Interface</code>，和<code>TypeScript</code>中的<code>Interface</code>也比较类似，其中有一个用处就是用于两个类之间的通信解耦，而<code>delegate</code>更多的是一种约定俗成的规则，看看具体怎么用:</p>
 <p>首先我有一个A类，用</p>
 <p>A.h</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@protocol ADelegate&#10;&#9;- (void) methodFromA;&#10;@end&#10;&#10;@interface A : NSObject&#10;// &#22768;&#26126;&#22996;&#25176;&#21464;&#37327;&#10;@property (assign, nonatomic) id&#60;ADelegate&#62; delegate;&#10;    - (void) test;&#10;@end</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@protocol ADelegate</span><br><span class="line">	- (void) methodFromA;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface A : NSObject</span><br><span class="line">// 声明委托变量</span><br><span class="line">@property (assign, nonatomic) id&lt;ADelegate&gt; delegate;</span><br><span class="line">    - (void) test;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
 <p>A.m</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;// &#22312;A&#31867;&#30340;&#23454;&#29616;&#25991;&#20214;&#37324;&#38754;&#65292;&#22312;&#38656;&#35201;&#36827;&#34892;&#22238;&#35843;&#30340;&#26102;&#20505;&#65292;&#21482;&#38656;&#35201;&#35843;&#29992;&#24403;&#21069;&#23454;&#20363;&#30340;delegate&#23545;&#35937;&#65292;&#32780;&#19981;&#29992;&#29702;&#20250;&#21040;&#24213;&#26159;&#35841;&#35843;&#29992;&#20102;&#33258;&#24049;&#65292;&#32780;&#19988;&#23545;&#26041;&#32943;&#23450;&#23454;&#29616;&#20102;delegate&#25351;&#21521;&#30340;protocol&#10;// &#38656;&#35201;&#30340;&#26102;&#20505;&#35843;&#29992;&#10;[self.delegate methodFromA];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// 在A类的实现文件里面，在需要进行回调的时候，只需要调用当前实例的delegate对象，而不用理会到底是谁调用了自己，而且对方肯定实现了delegate指向的protocol</span><br><span class="line">// 需要的时候调用</span><br><span class="line">[self.delegate methodFromA];</span><br></pre></td></tr></table></figure>
 <p>此时，我有一个B类，需要调用A类，同时需要监听回调函数：</p>
 <p>B.h</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#import &#34;A.h&#34;&#10;&#10;// &#36825;&#37324;&#23454;&#29616;&#20102;Adelegate Protocol&#10;@interface B : NSObject &#60;ADelegate&#62;&#10;...&#10;@end</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#import &quot;A.h&quot;</span><br><span class="line"></span><br><span class="line">// 这里实现了Adelegate Protocol</span><br><span class="line">@interface B : NSObject &lt;ADelegate&gt;</span><br><span class="line">...</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
 <p>B.m </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void) someMethod &#123;&#10;&#9;A *aInstance = [[A alloc] init];&#10;&#9;// &#36825;&#37324;&#25226;&#24403;&#21069;&#23454;&#20363;&#36171;&#20540;&#32473;A&#31867;&#23454;&#20363;&#30340;delegate&#23646;&#24615;&#10;&#9;aInstance.delegate = self;&#9;&#10;&#125;&#10;&#10;// &#23454;&#29616;&#20102;ADelegate&#10;- (void) methodFromA &#123;&#10;&#9;&#24403;A&#31867;&#35843;&#29992;self.delegate.methodFromA&#26102;&#65292;&#23601;&#21487;&#20197;&#22312;&#36825;&#37324;&#25191;&#34892;&#20320;&#33258;&#24049;&#30340;&#20195;&#30721;&#20102;&#10;&#9;// ...&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (void) someMethod &#123;</span><br><span class="line">	A *aInstance = [[A alloc] init];</span><br><span class="line">	// 这里把当前实例赋值给A类实例的delegate属性</span><br><span class="line">	aInstance.delegate = self;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 实现了ADelegate</span><br><span class="line">- (void) methodFromA &#123;</span><br><span class="line">	当A类调用self.delegate.methodFromA时，就可以在这里执行你自己的代码了</span><br><span class="line">	// ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="TypeScript中的delegate"><a href="#TypeScript中的delegate" class="headerlink" title="TypeScript中的delegate"></a>TypeScript中的delegate</h2><p>上面可以看到其实<code>delegate</code>的使用非常简单，只是一种约定的规则，同时<code>delegate</code>其实也是一种设计模式，在JS中其实也可以使用，只是JS是弱类型语言，无法通过编译器来约束一些行为，所以依赖于<code>TypeScript</code>的强类型，我们也可以来使用一下<code>delegate</code>：</p>
 <p>组件A</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export interface ADelegate &#123;&#10;&#9;methodFromA();&#10;&#125;&#10;&#10;export class A extends React.Component&#60;any, any&#62; &#123;&#10;&#9;public delegate: ADelegate;&#10;&#10;&#9;public render() &#123;&#10;&#10;&#9;&#9;// &#35843;&#29992;delegate&#30340;&#26041;&#27861;&#10;&#9;&#9;this.delegate.methodFromA();&#10;&#10;&#9;&#9;return (&#10;&#9;&#9;&#9;&#60;div&#62;&#60;/div&#62;&#10;&#9;&#9;);&#10;&#10;&#9;&#125;&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">export interface ADelegate &#123;</span><br><span class="line">	methodFromA();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export class A extends React.Component&lt;any, any&gt; &#123;</span><br><span class="line">	public delegate: ADelegate;</span><br><span class="line"></span><br><span class="line">	public render() &#123;</span><br><span class="line"></span><br><span class="line">		// 调用delegate的方法</span><br><span class="line">		this.delegate.methodFromA();</span><br><span class="line"></span><br><span class="line">		return (</span><br><span class="line">			&lt;div&gt;&lt;/div&gt;</span><br><span class="line">		);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>组件B</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import &#123; A, ADelegate &#125; from &#39;A&#39;;&#10;&#10;// &#36825;&#37324;&#23454;&#29616;&#20102;Interface: ADelegate&#10;export class B extends React.Component&#60;any, any&#62; implements ADelegate &#123;&#10;&#9;// &#20174;A&#23454;&#29616;&#30340;&#22238;&#35843;&#12290;&#10;&#9;public methodFromA(): void &#123;&#10;&#10;&#9;&#125;&#10;&#10;&#9;public componentDidMount(): void &#123;&#10;&#9;&#9;const aCom: A = &#60;A&#62;this.refs.acom;&#10;&#9;&#9;aCom.delegate = this;&#10;&#9;&#125;&#10;&#10;&#9;public render() &#123;&#10;&#9;&#9;return (&#10;&#9;&#9;&#9;&#60;A ref=&#34;acom&#34; /&#62;&#10;&#9;&#9;);&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import &#123; A, ADelegate &#125; from &apos;A&apos;;</span><br><span class="line"></span><br><span class="line">// 这里实现了Interface: ADelegate</span><br><span class="line">export class B extends React.Component&lt;any, any&gt; implements ADelegate &#123;</span><br><span class="line">	// 从A实现的回调。</span><br><span class="line">	public methodFromA(): void &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public componentDidMount(): void &#123;</span><br><span class="line">		const aCom: A = &lt;A&gt;this.refs.acom;</span><br><span class="line">		aCom.delegate = this;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public render() &#123;</span><br><span class="line">		return (</span><br><span class="line">			&lt;A ref=&quot;acom&quot; /&gt;</span><br><span class="line">		);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>上面的代码可以看到，A组件面向的不是调用他的组件，而是他自己声明的<code>delegate</code>，完全无需关心是谁在调用自己，在什么场景下调用自己</p>
 <p>而B组件也完全不用关心A组件的具体实现，只要实现A组件提供的<code>Interface</code>:<code>ADelegate</code>，从中选择自己需要的方法即可，两者实现解耦，面向delegate编程。</p>
 
@@ -626,7 +692,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2018/02/28/webpack-chunk-id-with-cdn/#ds-thread"><span class="ds-thread-count" data-thread-key="2018/02/28/webpack-chunk-id-with-cdn/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -636,13 +702,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><h3 id="webpack-chunk"><a href="#webpack-chunk" class="headerlink" title="webpack chunk"></a>webpack chunk</h3><p>先说说webpack的chunk是怎么一回事，如下图：</p>
 <p><img src="https://img.alicdn.com/tfs/TB1PQuNbgmTBuNjy1XbXXaMrVXa-343-390.png" alt=""></p>
 <p>有四个项目文件，分别为：file1.js, file2.js, file3.js, file4.js.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js&#10;file2.js&#10;&#10;file3.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">file1.js</span><br><span class="line">file2.js</span><br><span class="line"></span><br><span class="line">file3.js</span><br><span class="line">file4.js</span><br></pre></td></tr></table></figure>
 <p>其中，<code>file1</code>依赖了<code>file2</code>，<code>file3</code>依赖了<code>file4</code>，在webpack里面，通常情况下一个文件就是一个module，有时候也有一个文件多个module的情况，不过不多见，webpack会给每一个module分配一个id，这个id是自增的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js -&#62; module1, id: 1&#10;file2.js -&#62; module2, id: 2&#10;&#10;file3.js -&#62; module3, id: 3&#10;file4.js -&#62; module4, id: 4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">file1.js -&gt; module1, id: 1</span><br><span class="line">file2.js -&gt; module2, id: 2</span><br><span class="line"></span><br><span class="line">file3.js -&gt; module3, id: 3</span><br><span class="line">file4.js -&gt; module4, id: 4</span><br></pre></td></tr></table></figure>
 <p>因为<code>file1</code>和<code>file2</code>对于<code>file3</code>和<code>file4</code>都没有什么依赖关系，所以webpack把这四个文件分成了两个<code>chunk</code>，同时分别给了一个id，也是自增的:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chunkA: ChunkId1&#10;&#9;-&#62; module1&#10;&#9;-&#62; module2&#10;&#10;chunkB: ChunkId2&#10;&#9;-&#62; module3&#10;&#9;-&#62; module4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">chunkA: ChunkId1</span><br><span class="line">	-&gt; module1</span><br><span class="line">	-&gt; module2</span><br><span class="line"></span><br><span class="line">chunkB: ChunkId2</span><br><span class="line">	-&gt; module3</span><br><span class="line">	-&gt; module4</span><br></pre></td></tr></table></figure>
 <p>一个chunk就对应于webpack打包之后的文件，于是，打包之后我们现在有两个文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;file1.js&#10;            filea.hash.js&#10;file2.js&#10;&#10;----------------------------------&#10;&#10;file3.js&#10;            fileb.hash.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">file1.js</span><br><span class="line">            filea.hash.js</span><br><span class="line">file2.js</span><br><span class="line"></span><br><span class="line">----------------------------------</span><br><span class="line"></span><br><span class="line">file3.js</span><br><span class="line">            fileb.hash.js</span><br><span class="line">file4.js</span><br></pre></td></tr></table></figure>
 <p>两个chunk所对应的打包后的文件名为: <code>${fileName}.${md5}.js</code>.</p>
 <h3 id="CDN缓存"><a href="#CDN缓存" class="headerlink" title="CDN缓存"></a>CDN缓存</h3><p>项目中使用了覆盖式的CDN缓存方式，也就是不同发布之间没有版本概念，而是直接覆盖原来的文件，因为文件名中有MD5值，所以只要文件内容改变，那么文件名也就改变。</p>
 <p>好处是如果新版本没有变更的文件，可以让浏览器复用之前的缓存，达到最小更新目的。</p>
@@ -652,22 +718,22 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="为何在CDN场景下发布新版本会导致找不到chunk呢？"><a href="#为何在CDN场景下发布新版本会导致找不到chunk呢？" class="headerlink" title="为何在CDN场景下发布新版本会导致找不到chunk呢？"></a>为何在CDN场景下发布新版本会导致找不到chunk呢？</h2><p>把chunk id用MD5值代替，看起来确实没有问题，在版本化的CDN场景下使用或者说在本地开发环境中使用确实是没有问题的，问题出在和覆盖式的CDN同时使用时候的问题。</p>
 <h3 id="问题根源"><a href="#问题根源" class="headerlink" title="问题根源"></a>问题根源</h3><p>首先我们看chunka和chunkb打包之后的代码：</p>
 <p>chunka:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;1&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">__webpack__require.e( &apos;1&apos; ).then( &apos;....&apos; );</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>chunkb:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([1],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([1],&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>chunka中代码，打包前的代码为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import( &#39;./file3&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import( &apos;./file3&apos; );</span><br></pre></td></tr></table></figure>
 <p>chunka中需要引用id为<code>1</code>的chunk，然后chunkb的代码中，首先用<code>webpackJsonp</code>方法定义了自己的chunk id为：<code>1</code>，这样，整个代码就联系起来了，也就能正常运行了。</p>
 <h3 id="MD5替代chunk-id"><a href="#MD5替代chunk-id" class="headerlink" title="MD5替代chunk id"></a>MD5替代chunk id</h3><p>如果使用MD5来替换原先的chunk id呢？</p>
 <p>chunka:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md51&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">__webpack__require.e( &apos;md51&apos; ).then( &apos;....&apos; );</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>chunkb:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md51&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&apos;md51&apos;],&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>看起来也没什么问题，反正只要引用的chunk id和声明的chunk id对应上就可以了。尝试修改了一些file3的内容，也就是chunkb的内容有了变更之后：</p>
 <p>chunka:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md52&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">__webpack__require.e( &apos;md52&apos; ).then( &apos;....&apos; );</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>chunkb:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md52&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&apos;md52&apos;],&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>chunkb的chunk id变成了: md52，同时引用和声明的chunk id都能对应上，运行没问题，那么问题出在哪里呢？我们看看webpack生成文件的文件名：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;fileName&#125;.$&#123;md5&#125;.js</span><br></pre></td></tr></table></figure>
 <p>因为文件名中有MD5值，所以当修改了chunkb之后，那么chunkb对应的文件名肯定就变更了，这个没问题，而chunka其实内容并没有变更，所以chunka的md5没有变化，也就是说chunka的文件名不变。</p>
@@ -728,7 +794,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2017/11/24/thinking-of-lazy-load/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/11/24/thinking-of-lazy-load/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -742,14 +808,14 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="冰山效应"><a href="#冰山效应" class="headerlink" title="冰山效应"></a>冰山效应</h3><p>很多时候，用户打开一个页面，同时也加载了很多在这个页面上并不会运行的代码，甚至是永远都不会运行的代码，页面上的这些代码就像海洋里的冰山，运行的只是海平面上很小一部分，很大一部分在海平面下的代码，仅仅只会拖慢我们首页的打开时间。</p>
 <p><img src="https://img.alicdn.com/tfs/TB1GbDfktzJ8KJjSspkXXbF7VXa-1576-832.png" alt=""></p>
 <h2 id="按需加载"><a href="#按需加载" class="headerlink" title="按需加载"></a>按需加载</h2><p>从有模块化起，貌似就有了按需加载功能，很多工具都提供了按需加载的功能，以webpack为例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const&#160;jQuery&#160;=&#160;await&#160;import(&#160;&#39;jQuery&#39;&#160;);&#10;&#160;&#10;const&#160;model&#160;=&#160;await&#160;import(&#160;&#39;./model/data.js&#39;&#160;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const jQuery = await import( &apos;jQuery&apos; );</span><br><span class="line"> </span><br><span class="line">const model = await import( &apos;./model/data.js&apos; );</span><br></pre></td></tr></table></figure>
 <p>webpack内置函数<code>import</code>很容易就可以实现按需加载的功能，看起来似乎问题就已经解了？然而这只是问题的第一步，仅仅有了按需加载的能力，问题也会随之而来。</p>
 <h2 id="预加载"><a href="#预加载" class="headerlink" title="预加载"></a>预加载</h2><p>按需加载必然会带来一次网络请求，假设一个场景：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#29992;&#25143;&#28857;&#20987;&#19968;&#20010;&#25353;&#38062;&#65292;&#28982;&#21518;&#36339;&#20986;&#19968;&#20010;&#24377;&#26694;&#12290;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户点击一个按钮，然后跳出一个弹框。</span><br></pre></td></tr></table></figure>
 <p>普通情况下，点击按钮之后发生的事情如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#28857;&#20987;&#25353;&#38062;(ms) -&#62; &#28210;&#26579;&#24377;&#26694;(ms)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">点击按钮(ms) -&gt; 渲染弹框(ms)</span><br></pre></td></tr></table></figure>
 <p>如果我们把弹框做按需加载，那么点击按钮之后发生的事情如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#28857;&#20987;&#25353;&#38062;(ms) -&#62; &#21152;&#36733;&#24377;&#26694;&#20195;&#30721;(s) -&#62; &#28210;&#26579;&#24377;&#26694;(ms)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">点击按钮(ms) -&gt; 加载弹框代码(s) -&gt; 渲染弹框(ms)</span><br></pre></td></tr></table></figure>
 <p>中间多了一个步骤，并且是按秒计算的从网络加载代码，点击一个按钮之后需要等待一段时间，才会弹出弹框，用户操作非常不流畅，如果存在大量这种场景，体验或许还不如不用按需加载。</p>
 <p>有什么办法能解这个问题么？一种方案是：<code>预加载</code>，请看下图：</p>
 <p><img src="https://img.alicdn.com/tfs/TB1AZZjkxPI8KJjSspfXXcCFXXa-1548-1202.png" alt=""></p>
@@ -762,17 +828,17 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </ol>
 <h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>鉴于目前前端代码普遍存在于CDN的情况，按需加载带来的另外一个非常有优势的地方在于CDN缓存，假设我们有一份<code>jQuery</code>，有两个文件分别依赖了jQuery，情况如下：</p>
 <p><strong><em>a.js</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery&#20195;&#30721;*/ &#125;&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery代码*/ &#125;</span><br><span class="line"></span><br><span class="line">jQuery.query( &apos;xxx&apos; );</span><br></pre></td></tr></table></figure>
 <p><strong><em>b.js</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery&#20195;&#30721;*/ &#125;&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery代码*/ &#125;</span><br><span class="line"></span><br><span class="line">jQuery.query( &apos;xxx&apos; );</span><br></pre></td></tr></table></figure>
 <p>用户在打开A页面和B页面的时候，分别需要下载<code>a.js</code>和<code>b.js</code>，这时候重复下载了两份<code>jQuery</code>，即使他们是一样的，同时在用户的磁盘，也缓存了两份<code>jQuery</code>。</p>
 <h3 id="按需加载后的CDN缓存"><a href="#按需加载后的CDN缓存" class="headerlink" title="按需加载后的CDN缓存"></a>按需加载后的CDN缓存</h3><p>那么如果我们用按需加载的方式呢？</p>
-<p><strong><em><a href="http://cdn.com/jquery.js" target="_blank" rel="external">http://cdn.com/jquery.js</a></em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery&#20195;&#30721;*/ &#125;</span><br></pre></td></tr></table></figure>
+<p><strong><em><a href="http://cdn.com/jquery.js" target="_blank" rel="noopener">http://cdn.com/jquery.js</a></em></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = function()&#123; /*jquery代码*/ &#125;</span><br></pre></td></tr></table></figure>
 <p><strong><em>a.js</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = import( &#39;http://cdn.com/jquery.js&#39; );&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = import( &apos;http://cdn.com/jquery.js&apos; );</span><br><span class="line"></span><br><span class="line">jQuery.query( &apos;xxx&apos; );</span><br></pre></td></tr></table></figure>
 <p><strong><em>b.js</em></strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = import( &#39;http://cdn.com/jquery.js&#39; );&#10;&#10;jQuery.query( &#39;xxx&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var jQuery = import( &apos;http://cdn.com/jquery.js&apos; );</span><br><span class="line"></span><br><span class="line">jQuery.query( &apos;xxx&apos; );</span><br></pre></td></tr></table></figure>
 <p><code>jQuery.js</code>只会被下载一次，所有页面如果用的都是一个cdn地址，那么只要用户打开过任何一个页面，之后的页面即使用户从未打开过，<code>jQuery</code>也已经被缓存，这带来的是一个<code>1+1&gt;2</code>的效果。</p>
 <h2 id="理想中的按需加载"><a href="#理想中的按需加载" class="headerlink" title="理想中的按需加载"></a>理想中的按需加载</h2><p>最后说一说我理想中的按需加载，看下图：</p>
 <p><img src="https://img.alicdn.com/tfs/TB18SAfkvDH8KJjy1XcXXcpdXXa-1986-1182.png" alt=""></p>
@@ -840,7 +906,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2017/09/12/why-MTU-equals-1500/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/09/12/why-MTU-equals-1500/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -896,21 +962,21 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </tbody>
 </table>
 <h2 id="MTU有什么用？"><a href="#MTU有什么用？" class="headerlink" title="MTU有什么用？"></a>MTU有什么用？</h2><p>举一个最简单的场景，你在家用自己的笔记本上网，用的是路由器，路由器连接电信网络，然后访问了<code>www.baidu.com</code>，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
 <p>其中，每个节点都有一个MTU值，如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151;  -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房  -&gt; 服务器</span><br></pre></td></tr></table></figure>
 <p>假设现在我把笔记本的MTU最大值设置成了1700，然后发送了一个超大的ip数据包（2000），这时候在以外网传输的时候会被拆成2个包，一个1700，一个300，然后加上头信息进行传输。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
 <p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
 <h2 id="为什么是1500？"><a href="#为什么是1500？" class="headerlink" title="为什么是1500？"></a>为什么是1500？</h2><p>其实一个标准的以太网数据帧大小是：<code>1518</code>，头信息有14字节，尾部校验和FCS占了4字节，所以真正留给上层协议传输数据的大小就是：1518 - 14 - 4 = 1500，那么，1518这个值又是从哪里来的呢？</p>
 <h2 id="假设取一个更大的值"><a href="#假设取一个更大的值" class="headerlink" title="假设取一个更大的值"></a>假设取一个更大的值</h2><p>假设MTU值和IP数据包大小一致，一个IP数据包的大小是：65535，那么加上以太网帧头和为，一个以太网帧的大小就是：<code>65535 + 14 + 4 = 65553</code>，看起来似乎很完美，发送方也不需要拆包，接收方也不需要重组。</p>
 <p>那么假设我们现在的带宽是：<code>100Mbps</code>，因为以太网帧是传输中的最小可识别单元，再往下就是0101所对应的光信号了，所以我们的一条带宽同时只能发送一个以太网帧。如果同时发送多个，那么对端就无法重组成一个以太网帧了，在<code>100Mbps</code>的带宽中（假设中间没有损耗），我们计算一下发送这一帧需要的时间：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 100 * 1024 * 1024 ) &#8776; 0.005(s)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 100 * 1024 * 1024 ) ≈ 0.005(s)</span><br></pre></td></tr></table></figure>
 <p>在100M网络下传输一帧就需要5ms，也就是说这5ms其他进程发送不了任何数据。如果是早先的电话拨号，网速只有2M的情况下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 2 * 1024 * 1024 ) &#8776; 0.100(s)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 2 * 1024 * 1024 ) ≈ 0.100(s)</span><br></pre></td></tr></table></figure>
 <p>100ms，这简直是噩梦。其实这就像红绿灯，时间要设置合理，交替通行，不然同一个方向如果一直是绿灯，那么另一个方向就要堵成翔了。</p>
 <h2 id="既然大了不行，那设置小一点可以么？"><a href="#既然大了不行，那设置小一点可以么？" class="headerlink" title="既然大了不行，那设置小一点可以么？"></a>既然大了不行，那设置小一点可以么？</h2><p>假设MTU值设置为100，那么单个帧传输的时间，在2Mbps带宽下需要：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 &#8776; 5(ms)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 ≈ 5(ms)</span><br></pre></td></tr></table></figure>
 <p>时间上已经能接受了，问题在于，不管MTU设置为多少，以太网头帧尾大小是固定的，都是14 + 4，所以在MTU为100的时候，一个以太网帧的传输效率为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 - 14 - 4 ) / 100 = 82%</span><br></pre></td></tr></table></figure>
 <p>写成公式就是：<code>( T - 14 - 4 ) / T</code>，当T趋于无穷大的时候，效率接近<code>100%</code>，也就是MTU的值越大，传输效率最高，但是基于上一点传输时间的问题，来个折中的选择吧，既然头加尾是18，那就凑个整来个1500，总大小就是1518，传输效率：</p>
@@ -927,7 +993,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| VER(4bit) | TYPE(4bit) | CODE(8bit) | SESSION-ID(16bit) | LENGTH(16bit) |</span><br></pre></td></tr></table></figure>
 <p>这里总共是48位，也就是6个字节，那么另外2个字节是什么呢？答案是PPP协议的ID号，占用两个字节，所以在PPPoE环境下，最佳MTU值应该是：1500 - 4 - 2 = 1492。</p>
 <h3 id="我的上网方式"><a href="#我的上网方式" class="headerlink" title="我的上网方式"></a>我的上网方式</h3><p>当时我的上网路径如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PC -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PC -&gt; 路由器 -&gt; 电信</span><br></pre></td></tr></table></figure>
 <p>我在路由器进行拨号，然后PC连接路由器进行上网。</p>
 <h3 id="最根本原因"><a href="#最根本原因" class="headerlink" title="最根本原因"></a>最根本原因</h3><p>问题就出在路由器拨号，如果是PC拨号，那么PC会进行PPPoE的封装，会按照MTU:1492来进行以太网帧的封装，即使通过路由器，路由器这时候也只是转发而已，不会进行拆包。</p>
 <p>而当用路由器拨号时，PC并不知道路由器的通信方式，会以网卡的设置，默认1500的MTU来进行以太网帧的封装，到达路由器时，由于路由器需要进行PPPoE协议的封装，加上8字节的头信息，这样一来，就必须进行拆包，路由器把这一帧的内容拆成两帧发送，一帧是1492，一帧是8，然后分别加上PPPoE的头进行发送。</p>
@@ -986,7 +1052,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2017/09/04/main-host/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/09/04/main-host/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -994,13 +1060,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
             <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近项目中需要获取url的主域名，比如<code>www.baidu.com</code>那么就需要获取<code>baidu.com</code>，看似简单，<code>.</code>号分隔，取到最后两位就行，但是坑爹的是有<code>xxx.com.cn</code>这类域名，还有很多日本的域名，类似<code>toei.aichi.jp</code>等，这些都无法通过这种简单的取最后两位的方式来获取，看来只能枚举了。</p>
 <h2 id="Public-Suffix-List"><a href="#Public-Suffix-List" class="headerlink" title="Public Suffix List"></a>Public Suffix List</h2><p>这问题肯定是早有人就遇到了，于是各路有识之士已经帮你完整得准备好了一个列表，里面全部都是那些奇葩域名，一些jp域名也是让我长见识了，不知道各位老司机在秋名山飙车的时候有没有见过这些个域名：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#31179;&#30000;.jp&#10;&#32676;&#39340;.jp&#10;&#39321;&#24029;.jp&#10;&#39640;&#30693;.jp&#10;&#40165;&#21462;.jp&#10;&#40575;&#20816;&#23798;.jp&#10;// jp geographic type names&#10;// http://jprs.jp/doc/rule/saisoku-1.html&#10;*.kawasaki.jp&#10;*.kitakyushu.jp&#10;*.kobe.jp&#10;*.nagoya.jp&#10;*.sapporo.jp&#10;*.sendai.jp&#10;*.yokohama.jp&#10;!city.kawasaki.jp&#10;!city.kitakyushu.jp&#10;!city.kobe.jp&#10;!city.nagoya.jp&#10;!city.sapporo.jp&#10;!city.sendai.jp&#10;!city.yokohama.jp&#10;// 4th level registration&#10;aisai.aichi.jp</span><br></pre></td></tr></table></figure>
-<p>感兴趣的朋友可以看看这个github项目：<a href="https://github.com/wrangr/psl" target="_blank" rel="external">https://github.com/wrangr/psl</a>。</p>
-<p>这里有各种主域名的列表：<a href="https://publicsuffix.org/list/public_suffix_list.dat" target="_blank" rel="external">https://publicsuffix.org/list/public_suffix_list.dat</a>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">秋田.jp</span><br><span class="line">群馬.jp</span><br><span class="line">香川.jp</span><br><span class="line">高知.jp</span><br><span class="line">鳥取.jp</span><br><span class="line">鹿児島.jp</span><br><span class="line">// jp geographic type names</span><br><span class="line">// http://jprs.jp/doc/rule/saisoku-1.html</span><br><span class="line">*.kawasaki.jp</span><br><span class="line">*.kitakyushu.jp</span><br><span class="line">*.kobe.jp</span><br><span class="line">*.nagoya.jp</span><br><span class="line">*.sapporo.jp</span><br><span class="line">*.sendai.jp</span><br><span class="line">*.yokohama.jp</span><br><span class="line">!city.kawasaki.jp</span><br><span class="line">!city.kitakyushu.jp</span><br><span class="line">!city.kobe.jp</span><br><span class="line">!city.nagoya.jp</span><br><span class="line">!city.sapporo.jp</span><br><span class="line">!city.sendai.jp</span><br><span class="line">!city.yokohama.jp</span><br><span class="line">// 4th level registration</span><br><span class="line">aisai.aichi.jp</span><br></pre></td></tr></table></figure>
+<p>感兴趣的朋友可以看看这个github项目：<a href="https://github.com/wrangr/psl" target="_blank" rel="noopener">https://github.com/wrangr/psl</a>。</p>
+<p>这里有各种主域名的列表：<a href="https://publicsuffix.org/list/public_suffix_list.dat" target="_blank" rel="noopener">https://publicsuffix.org/list/public_suffix_list.dat</a>.</p>
 <p>浏览器其实也有内置类似的东西，用来做域名判断，cookie存储之类的事宜。</p>
 <h2 id="pls的问题"><a href="#pls的问题" class="headerlink" title="pls的问题"></a>pls的问题</h2><p>问题看似好像解决了，已经有现成的脚本去获取，但是仔细一看这脚本竟然有将近200K，而我自己的脚本才10K，既然浏览器已经内置了pls，那浏览器有没有暴露内置接口呢？很遗憾，搜索了一下并没有，而且浏览器那么多，即使chrome暴露了，IE肯定没有，等等，刚刚好像我们说到浏览器用来做域名判断，cookie存储，那我们能不能用这类方式间接地去调用内置pls呢？</p>
 <h2 id="最终解决方案"><a href="#最终解决方案" class="headerlink" title="最终解决方案"></a>最终解决方案</h2><p>目前想到有两种方式可以间接去调，<code>document.doamin</code>和<code>document.cookie</code>，测试一下就会发现，如果你尝试把当前域名设置为<code>com.cn</code>或者把cookie设置到<code>com.cn</code>上面，浏览器并不会生效，<code>document.domain</code>在第二次设置的时候，firefox会抛错，看来并不是很合适，而且可能多多少少会影响到业务，cookie设置方便，而且清除也方便，上代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getMainHost() &#123;&#10;  let key  = `mh_$&#123;Math.random()&#125;`;&#10;  let keyR = new RegExp( `(^|;)\\s*$&#123;key&#125;=12345` );&#10;  let expiredTime = new Date( 0 );&#10;  let domain = document.domain;&#10;  let domainList = domain.split( &#39;.&#39; );&#10;&#10;  let urlItems   = [];&#10;  // &#20027;&#22495;&#21517;&#19968;&#23450;&#20250;&#26377;&#20004;&#37096;&#20998;&#32452;&#25104;&#10;  urlItems.unshift( domainList.pop() );&#10;  // &#24930;&#24930;&#20174;&#21518;&#24448;&#21069;&#27979;&#35797;&#10;  while( domainList.length ) &#123;&#10;    urlItems.unshift( domainList.pop() );&#10;    let mainHost = urlItems.join( &#39;.&#39; );&#10;    let cookie   = `$&#123;key&#125;=$&#123;12345&#125;;domain=.$&#123;mainHost&#125;`;&#10;&#10;    document.cookie = cookie;&#10;&#10;    //&#22914;&#26524;cookie&#23384;&#22312;&#65292;&#21017;&#35828;&#26126;&#22495;&#21517;&#21512;&#27861;&#10;    if ( keyR.test( document.cookie ) ) &#123;&#10;      document.cookie = `$&#123;cookie&#125;;expires=$&#123;expiredTime&#125;`;&#10;      return mainHost;&#10;    &#125;&#10;  &#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">function getMainHost() &#123;</span><br><span class="line">  let key  = `mh_$&#123;Math.random()&#125;`;</span><br><span class="line">  let keyR = new RegExp( `(^|;)\\s*$&#123;key&#125;=12345` );</span><br><span class="line">  let expiredTime = new Date( 0 );</span><br><span class="line">  let domain = document.domain;</span><br><span class="line">  let domainList = domain.split( &apos;.&apos; );</span><br><span class="line"></span><br><span class="line">  let urlItems   = [];</span><br><span class="line">  // 主域名一定会有两部分组成</span><br><span class="line">  urlItems.unshift( domainList.pop() );</span><br><span class="line">  // 慢慢从后往前测试</span><br><span class="line">  while( domainList.length ) &#123;</span><br><span class="line">    urlItems.unshift( domainList.pop() );</span><br><span class="line">    let mainHost = urlItems.join( &apos;.&apos; );</span><br><span class="line">    let cookie   = `$&#123;key&#125;=$&#123;12345&#125;;domain=.$&#123;mainHost&#125;`;</span><br><span class="line"></span><br><span class="line">    document.cookie = cookie;</span><br><span class="line"></span><br><span class="line">    //如果cookie存在，则说明域名合法</span><br><span class="line">    if ( keyR.test( document.cookie ) ) &#123;</span><br><span class="line">      document.cookie = `$&#123;cookie&#125;;expires=$&#123;expiredTime&#125;`;</span><br><span class="line">      return mainHost;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>拉了差不多几十个pls里面的域名，跑了一下单元测试，没有问题。</p>
 
           
@@ -1054,7 +1120,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
                 <a href="/2017/07/27/ios-summary-1/#ds-thread"><span class="ds-thread-count" data-thread-key="2017/07/27/ios-summary-1/" data-count-type="comments"></span></a>
               
-          </ul>
+          </li></ul>
         </header>
       
       <div class="entry">
@@ -1064,40 +1130,40 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="系统信息"><a href="#系统信息" class="headerlink" title="系统信息"></a>系统信息</h2><ul>
 <li>设备型号</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">struct utsname systemInfo;&#10;uname(&#38;systemInfo);&#10;NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSASCIIStringEncoding];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">struct utsname systemInfo;</span><br><span class="line">uname(&amp;systemInfo);</span><br><span class="line">NSString *platform = [NSString stringWithCString:systemInfo.machine encoding:NSASCIIStringEncoding];</span><br></pre></td></tr></table></figure>
 <ul>
 <li>操作系统名称</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];&#10;[device systemName];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];</span><br><span class="line">[device systemName];</span><br></pre></td></tr></table></figure>
 <ul>
 <li>操作系统版本</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];&#10;[device systemVersion];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];</span><br><span class="line">[device systemVersion];</span><br></pre></td></tr></table></figure>
 <ul>
 <li>设备型号，如: iPad，iPod等。</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];&#10;[device model];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UIDevice *device = [UIDevice currentDevice];</span><br><span class="line">[device model];</span><br></pre></td></tr></table></figure>
 <ul>
 <li>屏幕分辨率</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIScreen *screen     = [UIScreen mainScreen];&#10;CGSize screenSize    = [[UIScreen mainScreen] bounds].size;&#10;CGFloat scale        = screen.scale;&#10;int screenX          = screenSize.width * scale;&#10;int screenY          = screenSize.height *scale;&#10;NSString *resolution = [NSString stringWithFormat:@&#34;%d*%d&#34;, screenX, screenY];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">UIScreen *screen     = [UIScreen mainScreen];</span><br><span class="line">CGSize screenSize    = [[UIScreen mainScreen] bounds].size;</span><br><span class="line">CGFloat scale        = screen.scale;</span><br><span class="line">int screenX          = screenSize.width * scale;</span><br><span class="line">int screenY          = screenSize.height *scale;</span><br><span class="line">NSString *resolution = [NSString stringWithFormat:@&quot;%d*%d&quot;, screenX, screenY];</span><br></pre></td></tr></table></figure>
 <ul>
 <li>电池电量</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[UIDevice currentDevice].batteryMonitoringEnabled = YES;&#10;[[NSNotificationCenter defaultCenter] addObserverForName:UIDeviceBatteryLevelDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) &#123;&#10;     // Level has changed&#10;     NSLog(@&#34;Battery Level Change&#34;);&#10;     NSLog(@&#34;&#30005;&#27744;&#30005;&#37327;&#65306;%.2f&#34;, [UIDevice currentDevice].batteryLevel);&#10; &#125;];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[UIDevice currentDevice].batteryMonitoringEnabled = YES;</span><br><span class="line">[[NSNotificationCenter defaultCenter] addObserverForName:UIDeviceBatteryLevelDidChangeNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *notification) &#123;</span><br><span class="line">     // Level has changed</span><br><span class="line">     NSLog(@&quot;Battery Level Change&quot;);</span><br><span class="line">     NSLog(@&quot;电池电量：%.2f&quot;, [UIDevice currentDevice].batteryLevel);</span><br><span class="line"> &#125;];</span><br></pre></td></tr></table></figure>
 <h2 id="网络信息"><a href="#网络信息" class="headerlink" title="网络信息"></a>网络信息</h2><p>需要引入库：<code>CoreTelephony.framework</code></p>
 <ul>
 <li>网络类型，如：WiFi，4G等。</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSString *networktype = nil;&#10;NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@&#34;statusBar&#34;] valueForKey:@&#34;foregroundView&#34;]subviews];&#10;NSNumber *dataNetworkItemView = nil;&#10;for (id subview in subviews) &#123;&#10;    if([subview isKindOfClass:[NSClassFromString(@&#34;UIStatusBarDataNetworkItemView&#34;) class]]) &#123;&#10;        dataNetworkItemView = subview;&#10;        break;&#10;    &#125;&#10;&#125;&#10;switch ([[dataNetworkItemView valueForKey:@&#34;dataNetworkType&#34;]integerValue]) &#123;&#10;    case 0:&#10;        networktype = @&#34;UNKNOW&#34;;&#10;        break;&#10;    case 1:&#10;        networktype = @&#34;2G&#34;;&#10;        break;&#10;    case 2:&#10;        networktype = @&#34;3G&#34;;&#10;        break;&#10;    case 3:&#10;        networktype = @&#34;4G&#34;;&#10;        break;&#10;    case 4:&#10;        networktype = @&#34;LTE&#34;;&#10;        break;&#10;    case 5:&#10;        networktype = @&#34;Wi-Fi&#34;;&#10;        break;&#10;    default:&#10;        break;&#10;&#125;&#10;return networktype;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">NSString *networktype = nil;</span><br><span class="line">NSArray *subviews = [[[[UIApplication sharedApplication] valueForKey:@&quot;statusBar&quot;] valueForKey:@&quot;foregroundView&quot;]subviews];</span><br><span class="line">NSNumber *dataNetworkItemView = nil;</span><br><span class="line">for (id subview in subviews) &#123;</span><br><span class="line">    if([subview isKindOfClass:[NSClassFromString(@&quot;UIStatusBarDataNetworkItemView&quot;) class]]) &#123;</span><br><span class="line">        dataNetworkItemView = subview;</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">switch ([[dataNetworkItemView valueForKey:@&quot;dataNetworkType&quot;]integerValue]) &#123;</span><br><span class="line">    case 0:</span><br><span class="line">        networktype = @&quot;UNKNOW&quot;;</span><br><span class="line">        break;</span><br><span class="line">    case 1:</span><br><span class="line">        networktype = @&quot;2G&quot;;</span><br><span class="line">        break;</span><br><span class="line">    case 2:</span><br><span class="line">        networktype = @&quot;3G&quot;;</span><br><span class="line">        break;</span><br><span class="line">    case 3:</span><br><span class="line">        networktype = @&quot;4G&quot;;</span><br><span class="line">        break;</span><br><span class="line">    case 4:</span><br><span class="line">        networktype = @&quot;LTE&quot;;</span><br><span class="line">        break;</span><br><span class="line">    case 5:</span><br><span class="line">        networktype = @&quot;Wi-Fi&quot;;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br><span class="line">return networktype;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>蜂窝网络类型</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];&#10;if ( [telephonyInfo respondsToSelector:@selector(currentRadioAccessTechnology)] ) &#123;&#10;    id radioAccessType = [telephonyInfo performSelector:@selector(currentRadioAccessTechnology)&#10;                                             withObject:nil];&#10;    &#10;    if ( [radioAccessType isKindOfClass:[NSString class]] ) &#123;&#10;        NSString *accessType = (NSString *)radioAccessType;&#10;        if ( [accessType hasPrefix:@&#34;CTRadioAccessTechnology&#34;] &#38;&#38; accessType.length &#62;= 23 ) &#123;&#10;            NSString *accessTypeStr = [accessType substringFromIndex:23];&#10;            return accessTypeStr;&#10;        &#125;&#10;    &#125;&#10;&#125;&#10;    &#10;return @&#34;UNKNOW&#34;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];</span><br><span class="line">if ( [telephonyInfo respondsToSelector:@selector(currentRadioAccessTechnology)] ) &#123;</span><br><span class="line">    id radioAccessType = [telephonyInfo performSelector:@selector(currentRadioAccessTechnology)</span><br><span class="line">                                             withObject:nil];</span><br><span class="line">    </span><br><span class="line">    if ( [radioAccessType isKindOfClass:[NSString class]] ) &#123;</span><br><span class="line">        NSString *accessType = (NSString *)radioAccessType;</span><br><span class="line">        if ( [accessType hasPrefix:@&quot;CTRadioAccessTechnology&quot;] &amp;&amp; accessType.length &gt;= 23 ) &#123;</span><br><span class="line">            NSString *accessTypeStr = [accessType substringFromIndex:23];</span><br><span class="line">            return accessTypeStr;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">return @&quot;UNKNOW&quot;;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>运营商信息</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];&#10;CTCarrier *carrier    = [telephonyInfo subscriberCellularProvider];&#10;NSString *carrierName = [carrier carrierName];&#10;if ( nil != carrierName ) &#123;&#10;    return carrierName;&#10;&#125;&#10;return @&#34;UNKNOW&#34;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CTTelephonyNetworkInfo *telephonyInfo = [[CTTelephonyNetworkInfo alloc] init];</span><br><span class="line">CTCarrier *carrier    = [telephonyInfo subscriberCellularProvider];</span><br><span class="line">NSString *carrierName = [carrier carrierName];</span><br><span class="line">if ( nil != carrierName ) &#123;</span><br><span class="line">    return carrierName;</span><br><span class="line">&#125;</span><br><span class="line">return @&quot;UNKNOW&quot;;</span><br></pre></td></tr></table></figure>
 <h2 id="应用状态"><a href="#应用状态" class="headerlink" title="应用状态"></a>应用状态</h2><ul>
 <li>APP启动，或者由后台进入前台</li>
 </ul>
@@ -1113,19 +1179,19 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <ul>
 <li>APP在前台锁屏</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#import &#60;notify.h&#62;&#10;#define NotificationLock CFSTR(&#34;com.apple.springboard.lockcomplete&#34;)&#10;#define NotificationChange CFSTR(&#34;com.apple.springboard.lockstate&#34;)&#10;#define NotificationPwdUI CFSTR(&#34;com.apple.springboard.hasBlankedScreen&#34;)&#10;&#10;static void screenLockStateChanged(CFNotificationCenterRef center,void* observer,CFStringRef name,const void* object,CFDictionaryRef userInfo)&#10;&#123;&#10;&#9;NSString* lockstate = (__bridge NSString*)name;&#10;&#9;if ([lockstate isEqualToString:(__bridge  NSString*)NotificationLock]) &#123;&#10;&#9;    NSLog(@&#34;locked.&#34;);&#10;&#9;&#125; else &#123;&#10;&#9;    NSLog(@&#34;lock state changed.&#34;);&#10;&#9;&#125;&#10;&#125;&#10;&#10;- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions&#10;&#123;&#10;&#9;CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, screenLockStateChanged, NotificationLock, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);&#10;&#9;CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, screenLockStateChanged, NotificationChange, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);&#10;&#9;return YES;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#import &lt;notify.h&gt;</span><br><span class="line">#define NotificationLock CFSTR(&quot;com.apple.springboard.lockcomplete&quot;)</span><br><span class="line">#define NotificationChange CFSTR(&quot;com.apple.springboard.lockstate&quot;)</span><br><span class="line">#define NotificationPwdUI CFSTR(&quot;com.apple.springboard.hasBlankedScreen&quot;)</span><br><span class="line"></span><br><span class="line">static void screenLockStateChanged(CFNotificationCenterRef center,void* observer,CFStringRef name,const void* object,CFDictionaryRef userInfo)</span><br><span class="line">&#123;</span><br><span class="line">	NSString* lockstate = (__bridge NSString*)name;</span><br><span class="line">	if ([lockstate isEqualToString:(__bridge  NSString*)NotificationLock]) &#123;</span><br><span class="line">	    NSLog(@&quot;locked.&quot;);</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">	    NSLog(@&quot;lock state changed.&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions</span><br><span class="line">&#123;</span><br><span class="line">	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, screenLockStateChanged, NotificationLock, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);</span><br><span class="line">	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, screenLockStateChanged, NotificationChange, NULL, CFNotificationSuspensionBehaviorDeliverImmediately);</span><br><span class="line">	return YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>APP在后台锁屏，通过循环的方式检测</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">static void setScreenStateCb()&#10;&#123;&#10;uint64_t locked;&#10;&#10;__block int token = 0;&#10;notify_register_dispatch(&#34;com.apple.springboard.lockstate&#34;,&#38;token,dispatch_get_main_queue(),^(int t)&#123;&#10;&#125;);&#10;&#9;notify_get_state(token, &#38;locked);&#10;&#9;NSLog(@&#34;%d&#34;,(int)locked);&#10;&#125;&#10;&#10;- (void)applicationDidEnterBackground:(UIApplication *)application&#10;&#123;&#10;&#9;while (YES) &#123;&#10;&#9;    setScreenStateCb();&#10;&#9;    sleep(5); // &#24490;&#29615;5s&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">static void setScreenStateCb()</span><br><span class="line">&#123;</span><br><span class="line">uint64_t locked;</span><br><span class="line"></span><br><span class="line">__block int token = 0;</span><br><span class="line">notify_register_dispatch(&quot;com.apple.springboard.lockstate&quot;,&amp;token,dispatch_get_main_queue(),^(int t)&#123;</span><br><span class="line">&#125;);</span><br><span class="line">	notify_get_state(token, &amp;locked);</span><br><span class="line">	NSLog(@&quot;%d&quot;,(int)locked);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (void)applicationDidEnterBackground:(UIApplication *)application</span><br><span class="line">&#123;</span><br><span class="line">	while (YES) &#123;</span><br><span class="line">	    setScreenStateCb();</span><br><span class="line">	    sleep(5); // 循环5s</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>获取当前APP的CPU使用率</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kern_return_t kr;&#10;task_info_data_t tinfo;&#10;mach_msg_type_number_t task_info_count;&#10;    &#10;task_info_count = TASK_INFO_MAX;&#10;kr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)tinfo, &#38;task_info_count);&#10;if (kr != KERN_SUCCESS) &#123;&#10;    return;&#10;&#125;&#10;    &#10;task_basic_info_t      basic_info;&#10;thread_array_t         thread_list;&#10;mach_msg_type_number_t thread_count;&#10;    &#10;thread_info_data_t     thinfo;&#10;mach_msg_type_number_t thread_info_count;&#10;    &#10;thread_basic_info_t basic_info_th;&#10;uint32_t stat_thread = 0; // Mach threads&#10;    &#10;basic_info = (task_basic_info_t)tinfo;&#10;    &#10;// get threads in the task&#10;kr = task_threads(mach_task_self(), &#38;thread_list, &#38;thread_count);&#10;if (kr != KERN_SUCCESS) &#123;&#10;    return;&#10;&#125;&#10;if (thread_count &#62; 0)&#10;    stat_thread += thread_count;&#10;    &#10;long tot_sec = 0;&#10;long tot_usec = 0;&#10;float tot_cpu = 0;&#10;int j;&#10;    &#10;for (j = 0; j &#60; thread_count; j++)&#10;&#123;&#10;    thread_info_count = THREAD_INFO_MAX;&#10;    kr = thread_info(thread_list[j], THREAD_BASIC_INFO,&#10;                     (thread_info_t)thinfo, &#38;thread_info_count);&#10;    if (kr != KERN_SUCCESS) &#123;&#10;        return;&#10;    &#125;&#10;    &#10;    basic_info_th = (thread_basic_info_t)thinfo;&#10;    &#10;    if (!(basic_info_th-&#62;flags &#38; TH_FLAGS_IDLE)) &#123;&#10;        tot_sec = tot_sec + basic_info_th-&#62;user_time.seconds + basic_info_th-&#62;system_time.seconds;&#10;        tot_usec = tot_usec + basic_info_th-&#62;system_time.microseconds + basic_info_th-&#62;system_time.microseconds;&#10;        tot_cpu = tot_cpu + basic_info_th-&#62;cpu_usage / (float)TH_USAGE_SCALE * 100.0;&#10;    &#125;&#10;    &#10;&#125; // for each thread&#10;    &#10;kr = vm_deallocate(mach_task_self(), (vm_offset_t)thread_list, thread_count * sizeof(thread_t));&#10;assert(kr == KERN_SUCCESS);&#10;    &#10;NSLog(@&#34;CPU Usage: %f \n&#34;, tot_cpu);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">kern_return_t kr;</span><br><span class="line">task_info_data_t tinfo;</span><br><span class="line">mach_msg_type_number_t task_info_count;</span><br><span class="line">    </span><br><span class="line">task_info_count = TASK_INFO_MAX;</span><br><span class="line">kr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)tinfo, &amp;task_info_count);</span><br><span class="line">if (kr != KERN_SUCCESS) &#123;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">task_basic_info_t      basic_info;</span><br><span class="line">thread_array_t         thread_list;</span><br><span class="line">mach_msg_type_number_t thread_count;</span><br><span class="line">    </span><br><span class="line">thread_info_data_t     thinfo;</span><br><span class="line">mach_msg_type_number_t thread_info_count;</span><br><span class="line">    </span><br><span class="line">thread_basic_info_t basic_info_th;</span><br><span class="line">uint32_t stat_thread = 0; // Mach threads</span><br><span class="line">    </span><br><span class="line">basic_info = (task_basic_info_t)tinfo;</span><br><span class="line">    </span><br><span class="line">// get threads in the task</span><br><span class="line">kr = task_threads(mach_task_self(), &amp;thread_list, &amp;thread_count);</span><br><span class="line">if (kr != KERN_SUCCESS) &#123;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line">if (thread_count &gt; 0)</span><br><span class="line">    stat_thread += thread_count;</span><br><span class="line">    </span><br><span class="line">long tot_sec = 0;</span><br><span class="line">long tot_usec = 0;</span><br><span class="line">float tot_cpu = 0;</span><br><span class="line">int j;</span><br><span class="line">    </span><br><span class="line">for (j = 0; j &lt; thread_count; j++)</span><br><span class="line">&#123;</span><br><span class="line">    thread_info_count = THREAD_INFO_MAX;</span><br><span class="line">    kr = thread_info(thread_list[j], THREAD_BASIC_INFO,</span><br><span class="line">                     (thread_info_t)thinfo, &amp;thread_info_count);</span><br><span class="line">    if (kr != KERN_SUCCESS) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    basic_info_th = (thread_basic_info_t)thinfo;</span><br><span class="line">    </span><br><span class="line">    if (!(basic_info_th-&gt;flags &amp; TH_FLAGS_IDLE)) &#123;</span><br><span class="line">        tot_sec = tot_sec + basic_info_th-&gt;user_time.seconds + basic_info_th-&gt;system_time.seconds;</span><br><span class="line">        tot_usec = tot_usec + basic_info_th-&gt;system_time.microseconds + basic_info_th-&gt;system_time.microseconds;</span><br><span class="line">        tot_cpu = tot_cpu + basic_info_th-&gt;cpu_usage / (float)TH_USAGE_SCALE * 100.0;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125; // for each thread</span><br><span class="line">    </span><br><span class="line">kr = vm_deallocate(mach_task_self(), (vm_offset_t)thread_list, thread_count * sizeof(thread_t));</span><br><span class="line">assert(kr == KERN_SUCCESS);</span><br><span class="line">    </span><br><span class="line">NSLog(@&quot;CPU Usage: %f \n&quot;, tot_cpu);</span><br></pre></td></tr></table></figure>
 <ul>
 <li>获取当前APP的内存使用情况</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">task_basic_info_data_t taskInfo;&#10;mach_msg_type_number_t infoCount = TASK_BASIC_INFO_COUNT;&#10;kern_return_t kernReturn = task_info(mach_task_self(),&#10;                                     TASK_BASIC_INFO, (task_info_t)&#38;taskInfo, &#38;infoCount);&#10;&#10;if(kernReturn != KERN_SUCCESS) &#123;&#10;    return;&#10;&#125;&#10;    &#10;NSLog(@&#34;Memory Usage: %f&#34;, taskInfo.resident_size / 1024.0 / 1024.0);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">task_basic_info_data_t taskInfo;</span><br><span class="line">mach_msg_type_number_t infoCount = TASK_BASIC_INFO_COUNT;</span><br><span class="line">kern_return_t kernReturn = task_info(mach_task_self(),</span><br><span class="line">                                     TASK_BASIC_INFO, (task_info_t)&amp;taskInfo, &amp;infoCount);</span><br><span class="line"></span><br><span class="line">if(kernReturn != KERN_SUCCESS) &#123;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">NSLog(@&quot;Memory Usage: %f&quot;, taskInfo.resident_size / 1024.0 / 1024.0);</span><br></pre></td></tr></table></figure>
           
         
       </div>
@@ -1147,7 +1213,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <nav id="pagination">
   
   
-    <a href="/page/2/" class="alignright next">下一頁</a>
+    <a href="/page/2/" class="alignright next">Next</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -1155,22 +1221,22 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -1191,7 +1257,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -1204,7 +1270,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -1220,8 +1286,6 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -1236,7 +1300,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -1280,7 +1344,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -1290,13 +1354,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -1334,15 +1394,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -1350,17 +1408,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -1417,7 +1471,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

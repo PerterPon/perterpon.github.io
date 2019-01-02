@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>零门槛学习https--(2)https中s的秘密 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="零门槛学习https--(2)https中s的秘密"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="零门槛学习https--(2)https中s的秘密">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -144,24 +144,24 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>非对称加密在目前的计算机领域内是非常安全的，主要还是受制于目前的计算能力，或许某天量子计算机的出现会改变这个局面。RSA的本质就是一个数学算法，所以本篇即使你不懂任何计算机知识，也能理解RSA算法的原理，但是其中会涉及到大量的数学知识。</p>
 <h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><p>前面已经介绍过RSA的名称由来，下面来介绍下RSA的安全本质：<code>大整数的因数分解</code>。</p>
 <p>举个例子：<code>求77的因数分解</code>，很简单，解是<code>7和11</code>，或许你在高中或者初中就学过这个，很诧异这能成为现代互联网安全的基础？那么你可以看看下面这个数字：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12301866845301177551304949&#10;58384962720772853569595334&#10;79219732245215172640050726&#10;36575187452021997864693899&#10;56474942774063845925192557&#10;32630345373154826850791702&#10;61221429134616704292143116&#10;02221240479274737794080665&#10;351419597459856902143413</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">12301866845301177551304949</span><br><span class="line">58384962720772853569595334</span><br><span class="line">79219732245215172640050726</span><br><span class="line">36575187452021997864693899</span><br><span class="line">56474942774063845925192557</span><br><span class="line">32630345373154826850791702</span><br><span class="line">61221429134616704292143116</span><br><span class="line">02221240479274737794080665</span><br><span class="line">351419597459856902143413</span><br></pre></td></tr></table></figure>
 <p>这个就是人类目前破解过的最长的一个整数，在2009年才破解成功，转成二进制就是768位，而现在普遍都是2048位的加密，如果非要破解，那么所需时间是一个天文数字。如果有一天，有人发明了简单的因数分解的方式，那么RSA就很容易被破解了，目前，基本上只有暴力破解，也就是一个数一个数地测试。</p>
 <h2 id="RSA的思路"><a href="#RSA的思路" class="headerlink" title="RSA的思路"></a>RSA的思路</h2><p>上面那个数等于下面这两个数的乘积，计算这两个数的乘积很简单，计算机在瞬间就可以给出答案，但是只有两个数的乘积，而让你求出其因数，就几乎是不可能了，当然这是基于大整数的情况下，简单的整数，通过暴力破解，还是可以求出来的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">33478071698956898786044169&#10;84821269081770479498371376&#10;85689124313889828837938780&#10;02287614711652531743087737&#10;814467999489&#10;&#12288;&#12288;&#12288;&#12288;&#215;&#10;36746043666799590428244633&#10;79962795263227915816434308&#10;76426760322838157396665112&#10;79233373417143396810270092&#10;798736308917</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">33478071698956898786044169</span><br><span class="line">84821269081770479498371376</span><br><span class="line">85689124313889828837938780</span><br><span class="line">02287614711652531743087737</span><br><span class="line">814467999489</span><br><span class="line">　　　　×</span><br><span class="line">36746043666799590428244633</span><br><span class="line">79962795263227915816434308</span><br><span class="line">76426760322838157396665112</span><br><span class="line">79233373417143396810270092</span><br><span class="line">798736308917</span><br></pre></td></tr></table></figure>
 <p>我们把这两个数分别称为<code>p</code>和<code>q</code>，这两个数的乘积称为<code>n</code>，从这个角度出发，只要加密者拥有<code>p</code>和<code>q</code>，很容易算出乘积<code>n</code>，而尝试破解的人，只有<code>n</code>，就没法算出<code>p</code>和<code>q</code>了。</p>
 <h2 id="如何生成公私钥？"><a href="#如何生成公私钥？" class="headerlink" title="如何生成公私钥？"></a>如何生成公私钥？</h2><p>本质已经知道了，那么我们来生成RSA的公钥和私钥吧，生成公钥和私钥总共分为五步：</p>
-<h3 id="1-随机选择两个质数p和q"><a href="#1-随机选择两个质数p和q" class="headerlink" title="1. 随机选择两个质数p和q"></a>1. 随机选择两个质数p和q</h3><p>质数又称素数，具体的特性和定义请<a href="https://zh.wikipedia.org/zh/%E7%B4%A0%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
+<h3 id="1-随机选择两个质数p和q"><a href="#1-随机选择两个质数p和q" class="headerlink" title="1. 随机选择两个质数p和q"></a>1. 随机选择两个质数p和q</h3><p>质数又称素数，具体的特性和定义请<a href="https://zh.wikipedia.org/zh/%E7%B4%A0%E6%95%B0" target="_blank" rel="noopener">参考这里</a></p>
 <p>比如这里我选择了<code>p=17，q=23</code></p>
 <h3 id="2-将这个两个数相乘得到n"><a href="#2-将这个两个数相乘得到n" class="headerlink" title="2. 将这个两个数相乘得到n"></a>2. 将这个两个数相乘得到n</h3><p><code>17 * 23 = 391</code>，<code>391</code>换算成二进制就是<code>110001000</code>，这里的位数就是9位，这就是我们密钥的长度。选择RSA密钥长度的时候，其实就是选择这个n的长度，长度越大，安全性越高，当然加密和解密的时候耗费的计算量也更大。</p>
-<h3 id="3-计算n的欧拉函数φ-n"><a href="#3-计算n的欧拉函数φ-n" class="headerlink" title="3. 计算n的欧拉函数φ(n)"></a>3. 计算n的欧拉函数φ(n)</h3><p>欧拉函数的作用是求得大于1小于n的所有质数的个数，例如符合φ(8)的情况是：<code>2, 3, 5, 7</code>，也就是φ(8)的值为：<code>4</code>，具体有关欧拉函数的其他特性请<a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0" target="_blank" rel="external">参考这里</a></p>
+<h3 id="3-计算n的欧拉函数φ-n"><a href="#3-计算n的欧拉函数φ-n" class="headerlink" title="3. 计算n的欧拉函数φ(n)"></a>3. 计算n的欧拉函数φ(n)</h3><p>欧拉函数的作用是求得大于1小于n的所有质数的个数，例如符合φ(8)的情况是：<code>2, 3, 5, 7</code>，也就是φ(8)的值为：<code>4</code>，具体有关欧拉函数的其他特性请<a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%87%BD%E6%95%B0" target="_blank" rel="noopener">参考这里</a></p>
 <p>我们这里φ(n)可以这么求值：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#966;(n) = (p-1)(q-1).&#10;&#10;&#36825;&#37324;&#65292;&#966;(n) = ( 17 -1 ) * ( 23 - 1 ) = 352</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">φ(n) = (p-1)(q-1).</span><br><span class="line"></span><br><span class="line">这里，φ(n) = ( 17 -1 ) * ( 23 - 1 ) = 352</span><br></pre></td></tr></table></figure>
 <h3 id="4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质"><a href="#4-随机选择一个整数e-需要符合条件：1-lt-e-lt-φ-n-并且e和φ-n-互质" class="headerlink" title="4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质"></a>4. 随机选择一个整数e, 需要符合条件：1 &lt; e &lt; φ(n)并且e和φ(n)互质</h3><p>也就是说，<code>e</code>和<code>φ(n)</code>不能有公约数，并且<code>φ(n)</code>不能是<code>e</code>的倍数。</p>
 <p>举个例子：<code>φ(n)</code> = 352，所以e可以选的数有<code>3, 5, 7, 11 ....</code>，这里我选择<strong><code>17</code></strong>。</p>
-<p>在现实场景中，通常<code>e</code>的选择是<code>65537</code>，为什么要选择这个数呢？请参看<a href="https://crypto.stackexchange.com/questions/3110/impacts-of-not-using-rsa-exponent-of-65537" target="_blank" rel="external">这篇文章</a>，解释得非常清楚，总的来说，比<code>65537</code>大的数，在现有的硬件和软件场景下，会造成计算变慢，而比<code>65537</code>小的数，在安全性上会有减弱，所以<code>65537</code>是一个折中的选择。</p>
+<p>在现实场景中，通常<code>e</code>的选择是<code>65537</code>，为什么要选择这个数呢？请参看<a href="https://crypto.stackexchange.com/questions/3110/impacts-of-not-using-rsa-exponent-of-65537" target="_blank" rel="noopener">这篇文章</a>，解释得非常清楚，总的来说，比<code>65537</code>大的数，在现有的硬件和软件场景下，会造成计算变慢，而比<code>65537</code>小的数，在安全性上会有减弱，所以<code>65537</code>是一个折中的选择。</p>
 <h3 id="5-计算e对于φ-n-的模反元素d"><a href="#5-计算e对于φ-n-的模反元素d" class="headerlink" title="5. 计算e对于φ(n)的模反元素d"></a>5. 计算e对于<code>φ(n)</code>的模反元素<code>d</code></h3><h4 id="求模"><a href="#求模" class="headerlink" title="求模"></a>求模</h4><p>求模操作在大部分计算机语言中操作符都是<code>%</code>，比如：<code>10 % 3 = 1</code>，指的是余数。</p>
 <h4 id="同余≡"><a href="#同余≡" class="headerlink" title="同余≡"></a>同余<code>≡</code></h4><p>三横的等号，代表同余，两个整数<code>a</code>，<code>b</code>，若它们除以正整数<code>m</code>所得的余数相等，则称 <code>a</code>， <code>b</code>对于模 <code>m</code>同余，例如：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 &#8801; 1 (mod 3)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">10 ≡ 1 (mod 3)</span><br></pre></td></tr></table></figure>
 <p>10 和 1 对于 <code>3</code> 同余。</p>
 <h4 id="模反元素"><a href="#模反元素" class="headerlink" title="模反元素"></a>模反元素</h4><p>模反元素也成为<code>模逆元</code></p>
 <p>一整数a对同余n之模逆元是指满足以下公式的整数 b</p>
@@ -170,31 +170,31 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p><img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/297023f006cd9486fa4192b391dbc819dd8f89e1" alt=""></p>
 <p>整数 a 对模数 n 之模逆元存在的充分必要条件是 a 和 n 互素，若此模逆元存在，在模数 n 下的除法可以用和对应模逆元的乘法来达成，此概念和实数除法的概念相同。</p>
 <p>以上是维基百科对于模反元素的介绍，将<code>e</code>和<code>φ(n)</code>代入公式就变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d &#8801; 1(mod &#966;(n))</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d ≡ 1(mod φ(n))</span><br></pre></td></tr></table></figure>
 <p>也就是说<code>e * d</code>的结果除以<code>k * φ(n)</code>的余数是<code>1</code>，所以我们的公式就变成了：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d - 1 = k * &#966;(n);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e * d - 1 = k * φ(n);</span><br></pre></td></tr></table></figure>
 <p>将<code>e</code>和<code>φ(n)</code>代入：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231 * d - 1 = k * 352</span><br></pre></td></tr></table></figure>
 <p>转变一下位置：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">231x - 352y = 1</span><br></pre></td></tr></table></figure>
-<p>就变成了一个二元一次方程，初中时候就求过二元一次方程的解，但是必须得有两个二元一次方程才能求出解，不然就是一个直线方程了，这里我们采用<a href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95" target="_blank" rel="external">扩展欧几里得算法</a>来进行求解。</p>
+<p>就变成了一个二元一次方程，初中时候就求过二元一次方程的解，但是必须得有两个二元一次方程才能求出解，不然就是一个直线方程了，这里我们采用<a href="https://zh.wikipedia.org/wiki/%E6%89%A9%E5%B1%95%E6%AC%A7%E5%87%A0%E9%87%8C%E5%BE%97%E7%AE%97%E6%B3%95" target="_blank" rel="noopener">扩展欧几里得算法</a>来进行求解。</p>
 <h4 id="欧几里得算法"><a href="#欧几里得算法" class="headerlink" title="欧几里得算法"></a>欧几里得算法</h4><p>我们先看看欧几里得算法的定义：<code>欧几里得算法又称为辗转相除法，是一种求最大公约数的方法，其核心思想如下图：</code></p>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2iDY8p4XlpuFjSsphXXbJOXXa_!!99218453.gif" alt=""></p>
 <p>假设我们要求<code>120</code>和<code>76</code>的最大公约数，可以这么计算：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39318;&#20808;&#36873;&#25321;&#22823;&#30340;&#25968;&#20943;&#21435;&#23567;&#30340;&#25968;&#10;&#10;120 - 76 = 44&#10;&#10;&#29616;&#22312;&#25105;&#20204;&#21097;&#19979;76 &#21644; 44&#20004;&#20010;&#25968;&#65292;&#32487;&#32493;&#31532;&#19968;&#27493;&#25805;&#20316;&#10;&#10;76 - 44 = 32&#10;&#10;44 - 32 = 12&#10;&#10;32 - 12  = 20&#10;&#10;20 - 12  = 8&#10;&#10;12 - 8  = 4&#10;&#10;8  - 4  = 4&#10;&#10;4  - 4  = 0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">首先选择大的数减去小的数</span><br><span class="line"></span><br><span class="line">120 - 76 = 44</span><br><span class="line"></span><br><span class="line">现在我们剩下76 和 44两个数，继续第一步操作</span><br><span class="line"></span><br><span class="line">76 - 44 = 32</span><br><span class="line"></span><br><span class="line">44 - 32 = 12</span><br><span class="line"></span><br><span class="line">32 - 12  = 20</span><br><span class="line"></span><br><span class="line">20 - 12  = 8</span><br><span class="line"></span><br><span class="line">12 - 8  = 4</span><br><span class="line"></span><br><span class="line">8  - 4  = 4</span><br><span class="line"></span><br><span class="line">4  - 4  = 0</span><br></pre></td></tr></table></figure>
 <p>所以，我们就可以求出，<code>120</code>和<code>76</code>的最大公约数是<code>4</code>。</p>
 <h4 id="扩展欧几里得算法"><a href="#扩展欧几里得算法" class="headerlink" title="扩展欧几里得算法"></a>扩展欧几里得算法</h4><p>看名字就可以知道这是欧几里得算法的扩展，其核心思想如下：</p>
 <p>已知a和b，求解一组x, y使得<strong><code>ax+by=Gcd(a, b)=d</code></strong> <code>(Gcd(a, b) 表示a和b的最大公约数)</code>。</p>
 <p>用类似辗转相除法来求解这个等式<code>17x - 352y = 1</code>：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">352 = 17 * 20 + 12&#10;17  = 12 * 1 + 5&#10;12  = 5 * 2 + 2&#10;5   = 2 * 2 + 1</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">352 = 17 * 20 + 12</span><br><span class="line">17  = 12 * 1 + 5</span><br><span class="line">12  = 5 * 2 + 2</span><br><span class="line">5   = 2 * 2 + 1</span><br></pre></td></tr></table></figure>
 <p>改变一下等式两边</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">12  = 352 - 17 * 20&#10;5   = 17 - 12&#10;2   = 12 - 5 * 2&#10;1   = 5 - 2 * 2</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">12  = 352 - 17 * 20</span><br><span class="line">5   = 17 - 12</span><br><span class="line">2   = 12 - 5 * 2</span><br><span class="line">1   = 5 - 2 * 2</span><br></pre></td></tr></table></figure>
 <p>把等式代入上一个等式</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1  = 5 - 2 * 2&#10;1  = 5 -&#65288; 12 - 5 * 2 &#65289;* 2 // &#20195;&#20837;&#31561;&#24335;&#65306;2 = 12 - 5 * 2&#10;1  = 5 - 12 * 2 + 5 * 4&#10;1  = 5 * 5 - 12 * 2&#10;1  = ( 17 - 12 ) * 5 - 12 * 2 // &#20195;&#20837;&#31561;&#24335;&#65306;5 = 17 - 12&#10;1  = 17 * 5 - 12 * 5 - 12 * 2&#10;1  = 17 * 5 - 12 * 7&#10;1  = 17 * 5 - ( 352 - 17 * 20 ) * 7 // &#20195;&#20837;&#31561;&#24335;&#65306;12 = 352 - 17 * 20&#10;1  = 17 * 5 - 352 * 7 + 17 * 140&#10;1  = 17 * 145 - 352 * 7</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1  = 5 - 2 * 2</span><br><span class="line">1  = 5 -（ 12 - 5 * 2 ）* 2 // 代入等式：2 = 12 - 5 * 2</span><br><span class="line">1  = 5 - 12 * 2 + 5 * 4</span><br><span class="line">1  = 5 * 5 - 12 * 2</span><br><span class="line">1  = ( 17 - 12 ) * 5 - 12 * 2 // 代入等式：5 = 17 - 12</span><br><span class="line">1  = 17 * 5 - 12 * 5 - 12 * 2</span><br><span class="line">1  = 17 * 5 - 12 * 7</span><br><span class="line">1  = 17 * 5 - ( 352 - 17 * 20 ) * 7 // 代入等式：12 = 352 - 17 * 20</span><br><span class="line">1  = 17 * 5 - 352 * 7 + 17 * 140</span><br><span class="line">1  = 17 * 145 - 352 * 7</span><br></pre></td></tr></table></figure>
 <p>即可得出：<code>x = 145, y = 7</code></p>
 <h4 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h4><p>在第五步中我们想要的<code>d</code>就是这里的x，所以，<code>d = 145</code>。</p>
 <p>作为一个直线方程，这里理论上这里会有无数个整数解，的确，尝试一下就发现，所有整数解都是能计算的，只是数字越大，计算量越大，但是要注意，这里的<code>d</code>不能小于0。</p>
-<h3 id="组合公钥和私钥"><a href="#组合公钥和私钥" class="headerlink" title="组合公钥和私钥"></a>组合公钥和私钥</h3><p>到这里，公钥和私钥所需要的东西都齐全了，<code>({n, e})</code>就是公钥，而<code>({n, d})</code>就是私钥，一般会使用<a href="https://zh.wikipedia.org/zh-cn/ASN.1" target="_blank" rel="external">ASN.1</a>来表达。</p>
+<h3 id="组合公钥和私钥"><a href="#组合公钥和私钥" class="headerlink" title="组合公钥和私钥"></a>组合公钥和私钥</h3><p>到这里，公钥和私钥所需要的东西都齐全了，<code>({n, e})</code>就是公钥，而<code>({n, d})</code>就是私钥，一般会使用<a href="https://zh.wikipedia.org/zh-cn/ASN.1" target="_blank" rel="noopener">ASN.1</a>来表达。</p>
 <h2 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h2><p>首先，我们用公钥加密。</p>
 <h3 id="要加密的数据m"><a href="#要加密的数据m" class="headerlink" title="要加密的数据m"></a>要加密的数据m</h3><p>m需要满足以下条件：</p>
 <ol>
@@ -224,7 +224,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>代入刚刚简化后的等式：</p>
 <p><strong><em>m<sup>hφ(n)+1</sup> ≡ m (mod n)</em></strong></p>
 <p>到这里，只要我们能够证明这个等式是成立的，那么就能够证明我们的加密和解密公式是成立的，这里就有两种情况了：</p>
-<h3 id="m和n是互质的关系"><a href="#m和n是互质的关系" class="headerlink" title="m和n是互质的关系"></a>m和n是互质的关系</h3><p><strong><a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86_(%E6%95%B0%E8%AE%BA" target="_blank" rel="external">欧拉定理</a>)</strong>：<code>如果两个正整数a和n互质，则n的欧拉函数 φ(n) 可以让下面的等式成立：</code></p>
+<h3 id="m和n是互质的关系"><a href="#m和n是互质的关系" class="headerlink" title="m和n是互质的关系"></a>m和n是互质的关系</h3><p><strong><a href="https://zh.wikipedia.org/zh-hans/%E6%AC%A7%E6%8B%89%E5%AE%9A%E7%90%86_(%E6%95%B0%E8%AE%BA" target="_blank" rel="noopener">欧拉定理</a>)</strong>：<code>如果两个正整数a和n互质，则n的欧拉函数 φ(n) 可以让下面的等式成立：</code></p>
 <p><strong><em>a<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
 <p>我们把<code>m</code>和<code>n</code>代入公式可以得到：</p>
 <p><strong><em>m<sup>φ(n)</sup> ≡ 1 (mod n)</em></strong></p>
@@ -301,7 +301,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/05/19/https-3/" title="零门槛学习https--(3)https的安全策略">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -311,7 +311,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2017/05/16/https-1/"  title="零门槛学习https--(1)为什么我们要用https">
+<a href="/2017/05/16/https-1/" title="零门槛学习https--(1)为什么我们要用https">
  <span>零门槛学习https--(1)为什么我们要用https
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -328,7 +328,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -357,22 +357,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -393,7 +393,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -406,7 +406,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -422,8 +422,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -438,7 +436,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -482,7 +480,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -492,13 +490,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -536,15 +530,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -552,17 +544,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -619,7 +607,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

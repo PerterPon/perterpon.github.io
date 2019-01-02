@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>强类型？弱类型？强类型！ | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="强类型？弱类型？强类型！"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="强类型？弱类型？强类型！">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -149,16 +149,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li><code>(![]+[])[+[]]+(![]+[])[+!+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+[])[!+[]+!+[]]</code>甚至包括这种，我还真写过，只是没有这么夸张。</li>
 </ul>
 <h2 id="灵活的代价"><a href="#灵活的代价" class="headerlink" title="灵活的代价"></a>灵活的代价</h2><p>下面的代码是一个真实的例子，我调用了别人的代码，他的函数：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;&#10;    ...&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function test() &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // 这里返回是一个Promise</span><br><span class="line">    return doSomeAsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>返回的是一个<code>Promise</code>，所以我用<code>await</code>去调用，到这里并没有问题。</p>
 <p>而出现问题来源于一次需求的增加，在执行这种函数时，需要判断一些意外情况，如果出现意外，就弹出一个对话框，让用户点击确认后才继续执行，于是他的代码变成了: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;function test( needConfirm ) &#123;&#10;&#10;    ...&#10;&#10;    if ( needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    // &#36825;&#37324;&#36820;&#22238;&#26159;&#19968;&#20010;Promise&#10;    return doSomeAsync();&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">function test( needConfirm ) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    if ( needConfirm ) &#123;</span><br><span class="line">        Dialog.show( &#123;</span><br><span class="line">            content: &apos;您确定要继续执行么？&apos;,</span><br><span class="line">            onOk: () =&gt; &#123;</span><br><span class="line">                doSomeAsync();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; );</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 这里返回是一个Promise</span><br><span class="line">    return doSomeAsync();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这么改动乍一看也没什么问题，如果需要确认，就弹出一个对话框，给用户确认，当用户点击确认的时候，在回调函数里面执行原本的操作。</p>
 <p>而对于我的代码来说，我依赖于<code>doSomeAsync</code>执行的结束，所以，当我任然使用<code>await test( true )</code>去调用时，我的代码就报错了，因为<code>true === needConfirm</code>的时候返回的是<code>undefined</code>，<code>await</code>并不会等待，而是继续执行下面的代码，所以导致了错误的出现。</p>
 <h2 id="“束缚”的TypeScript"><a href="#“束缚”的TypeScript" class="headerlink" title="“束缚”的TypeScript"></a>“束缚”的<code>TypeScript</code></h2><p>相信以上的代码绝大部分人都写过，我们再仔细看下，其实上面这段代码的问题在于函数的行为不一致，正常情况是返回一个<code>Promise</code>，而分支情况是返回一个<code>undefined</code>，我们看看在<code>TypeScript</code>下怎么写这段代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#35748;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: () =&#62; &#123;&#10;                doSomeAsync();&#10;            &#125;&#10;        &#125; );&#10;        return;&#10;    &#125;&#10;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">function test( needConfirm: boolean ): Promise&lt;void&gt; &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    if ( true === needConfirm ) &#123;</span><br><span class="line">        Dialog.show( &#123;</span><br><span class="line">            content: &apos;您确认要继续执行么？&apos;,</span><br><span class="line">            onOk: () =&gt; &#123;</span><br><span class="line">                doSomeAsync();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; );</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return doSomeAsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如果你任然这么写，那么<code>TypeScript</code>的编译阶段就会报错，因为你规定了函数需要返回一个<code>Promise</code>，但是却存在返回<code>undefined</code>的情况，你不得不去修改你的代码:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;functon test( needConfirm: boolean ): Promise&#60;void&#62; &#123;&#10;&#10;    ...&#10;&#10;    if ( true === needConfirm ) &#123;&#10;&#10;        let resolveFunc = null;&#10;&#10;        Dialog.show( &#123;&#10;            content: &#39;&#24744;&#30830;&#23450;&#35201;&#32487;&#32493;&#25191;&#34892;&#20040;&#65311;&#39;,&#10;            onOk: async function(): Promise&#60;void&#62; &#123;&#10;                const result = await doSomeAsync();&#10;                resolveFunc( result );&#10;            &#125;&#10;        &#125; );&#10;&#10;        return new Promise( ( resolve, reject ) =&#62; &#123;&#10;            resolveFunc = resolve;&#10;        &#125; );&#10;    &#125;&#10;    return doSomeAsync();&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">functon test( needConfirm: boolean ): Promise&lt;void&gt; &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    if ( true === needConfirm ) &#123;</span><br><span class="line"></span><br><span class="line">        let resolveFunc = null;</span><br><span class="line"></span><br><span class="line">        Dialog.show( &#123;</span><br><span class="line">            content: &apos;您确定要继续执行么？&apos;,</span><br><span class="line">            onOk: async function(): Promise&lt;void&gt; &#123;</span><br><span class="line">                const result = await doSomeAsync();</span><br><span class="line">                resolveFunc( result );</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; );</span><br><span class="line"></span><br><span class="line">        return new Promise( ( resolve, reject ) =&gt; &#123;</span><br><span class="line">            resolveFunc = resolve;</span><br><span class="line">        &#125; );</span><br><span class="line">    &#125;</span><br><span class="line">    return doSomeAsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>编译通过，函数行为一致，调用者也无需感知里面的逻辑。</p>
 <h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>强类型写起来限制会更多，然而对于代码的可维护性，可运行性都有很大的提升。</p>
 <p>现在前端的复杂性提升地非常快，几年前也许前端仅仅只是更多作为展示型页面存在，但是现在的前端已经承载了太多的东西，用户的交互也发生了很大变化，<code>JavaScript</code>也可以写<code>ReactNative</code>的APP，可以写<code>NodeJs</code>服务，可以用<code>NodeWebkit</code>等工具写跨平台的客户端，使用<code>TypeScript</code>严格按照强类型语言去写你的应用，让你的应用具备更高的可读性和可维护性。</p>
@@ -208,7 +208,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2018/06/24/node-event-loop/" title="一段有意思的Nodejs异步处理代码">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -218,7 +218,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2018/06/20/protocol-in-typescript/"  title="在typescript中使用delegate来进行解耦">
+<a href="/2018/06/20/protocol-in-typescript/" title="在typescript中使用delegate来进行解耦">
  <span>在typescript中使用delegate来进行解耦
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -235,7 +235,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -264,22 +264,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -300,7 +300,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -313,7 +313,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -329,8 +329,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -345,7 +343,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -389,7 +387,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -399,13 +397,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -443,15 +437,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -459,17 +451,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -526,7 +514,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

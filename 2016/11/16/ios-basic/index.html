@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>iOS开发--1天从入门到放弃--基础 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="iOS开发--1天从入门到放弃--基础"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="iOS开发--1天从入门到放弃--基础">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -176,16 +176,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="搭建我们的应用"><a href="#搭建我们的应用" class="headerlink" title="搭建我们的应用"></a>搭建我们的应用</h2><p>为什么用<code>搭建</code>这个词呢，因为<code>Cocoa Touch</code>已经帮助我们封装好了很多内部组件，和安卓不同，<code>Cocoa Touch</code>的内部组件通常都有一个比较好的交互和外观，典型应用是<code>微信</code>，微信基本都使用了内部组件，内部组件也最符合用户使用习惯。</p>
 <p>搭建界面有两种方式：</p>
 <ol>
-<li>storyboard，可视化组件拖拉，类似于Dreamweaver，这种方式不做介绍了，快速搭建应用首选，也存在些许弊端，有兴趣的可以看看<a href="http://www.jianshu.com/p/aaa4b89dbba1" target="_blank" rel="external">这篇文章</a>。</li>
+<li>storyboard，可视化组件拖拉，类似于Dreamweaver，这种方式不做介绍了，快速搭建应用首选，也存在些许弊端，有兴趣的可以看看<a href="http://www.jianshu.com/p/aaa4b89dbba1" target="_blank" rel="noopener">这篇文章</a>。</li>
 <li>纯代码，类似于手写HTML代码。</li>
 </ol>
 <h2 id="如何添加组件？"><a href="#如何添加组件？" class="headerlink" title="如何添加组件？"></a>如何添加组件？</h2><p>拿一个<code>button</code>组件来说，在<code>ViewController</code>类中的<code>viewDidLoad</code>方法中添加如下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIButton *button = [[UIButton alloc] init];&#10;button.frame     = CGRectMake(100, 100, 100, 50);&#10;[button setTitle:@&#34;&#25353;&#38062;&#27979;&#35797;&#34; forState:UIControlStateNormal];&#10;[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];&#10;&#10;[self.view addSubview:button];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">UIButton *button = [[UIButton alloc] init];</span><br><span class="line">button.frame     = CGRectMake(100, 100, 100, 50);</span><br><span class="line">[button setTitle:@&quot;按钮测试&quot; forState:UIControlStateNormal];</span><br><span class="line">[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];</span><br><span class="line"></span><br><span class="line">[self.view addSubview:button];</span><br></pre></td></tr></table></figure>
 <p>重新编译运行一下我们的代码，就可以看到一个黑色的按钮在界面上了。</p>
 <p>下面用浏览器的方式展示如何添加一个按钮，相信大家一定都非常熟悉了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const button = document.createElement( &#39;button&#39; );&#10;button.textContent  = &#39;&#25353;&#38062;&#27979;&#35797;&#39;&#10;button.style.width  = &#39;100px&#39;;&#10;button.style.height = &#39;50px&#39;;&#10;button.style[ &#39;margin-left&#39; ]   = &#39;100px&#39;;&#10;button.style[ &#39;margin-top&#39;  ]   = &#39;100px&#39;;&#10;button.style.color  = &#39;rgb(0, 0, 0)&#39;&#10;&#10;document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const button = document.createElement( &apos;button&apos; );</span><br><span class="line">button.textContent  = &apos;按钮测试&apos;</span><br><span class="line">button.style.width  = &apos;100px&apos;;</span><br><span class="line">button.style.height = &apos;50px&apos;;</span><br><span class="line">button.style[ &apos;margin-left&apos; ]   = &apos;100px&apos;;</span><br><span class="line">button.style[ &apos;margin-top&apos;  ]   = &apos;100px&apos;;</span><br><span class="line">button.style.color  = &apos;rgb(0, 0, 0)&apos;</span><br><span class="line"></span><br><span class="line">document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
 <p>对比一下两段代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#21019;&#24314;&#19968;&#20010;&#32452;&#20214;&#10;UIButton *button = [[UIButton alloc] init];                                ||| let button = document.createElement( &#39;button&#39; );&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#30340;left, top, width, height&#23646;&#24615;&#10;button.frame     = CGRectMake(100, 100, 100, 50);                          ||| button.style.width  = &#39;100px&#39;;&#10;                                                                           ||| button.style.height = &#39;50px&#39;;&#10;                                                                           ||| button.style.margin-left   = &#39;100px&#39;;&#10;                                                                           ||| button.style.margin-top    = &#39;100px&#39;;&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#30340;&#39;&#26631;&#39064;&#39;&#23646;&#24615;&#10;[button setTitle:@&#34;&#25353;&#38062;&#27979;&#35797;&#34; forState:UIControlStateNormal];                 ||| button.textContent  = &#39;&#25353;&#38062;&#27979;&#35797;&#39;&#10;&#10;// &#35774;&#32622;&#32452;&#20214;&#26631;&#39064;&#30340;&#39068;&#33394;&#10;[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal]; ||| button.style.color  = &#39;rgb(0, 0, 0)&#39;&#10;&#10;// &#23558;&#32452;&#20214;&#28155;&#21152;&#21040;&#24403;&#21069;&#30011;&#24067;&#19978;&#10;[self.view addSubview:button];                                             ||| document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个组件</span><br><span class="line">UIButton *button = [[UIButton alloc] init];                                ||| let button = document.createElement( &apos;button&apos; );</span><br><span class="line"></span><br><span class="line">// 设置组件的left, top, width, height属性</span><br><span class="line">button.frame     = CGRectMake(100, 100, 100, 50);                          ||| button.style.width  = &apos;100px&apos;;</span><br><span class="line">                                                                           ||| button.style.height = &apos;50px&apos;;</span><br><span class="line">                                                                           ||| button.style.margin-left   = &apos;100px&apos;;</span><br><span class="line">                                                                           ||| button.style.margin-top    = &apos;100px&apos;;</span><br><span class="line"></span><br><span class="line">// 设置组件的&apos;标题&apos;属性</span><br><span class="line">[button setTitle:@&quot;按钮测试&quot; forState:UIControlStateNormal];                 ||| button.textContent  = &apos;按钮测试&apos;</span><br><span class="line"></span><br><span class="line">// 设置组件标题的颜色</span><br><span class="line">[button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal]; ||| button.style.color  = &apos;rgb(0, 0, 0)&apos;</span><br><span class="line"></span><br><span class="line">// 将组件添加到当前画布上</span><br><span class="line">[self.view addSubview:button];                                             ||| document.body.appendChild( button );</span><br></pre></td></tr></table></figure>
 <p>其实从逻辑上来看两段代码非常相似，唯一不同的仅仅是语法而已。</p>
 <h3 id="那么从系统层面看，两者如何？"><a href="#那么从系统层面看，两者如何？" class="headerlink" title="那么从系统层面看，两者如何？"></a>那么从系统层面看，两者如何？</h3><p>首先来看看html</p>
 <p><img src="/image/html-c.png" alt="htmlc"></p>
@@ -193,18 +193,18 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p><img src="/image/cocoa-c.png" alt="cocoac"></p>
 <h2 id="响应UI事件"><a href="#响应UI事件" class="headerlink" title="响应UI事件"></a>响应UI事件</h2><p>通常在页面上放置了一个按钮并不是为了展示信息，而是为了能让用户进行交互，那么来看看两者如何进行UI响应。</p>
 <p><code>Javascript</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">button.addEventListener( &#39;click&#39;, function( event ) &#123;&#10;  alert( &#39;clicked&#39; );&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">button.addEventListener( &apos;click&apos;, function( event ) &#123;</span><br><span class="line">  alert( &apos;clicked&apos; );</span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <p>拿到<code>button</code>对象，然后给这个button注册一个名字叫<code>click</code>的事件，再给这个注册方法一个回调函数，然后用户在这个按钮上单击的话，就能够触发这个回调函数了。</p>
 <p><code>Objective-c</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[button addTarget:self action:@selector(clickHandler:) forControlEvents:UIControlEventTouchUpInside];</span><br></pre></td></tr></table></figure>
 <p>调用<code>button</code>对象的<code>addTarget</code>方法，为<code>UIControlEventTouchUpInside</code>事件，也就是单击事件添加<code>self</code>也就是当前实例下的<code>clickHandler</code>作为事件处理函数。这里也可以选择别的类的方法，只要<code>selector</code>中的方法名能在<code>addTarget</code>对象中找到就行。<br><code>iOS</code>中只能使用类的方法作为事件处理函数，没法使用类似匿名函数的<code>block</code>来进行事件处理。</p>
 <h2 id="回调"><a href="#回调" class="headerlink" title="回调"></a>回调</h2><p><code>Javascript</code>中发送一个http请求</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let xhr = new XMLHttpRequest();&#10;xhr.open( &#39;GET&#39;, &#39;http://xxxx.com&#39; );&#10;xhr.send();&#10;&#10;xhr.onreadystatechange = function()&#123;&#10;  // do something&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">let xhr = new XMLHttpRequest();</span><br><span class="line">xhr.open( &apos;GET&apos;, &apos;http://xxxx.com&apos; );</span><br><span class="line">xhr.send();</span><br><span class="line"></span><br><span class="line">xhr.onreadystatechange = function()&#123;</span><br><span class="line">  // do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>Javascript</code>基于事件驱动，通常使用一个匿名函数来作为请求结束时候的回调函数。</p>
 <p><code>Objective-c</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NSURL *url = [NSURL URLWithString:@&#34;http://xxx.com&#34;];&#10;NSURLRequest *request = [NSURLRequest requestWithURL:url];&#10;&#10;NSURLSession *session = [NSURLSession sharedSession];&#10;NSURLSessionDataTask *task = [session dataTaskWithRequest: request completionHandler: ^(NSData *data, NSURLResponse *response, NSError *error) &#123;&#10;    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];&#10;         // ...&#10;     &#125;];&#10;[task resume];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">NSURL *url = [NSURL URLWithString:@&quot;http://xxx.com&quot;];</span><br><span class="line">NSURLRequest *request = [NSURLRequest requestWithURL:url];</span><br><span class="line"></span><br><span class="line">NSURLSession *session = [NSURLSession sharedSession];</span><br><span class="line">NSURLSessionDataTask *task = [session dataTaskWithRequest: request completionHandler: ^(NSData *data, NSURLResponse *response, NSError *error) &#123;</span><br><span class="line">    NSString *result = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];</span><br><span class="line">         // ...</span><br><span class="line">     &#125;];</span><br><span class="line">[task resume];</span><br></pre></td></tr></table></figure>
 <p><code>Objective-c</code> 相对来说发送一个请求的方式稍微有一些复杂，看到<code>completionHandler</code>这个参数，这在<code>Objective-c</code>中被称为<code>block</code>，是一种类似于<code>Javascript</code>中的回调函数，当然也可以使用<code>typedef</code>声明一个<code>block</code>在多个场景下使用。</p>
-<p>关于<code>block</code>更多的使用奥秘，可以<a href="http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html" target="_blank" rel="external">点击查看这篇文章</a>。</p>
+<p>关于<code>block</code>更多的使用奥秘，可以<a href="http://www.cnblogs.com/biosli/archive/2013/05/29/iOS_Objective-C_Block.html" target="_blank" rel="noopener">点击查看这篇文章</a>。</p>
 <h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><p>数据请求回来了，那么就要开始渲染页面了，<code>iOS</code>有良好的动画运行机制，可以比安卓更流畅地运行动画，良好的动画效果可以带来更好的用户体验。</p>
 <p><code>Javascript</code></p>
 <p>JS中动画效果大致有如下几种：</p>
@@ -213,24 +213,24 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li><code>setTimeout</code>，定时更新形变达到每秒24次即可实现基本的动画效果。</li>
 </ul>
 <p>示例代码: </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let width = 100;&#10;setInterval( function() &#123;&#10;  width++;&#10;  button.style.width = `$&#123;width&#125;px`;&#10;&#125;, 16 );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let width = 100;</span><br><span class="line">setInterval( function() &#123;</span><br><span class="line">  width++;</span><br><span class="line">  button.style.width = `$&#123;width&#125;px`;</span><br><span class="line">&#125;, 16 );</span><br></pre></td></tr></table></figure>
 <p>更多更高效的动画效果可以借助<code>HTML5</code>和<code>CSS3</code>来实现</p>
 <ul>
 <li><code>requestAnimationFrame</code>，保持和系统相同的刷新率，得到更好体验的同时，有更高的效率。</li>
 <li>css中的<code>transition-duration</code>，效率非常高，可以直接调用GPU来进行渲染。</li>
 </ul>
 <p><code>Objective-c</code></p>
-<p><code>iOS</code>中的动画主要是指<code>Core Animation</code>框架，<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html" target="_blank" rel="external">这里是官方的文档</a>。</p>
+<p><code>iOS</code>中的动画主要是指<code>Core Animation</code>框架，<a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreAnimation_guide/Introduction/Introduction.html" target="_blank" rel="noopener">这里是官方的文档</a>。</p>
 <p>调用方式主要有以下三种：</p>
 <ol>
 <li>UIView 代码块调用</li>
 <li>UIView [begin commit]模式</li>
 <li>CoreAnimation中的类</li>
 </ol>
-<p>简单贴一下最简单也最常用的 UIView 代码块调用的方式，其他方式的详细调用可以<a href="http://blog.csdn.net/yixiangboy/article/details/47016829" target="_blank" rel="external">参考这里</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CGRect newFrame = CGRect( 200, 200, 100, 50 );&#10;[UIView animateWithDuration:1 animations:^&#123;&#10;  button.frame = newFrame;&#10;&#125;];</span><br></pre></td></tr></table></figure>
+<p>简单贴一下最简单也最常用的 UIView 代码块调用的方式，其他方式的详细调用可以<a href="http://blog.csdn.net/yixiangboy/article/details/47016829" target="_blank" rel="noopener">参考这里</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">CGRect newFrame = CGRect( 200, 200, 100, 50 );</span><br><span class="line">[UIView animateWithDuration:1 animations:^&#123;</span><br><span class="line">  button.frame = newFrame;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
 <p>修改UI只能在主线程中执行，如果说要在回调函数中执行以上代码，需要嵌套在下面的代码中进行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_async(dispatch_get_main_queue(), ^&#123;&#10;                &#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dispatch_async(dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>有了以上这些东西，你能已经能把一个小功能呢给串起来了，但是<code>iOS</code>还有更加强大实用的各种组件，<code>UINavigationController</code>，<code>UITableViewController</code>，<code>NSUrlSession</code>，还有各种全局事件派发，多线程GCD，以及处理音视频的<code>AVFoundation</code>，更多功能，请看进阶篇。</p>
 
         
@@ -246,7 +246,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/Javascript/">Javascript</a>, <a href="/tags/basic/">basic</a>, <a href="/tags/iOS/">iOS</a>
+    <a href="/tags/iOS/">iOS</a>, <a href="/tags/Javascript/">Javascript</a>, <a href="/tags/basic/">basic</a>
   </div>
 
           <div class="share">
@@ -277,7 +277,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2016/11/23/computer-number/" title="计算机眼中的数字">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -287,7 +287,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2016/07/19/dataplus-pai/"  title="数加Pai（机器学习平台）的上手体验">
+<a href="/2016/07/19/dataplus-pai/" title="数加Pai（机器学习平台）的上手体验">
  <span>数加Pai（机器学习平台）的上手体验
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -304,7 +304,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -333,22 +333,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -369,7 +369,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -382,7 +382,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -398,8 +398,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -414,7 +412,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -458,7 +456,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -468,13 +466,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -512,15 +506,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -528,17 +520,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -595,7 +583,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

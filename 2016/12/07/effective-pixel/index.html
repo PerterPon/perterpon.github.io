@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>获取最小有效像素区域 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="获取最小有效像素区域"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="获取最小有效像素区域">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -145,12 +145,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p><img src="/https://img.alicdn.com/imgextra/i4/99218453/TB2D36iaORnpuFjSZFCXXX2DXXa_!!99218453.png" alt="原始图片"></p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2JsvdaJBopuFjSZPcXXc9EpXa_!!99218453.png" alt="处理后图片"></p>
 <h2 id="canvas"><a href="#canvas" class="headerlink" title="canvas"></a>canvas</h2><p>网页内容是用<code>Html2Canvas</code>把DOM截图成了canvas，原理不是很清楚，大概是读取DOM样式然后在<code>canvas</code>里面重新画一遍，这不是重点，这个时候我们已经拿到画成了的canvas了，改怎么处理呢？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var canvas  = document.getElementById( &#39;canvas&#39; );&#10;var ctx     = canvas.getContext( &#39;2d&#39; );&#10;var imgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var canvas  = document.getElementById( &apos;canvas&apos; );</span><br><span class="line">var ctx     = canvas.getContext( &apos;2d&apos; );</span><br><span class="line">var imgData = ctx.getImageData( 0, 0, canvas.width, canvas.height );</span><br></pre></td></tr></table></figure>
 <p>通过<code>getImageData</code>方法就能够拿到<code>canvas</code>的原始像素点信息了，四个参数描述了一个矩形，返回的像素点信息就是这个矩形内的信息。</p>
-<p>返回的是一个<code>Uint8ClampedArray</code>，<code>Uint8ClampedArray</code>是<code>JavaScript</code>中的类型数组，具体的可以参看<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" target="_blank" rel="external">这里</a>，简单来看就是这个数组中的元素都是<code>unsigned int</code>并且都是8位的，所以取值范围是<code>0~255</code>，非常适合用来存放ImageData，而且类型数组因为类型都是确定的，使用起来比普通数组速度上会快很多。</p>
+<p>返回的是一个<code>Uint8ClampedArray</code>，<code>Uint8ClampedArray</code>是<code>JavaScript</code>中的类型数组，具体的可以参看<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array" target="_blank" rel="noopener">这里</a>，简单来看就是这个数组中的元素都是<code>unsigned int</code>并且都是8位的，所以取值范围是<code>0~255</code>，非常适合用来存放ImageData，而且类型数组因为类型都是确定的，使用起来比普通数组速度上会快很多。</p>
 <h2 id="ImageData"><a href="#ImageData" class="headerlink" title="ImageData"></a>ImageData</h2><p>拿到了原始的像素点数据，来看看数据长什么样子，首先看数组长度，假设是一个100X100的图片，那么理论上像素点的数量是100<em>100，也就是10000个，拿到ImageData的数组看长度其实有40000，简单猜测一下大概是10000 </em> rgba，看具体的数组内容很容易就能够验证我们的猜想。</p>
 <p>一个典型的<code>ImageData</code>大概长这个样子，这是一个从左往右，从上到下按顺序排列的一个数组：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">imageData = [ &#10;              0,   0,   0,   0,&#10;              255, 255, 255, 1,&#10;              122, 122, 122, 0.5,&#10;              ....&#10;            ];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">imageData = [ </span><br><span class="line">              0,   0,   0,   0,</span><br><span class="line">              255, 255, 255, 1,</span><br><span class="line">              122, 122, 122, 0.5,</span><br><span class="line">              ....</span><br><span class="line">            ];</span><br></pre></td></tr></table></figure>
 <h2 id="如何获取最小像素区域？"><a href="#如何获取最小像素区域？" class="headerlink" title="如何获取最小像素区域？"></a>如何获取最小像素区域？</h2><p>要实现这个功能的本质，其实就是如何寻找最上、最右、最下以及最左四个点(P1,P2,P3,P4)，有了这四个点，我们就能画出一个最小矩形，把这个图像框在里面。</p>
 <h3 id="一维组数映射到二维空间"><a href="#一维组数映射到二维空间" class="headerlink" title="一维组数映射到二维空间"></a>一维组数映射到二维空间</h3><p>根据数组下标计算当前点在二维空间的坐标，方法其实很简单。</p>
 <p>看下面这张图，可以认为这是一张 5X4 的一张图片，那么总共就有20个像素点，每个格子里的<code>0-19</code>数字就意味着这是在一维数组里面的下标<code>N</code>，由此可得</p>
@@ -158,13 +158,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2rXniaOlnpuFjSZFgXXbi7FXa_!!99218453.png" alt="pixel"></p>
 <h3 id="全数组扫描"><a href="#全数组扫描" class="headerlink" title="全数组扫描"></a>全数组扫描</h3><p>首先能想到的最简单的办法，就是循环整个数组，当<code>alpha</code>值大于0的时候，即可判断这个点是一个有效像素点，然后整个数组循环完成之后，即可知道得到P1,P2,P3,P4四个点。</p>
 <p>以下是实现代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect( imageData, width, height ) &#123;&#10;  // &#19978;&#28857;, Y&#20540;&#26368;&#23567;&#10;  var p1 = [ 0, height ];&#10;  // &#21491;&#28857;, X&#20540;&#26368;&#22823;&#10;  var p2 = [ 0, 0 ];&#10;  // &#19979;&#28857;, Y&#20540;&#26368;&#22823;&#10;  var p3 = [ 0, 0 ];&#10;  // &#24038;&#28857;, X&#20540;&#26368;&#23567;&#10;  var p4 = [ width, 0 ];&#10;&#10;  var data    = imageData.data;&#10;  var number  = 0;&#10;  console.time( &#39;image1&#39; );&#10;  for ( var i = 0; i &#60; data.length; i ) &#123;&#10;    number++;&#10;    var r = data[ i++ ];&#10;    var g = data[ i++ ];&#10;    var b = data[ i++ ];&#10;    var a = data[ i++ ];&#10;    if ( a === 0 ) &#123;&#10;      continue;&#10;    &#125;&#10;    var x = number % width;&#10;    var y = ( number - x ) / width;&#10;    if ( p1[ 1 ] &#62; y ) &#123;&#10;      p1[ 0 ] = x;&#10;      p1[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p2[ 0 ] &#60; x ) &#123;&#10;      p2[ 0 ] = x;&#10;      p2[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p3[ 1 ] &#60; y ) &#123;&#10;      p3[ 0 ] = x;&#10;      p3[ 1 ] = y;&#10;    &#125;&#10;&#10;    if ( p4[ 0 ] &#62; x ) &#123;&#10;      p4[ 0 ] = x;&#10;      p4[ 1 ] = y;&#10;    &#125;&#10;  &#125;&#10;&#10;  return &#123; p1, p2, p3, p4 &#125;;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect( imageData, width, height ) &#123;</span><br><span class="line">  // 上点, Y值最小</span><br><span class="line">  var p1 = [ 0, height ];</span><br><span class="line">  // 右点, X值最大</span><br><span class="line">  var p2 = [ 0, 0 ];</span><br><span class="line">  // 下点, Y值最大</span><br><span class="line">  var p3 = [ 0, 0 ];</span><br><span class="line">  // 左点, X值最小</span><br><span class="line">  var p4 = [ width, 0 ];</span><br><span class="line"></span><br><span class="line">  var data    = imageData.data;</span><br><span class="line">  var number  = 0;</span><br><span class="line">  console.time( &apos;image1&apos; );</span><br><span class="line">  for ( var i = 0; i &lt; data.length; i ) &#123;</span><br><span class="line">    number++;</span><br><span class="line">    var r = data[ i++ ];</span><br><span class="line">    var g = data[ i++ ];</span><br><span class="line">    var b = data[ i++ ];</span><br><span class="line">    var a = data[ i++ ];</span><br><span class="line">    if ( a === 0 ) &#123;</span><br><span class="line">      continue;</span><br><span class="line">    &#125;</span><br><span class="line">    var x = number % width;</span><br><span class="line">    var y = ( number - x ) / width;</span><br><span class="line">    if ( p1[ 1 ] &gt; y ) &#123;</span><br><span class="line">      p1[ 0 ] = x;</span><br><span class="line">      p1[ 1 ] = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if ( p2[ 0 ] &lt; x ) &#123;</span><br><span class="line">      p2[ 0 ] = x;</span><br><span class="line">      p2[ 1 ] = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if ( p3[ 1 ] &lt; y ) &#123;</span><br><span class="line">      p3[ 0 ] = x;</span><br><span class="line">      p3[ 1 ] = y;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if ( p4[ 0 ] &gt; x ) &#123;</span><br><span class="line">      p4[ 0 ] = x;</span><br><span class="line">      p4[ 1 ] = y;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return &#123; p1, p2, p3, p4 &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="从矩形的四个角分别去寻找"><a href="#从矩形的四个角分别去寻找" class="headerlink" title="从矩形的四个角分别去寻找"></a>从矩形的四个角分别去寻找</h3><p>具体的思路如下图：</p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2Mf_jaJFopuFjSZFHXXbSlXXa_!!99218453.png" alt="from-rect"></p>
 <p>理论上只要有效像素区域越大，那么需要计算的量就越少，速度也就越快，以下是我的实现代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect2( imageData, width, height ) &#123;&#10;  var data = imageData.data;&#10;&#10;  console.time( &#39;image2&#39; );&#10;  var p1 = [];&#10;  var p2 = [];&#10;  var p3 = [];&#10;  var p4 = [];&#10;&#10;  // &#23547;&#25214;P1&#10;  var len = 0&#10;  for ( var i = 0; i &#60; data.length / 4; i ++ ) &#123;&#10;    len   += 7;&#10;    var a = data[ len ];&#10;    if ( a !== 0 ) &#123;&#10;      var x = i % width;&#10;      var y = ( i - x ) / width;&#10;      p1    = [ x, y ];&#10;      break;&#10;    &#125;&#10;  &#125;;&#10;&#10;  //&#23547;&#25214;P3&#10;  var len = 0;&#10;  for ( var i = data.length / 4 - 1; i &#62;= 0; i -- ) &#123;&#10;    len  += 7;&#10;    var a = data[ len ];&#10;    if ( a !== 0 ) &#123;&#10;      var x = i % width;&#10;      var y = ( i - x ) / width;&#10;      p3    = [ x, y ];&#10;      break;&#10;    &#125;&#10;  &#125;&#10;&#10;  // &#23547;&#25214;P2&#10;  for ( var i   = width - 1; i &#62;= 0; i -- ) &#123;&#10;    if ( p2.length ) &#123;&#10;      break;&#10;    &#125;&#10;    var a = p1[ 1 ];&#10;    var b = p3[ 1 ];&#10;    var len = i + a * width;&#10;    for ( var j = a; j &#60; b; j ++ ) &#123;&#10;      len += width;&#10;      // var point = i + j * width;&#10;      var point = len;&#10;      var a = data[ point * 4 + 3 ];&#10;      if ( a !== 0 ) &#123;&#10;        var x = point % width;&#10;        var y = ( point - x ) / height;&#10;        p2    = [ x, y ];&#10;        break;&#10;      &#125;&#10;    &#125;&#10;  &#125;;&#10;&#10;  // &#23547;&#25214;P4&#10;  for ( var i = 0; i &#60; width; i ++ ) &#123;&#10;    if ( p4.length ) &#123;&#10;      break;&#10;    &#125;&#10;    for ( var j = p1[ 1 ]; j &#60; p3[ 1 ]; j ++ ) &#123;&#10;      var point = i + j * width;&#10;      var a = data[ point * 4 + 3 ];&#10;      if ( a !== 0 ) &#123;&#10;        var x = point % width;&#10;        var y = ( point - x ) / height;&#10;        p4    = [ x, y ];&#10;        break;&#10;      &#125;&#10;    &#125;&#10;  &#125;&#10;&#10;  return &#123; p1, p2, p3, p4 &#125;;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">function getEffectiveRect2( imageData, width, height ) &#123;</span><br><span class="line">  var data = imageData.data;</span><br><span class="line"></span><br><span class="line">  console.time( &apos;image2&apos; );</span><br><span class="line">  var p1 = [];</span><br><span class="line">  var p2 = [];</span><br><span class="line">  var p3 = [];</span><br><span class="line">  var p4 = [];</span><br><span class="line"></span><br><span class="line">  // 寻找P1</span><br><span class="line">  var len = 0</span><br><span class="line">  for ( var i = 0; i &lt; data.length / 4; i ++ ) &#123;</span><br><span class="line">    len   += 7;</span><br><span class="line">    var a = data[ len ];</span><br><span class="line">    if ( a !== 0 ) &#123;</span><br><span class="line">      var x = i % width;</span><br><span class="line">      var y = ( i - x ) / width;</span><br><span class="line">      p1    = [ x, y ];</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  //寻找P3</span><br><span class="line">  var len = 0;</span><br><span class="line">  for ( var i = data.length / 4 - 1; i &gt;= 0; i -- ) &#123;</span><br><span class="line">    len  += 7;</span><br><span class="line">    var a = data[ len ];</span><br><span class="line">    if ( a !== 0 ) &#123;</span><br><span class="line">      var x = i % width;</span><br><span class="line">      var y = ( i - x ) / width;</span><br><span class="line">      p3    = [ x, y ];</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 寻找P2</span><br><span class="line">  for ( var i   = width - 1; i &gt;= 0; i -- ) &#123;</span><br><span class="line">    if ( p2.length ) &#123;</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">    var a = p1[ 1 ];</span><br><span class="line">    var b = p3[ 1 ];</span><br><span class="line">    var len = i + a * width;</span><br><span class="line">    for ( var j = a; j &lt; b; j ++ ) &#123;</span><br><span class="line">      len += width;</span><br><span class="line">      // var point = i + j * width;</span><br><span class="line">      var point = len;</span><br><span class="line">      var a = data[ point * 4 + 3 ];</span><br><span class="line">      if ( a !== 0 ) &#123;</span><br><span class="line">        var x = point % width;</span><br><span class="line">        var y = ( point - x ) / height;</span><br><span class="line">        p2    = [ x, y ];</span><br><span class="line">        break;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  // 寻找P4</span><br><span class="line">  for ( var i = 0; i &lt; width; i ++ ) &#123;</span><br><span class="line">    if ( p4.length ) &#123;</span><br><span class="line">      break;</span><br><span class="line">    &#125;</span><br><span class="line">    for ( var j = p1[ 1 ]; j &lt; p3[ 1 ]; j ++ ) &#123;</span><br><span class="line">      var point = i + j * width;</span><br><span class="line">      var a = data[ point * 4 + 3 ];</span><br><span class="line">      if ( a !== 0 ) &#123;</span><br><span class="line">        var x = point % width;</span><br><span class="line">        var y = ( point - x ) / height;</span><br><span class="line">        p4    = [ x, y ];</span><br><span class="line">        break;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  return &#123; p1, p2, p3, p4 &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>将两种方法分别去计算最开头的图片，两种方式的计算时间分别是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">image1: 10.83ms&#10;image2: 15.32ms</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">image1: 10.83ms</span><br><span class="line">image2: 15.32ms</span><br></pre></td></tr></table></figure>
 <h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>方法2引入的复杂的逻辑反而降低了计算时间，逻辑最简单的全数组扫描比第二种方式快了30%，因为涉及到的东西比较多，目前还不清楚到底是什么原因导致第二种方式速度如此慢，测试了一下，只有当一整张图片几乎全部有像素点的时候，两种方法的速度才差不多。后续我会继续寻找原因，猜测可能是方法2的计算量比方法1多，而方法1更多的是比较和赋值。</p>
 
         
@@ -211,7 +211,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/02/25/high-precision-timer-in-ios/" title="iOS中实现高精度定时器的方法">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -221,7 +221,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2016/11/23/computer-number/"  title="计算机眼中的数字">
+<a href="/2016/11/23/computer-number/" title="计算机眼中的数字">
  <span>计算机眼中的数字
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -238,7 +238,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -267,22 +267,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -303,7 +303,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -316,7 +316,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -332,8 +332,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -348,7 +346,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -392,7 +390,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -402,13 +400,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -446,15 +440,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -462,17 +454,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -529,7 +517,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>伟大的单元测试 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="伟大的单元测试"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="伟大的单元测试">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -142,9 +142,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <h2 id="什么是单元测试？"><a href="#什么是单元测试？" class="headerlink" title="什么是单元测试？"></a>什么是单元测试？</h2><p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2Ld8oeYtlpuFjSspoXXbcDpXa_!!99218453.jpeg" alt=""></p>
 <p>在计算机编程中，单元测试（英语：Unit Testing）又称为模块测试, 是针对程序模块（软件设计的最小单位）来进行正确性检验的测试工作。程序单元是应用的最小可测试部件。在过程化编程中，一个单元就是单个程序、函数、过程等；对于面向对象编程，最小单元就是方法，包括基类（超类）、抽象类、或者派生类（子类）中的方法。</p>
-<h2 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h2><h3 id="待测试类"><a href="#待测试类" class="headerlink" title="待测试类"></a>待测试类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;class Car &#123;&#10;&#10;  constructor() &#123;&#10;    this.status = &#34;stop&#34;;&#10;  &#125;&#10;&#10;  // &#24320;&#36710;&#10;  start() &#123;&#10;    this.status = &#34;start&#34;;&#10;    this._lockDoor();&#10;  &#125;&#10;&#10;  // &#20572;&#36710;&#10;  stop() &#123;&#10;    this.status = &#34;stop&#34;;&#10;    this._unlockDoor();&#10;  &#125;&#10;&#10;  // &#38145;&#36710;&#38376;&#10;  _lockDoor() &#123;&#10;    console.log( &#34;door locked&#34; );&#10;    this._lockFrontDoor();&#10;    this._lockBackDoor();&#10;  &#125;&#10;&#10;  // &#35299;&#38145;&#36710;&#38376;&#10;  _unlockDoor() &#123;&#10;    console.log( &#34;door unlocked&#34; );&#10;    this._unlockFrontDoor();&#10;    this._unlockBackDoor();&#10;  &#125;&#10;&#10;  _lockFrontDoor() &#123;&#10;    console.log( &#34;front door locked&#34; );&#10;  &#125;&#10;&#10;  _lockBackDoor() &#123;&#10;    console.log( &#34;back door locked&#34; );&#10;  &#125;&#10;&#10;  _unlockFrontDoor() &#123;&#10;    console.log( &#34;front door unlocked&#34; );&#10;  &#125;&#10;&#10;  _unlockBackDoor() &#123;&#10;    console.log( &#34;back door unlocked&#34; );&#10;  &#125;&#10;&#10;&#125;;&#10;&#10;module.exports = Car;</span><br></pre></td></tr></table></figure>
-<h3 id="以逻辑单元为最小单位的测试"><a href="#以逻辑单元为最小单位的测试" class="headerlink" title="以逻辑单元为最小单位的测试"></a>以逻辑单元为最小单位的测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;const assert = require( &#34;assert&#34; );&#10;&#10;const Car = require( &#34;./sample&#34; );&#10;&#10;describe( &#34;test Car&#34;, function() &#123;&#10;&#10;  it( &#34;start car&#34;, function () &#123;&#10;    let car = new Car();&#10;&#10;    assert.equal( car.status, &#34;stopped&#34; );&#10;&#10;    let locked   = false;&#10;    // MOCK&#10;    car._lockDoor = function () &#123;&#10;      locked     = true;&#10;    &#125;&#10;&#10;    car.start();&#10;&#10;    assert.equal( car.status, &#34;running&#34; );&#10;    assert.equal( locked, true );&#10;&#10;  &#125; );&#10;&#10;  it( &#34;lock door&#34;, function () &#123;&#10;    let car = new Car();&#10;&#10;    let frontDoorLocked = false;&#10;    let backDoorLocked  = false;&#10;    car._lockFrontDoor  = function () &#123;&#10;      frontDoorLocked     = true;&#10;    &#125;;&#10;&#10;    car._lockBackDoor   = function () &#123;&#10;      backDoorLocked      = true;&#10;    &#125;;&#10;&#10;    car._lockDoor();&#10;&#10;    assert( frontDoorLocked, true );&#10;    assert( backDoorLocked, true );&#10;&#10;  &#125; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
-<h3 id="以业务单元为最小单位的测试"><a href="#以业务单元为最小单位的测试" class="headerlink" title="以业务单元为最小单位的测试"></a>以业务单元为最小单位的测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;const assert = require( &#34;assert&#34; );&#10;&#10;const Car = require( &#34;./sample&#34; );&#10;&#10;describe( &#34;test Car&#34;, function() &#123;&#10;&#10;  it( &#34;start car&#34;, function () &#123;&#10;    let car = new Car();&#10;&#10;    assert.equal( car.status, &#34;stop&#34; );&#10;&#10;    let _lockFrontDoor  = car._lockFrontDoor;&#10;    let _lockBackDoor   = car._lockBackDoor;&#10;&#10;    let frontDoorLocked = false;&#10;    let backDoorLocked  = false;&#10;&#10;    car._lockFrontDoor  = function () &#123;&#10;      frontDoorLocked     = true;&#10;      _lockBackDoor();&#10;    &#125;;&#10;&#10;    car._lockBackDoor   = function () &#123;&#10;      backDoorLocked      = true;&#10;      _lockFrontDoor();&#10;    &#125;;&#10;&#10;    car.start();&#10;&#10;    assert.equal( car.status, &#34;running&#34; );&#10;    assert.equal( frontDoorLocked, true );&#10;    assert.equal( backDoorLocked, true );&#10;&#10;  &#125; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<h2 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h2><h3 id="待测试类"><a href="#待测试类" class="headerlink" title="待测试类"></a>待测试类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">&quot;use strict&quot;;</span><br><span class="line"></span><br><span class="line">class Car &#123;</span><br><span class="line"></span><br><span class="line">  constructor() &#123;</span><br><span class="line">    this.status = &quot;stop&quot;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 开车</span><br><span class="line">  start() &#123;</span><br><span class="line">    this.status = &quot;start&quot;;</span><br><span class="line">    this._lockDoor();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 停车</span><br><span class="line">  stop() &#123;</span><br><span class="line">    this.status = &quot;stop&quot;;</span><br><span class="line">    this._unlockDoor();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 锁车门</span><br><span class="line">  _lockDoor() &#123;</span><br><span class="line">    console.log( &quot;door locked&quot; );</span><br><span class="line">    this._lockFrontDoor();</span><br><span class="line">    this._lockBackDoor();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 解锁车门</span><br><span class="line">  _unlockDoor() &#123;</span><br><span class="line">    console.log( &quot;door unlocked&quot; );</span><br><span class="line">    this._unlockFrontDoor();</span><br><span class="line">    this._unlockBackDoor();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _lockFrontDoor() &#123;</span><br><span class="line">    console.log( &quot;front door locked&quot; );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _lockBackDoor() &#123;</span><br><span class="line">    console.log( &quot;back door locked&quot; );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _unlockFrontDoor() &#123;</span><br><span class="line">    console.log( &quot;front door unlocked&quot; );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _unlockBackDoor() &#123;</span><br><span class="line">    console.log( &quot;back door unlocked&quot; );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">module.exports = Car;</span><br></pre></td></tr></table></figure>
+<h3 id="以逻辑单元为最小单位的测试"><a href="#以逻辑单元为最小单位的测试" class="headerlink" title="以逻辑单元为最小单位的测试"></a>以逻辑单元为最小单位的测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&quot;use strict&quot;;</span><br><span class="line"></span><br><span class="line">const assert = require( &quot;assert&quot; );</span><br><span class="line"></span><br><span class="line">const Car = require( &quot;./sample&quot; );</span><br><span class="line"></span><br><span class="line">describe( &quot;test Car&quot;, function() &#123;</span><br><span class="line"></span><br><span class="line">  it( &quot;start car&quot;, function () &#123;</span><br><span class="line">    let car = new Car();</span><br><span class="line"></span><br><span class="line">    assert.equal( car.status, &quot;stopped&quot; );</span><br><span class="line"></span><br><span class="line">    let locked   = false;</span><br><span class="line">    // MOCK</span><br><span class="line">    car._lockDoor = function () &#123;</span><br><span class="line">      locked     = true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    car.start();</span><br><span class="line"></span><br><span class="line">    assert.equal( car.status, &quot;running&quot; );</span><br><span class="line">    assert.equal( locked, true );</span><br><span class="line"></span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">  it( &quot;lock door&quot;, function () &#123;</span><br><span class="line">    let car = new Car();</span><br><span class="line"></span><br><span class="line">    let frontDoorLocked = false;</span><br><span class="line">    let backDoorLocked  = false;</span><br><span class="line">    car._lockFrontDoor  = function () &#123;</span><br><span class="line">      frontDoorLocked     = true;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    car._lockBackDoor   = function () &#123;</span><br><span class="line">      backDoorLocked      = true;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    car._lockDoor();</span><br><span class="line"></span><br><span class="line">    assert( frontDoorLocked, true );</span><br><span class="line">    assert( backDoorLocked, true );</span><br><span class="line"></span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
+<h3 id="以业务单元为最小单位的测试"><a href="#以业务单元为最小单位的测试" class="headerlink" title="以业务单元为最小单位的测试"></a>以业务单元为最小单位的测试</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&quot;use strict&quot;;</span><br><span class="line"></span><br><span class="line">const assert = require( &quot;assert&quot; );</span><br><span class="line"></span><br><span class="line">const Car = require( &quot;./sample&quot; );</span><br><span class="line"></span><br><span class="line">describe( &quot;test Car&quot;, function() &#123;</span><br><span class="line"></span><br><span class="line">  it( &quot;start car&quot;, function () &#123;</span><br><span class="line">    let car = new Car();</span><br><span class="line"></span><br><span class="line">    assert.equal( car.status, &quot;stop&quot; );</span><br><span class="line"></span><br><span class="line">    let _lockFrontDoor  = car._lockFrontDoor;</span><br><span class="line">    let _lockBackDoor   = car._lockBackDoor;</span><br><span class="line"></span><br><span class="line">    let frontDoorLocked = false;</span><br><span class="line">    let backDoorLocked  = false;</span><br><span class="line"></span><br><span class="line">    car._lockFrontDoor  = function () &#123;</span><br><span class="line">      frontDoorLocked     = true;</span><br><span class="line">      _lockBackDoor();</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    car._lockBackDoor   = function () &#123;</span><br><span class="line">      backDoorLocked      = true;</span><br><span class="line">      _lockFrontDoor();</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    car.start();</span><br><span class="line"></span><br><span class="line">    assert.equal( car.status, &quot;running&quot; );</span><br><span class="line">    assert.equal( frontDoorLocked, true );</span><br><span class="line">    assert.equal( backDoorLocked, true );</span><br><span class="line"></span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <h2 id="一些单元测试原则"><a href="#一些单元测试原则" class="headerlink" title="一些单元测试原则"></a>一些单元测试原则</h2><ul>
 <li>单元测试必须由最熟悉代码的人（程序的作者）来写。</li>
 <li>单元测试应该在最低的功能/参数上验证程序的正确性。</li>
@@ -170,8 +170,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li>需求快速变化期间。有时候需求变化非常快速，单元测试会降低业务变化的敏捷度。</li>
 </ul>
 <h2 id="MOCK"><a href="#MOCK" class="headerlink" title="MOCK"></a>MOCK</h2><p>MOCK 简单来说就是纸老虎。</p>
-<h4 id="业务代码"><a href="#业务代码" class="headerlink" title="业务代码"></a>业务代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#34;use strict&#34;;&#10;&#10;const DB = require( &#39;database&#39; );&#10;&#10;class Mock &#123;&#10;&#10;  getList() &#123;&#10;    const result = DB.query( &#34;select * from table&#34; );&#10;    for( let i = 0; i &#60; result.length; i ++ ) &#123;&#10;      // do somting&#10;    &#125;;&#10;&#10;    return result;&#10;  &#125;&#10;&#10;&#125;;&#10;&#10;module.exports = Mock;</span><br></pre></td></tr></table></figure>
-<h4 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;const Mock = require( &#39;./mock&#39; );&#10;&#10;const DB   = require( &#39;db&#39; );&#10;&#10;describe( &#34;test Mock&#34;, function () &#123;&#10;&#10;  it( &#34;get list&#34;, function () &#123;&#10;    DB.query = function ( sql ) &#123;&#10;      return [ 1, 2, 3 ];&#10;    &#125;;&#10;&#10;    const car    = new Car();&#10;    const result = car.getList();&#10;&#10;    assert.equal( result, [ 1, 2, 3 ] );&#10;  &#125; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<h4 id="业务代码"><a href="#业务代码" class="headerlink" title="业务代码"></a>业务代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&quot;use strict&quot;;</span><br><span class="line"></span><br><span class="line">const DB = require( &apos;database&apos; );</span><br><span class="line"></span><br><span class="line">class Mock &#123;</span><br><span class="line"></span><br><span class="line">  getList() &#123;</span><br><span class="line">    const result = DB.query( &quot;select * from table&quot; );</span><br><span class="line">    for( let i = 0; i &lt; result.length; i ++ ) &#123;</span><br><span class="line">      // do somting</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    return result;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">module.exports = Mock;</span><br></pre></td></tr></table></figure>
+<h4 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">const Mock = require( &apos;./mock&apos; );</span><br><span class="line"></span><br><span class="line">const DB   = require( &apos;db&apos; );</span><br><span class="line"></span><br><span class="line">describe( &quot;test Mock&quot;, function () &#123;</span><br><span class="line"></span><br><span class="line">  it( &quot;get list&quot;, function () &#123;</span><br><span class="line">    DB.query = function ( sql ) &#123;</span><br><span class="line">      return [ 1, 2, 3 ];</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    const car    = new Car();</span><br><span class="line">    const result = car.getList();</span><br><span class="line"></span><br><span class="line">    assert.equal( result, [ 1, 2, 3 ] );</span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <h2 id="为什么我的代码需要mock？"><a href="#为什么我的代码需要mock？" class="headerlink" title="为什么我的代码需要mock？"></a>为什么我的代码需要mock？</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
 <li>可以不用去关注一些底层支撑系统，例如DB，如果不MOCK，那么还需要初始化一个DB，使用前使用后都要去清理环境，给自己擦屁股。</li>
 <li>可以更加关注于自己业务代码的业务逻辑，例如去初始化一个DB，需要很多配置信息。</li>
@@ -249,7 +249,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/bdd/">bdd</a>, <a href="/tags/ddd/">ddd</a>, <a href="/tags/tdd/">tdd</a>, <a href="/tags/unittest/">unittest</a>
+    <a href="/tags/unittest/">unittest</a>, <a href="/tags/tdd/">tdd</a>, <a href="/tags/bdd/">bdd</a>, <a href="/tags/ddd/">ddd</a>
   </div>
 
           <div class="share">
@@ -280,7 +280,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/03/29/set-root-view-controller/" title="多次setRootViewController导致view无限叠加的问题">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -290,7 +290,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2017/02/25/high-precision-timer-in-ios/"  title="iOS中实现高精度定时器的方法">
+<a href="/2017/02/25/high-precision-timer-in-ios/" title="iOS中实现高精度定时器的方法">
  <span>iOS中实现高精度定时器的方法
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -307,7 +307,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -336,22 +336,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -372,7 +372,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -385,7 +385,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -401,8 +401,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -417,7 +415,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -461,7 +459,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -471,13 +469,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -515,15 +509,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -531,17 +523,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -598,7 +586,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

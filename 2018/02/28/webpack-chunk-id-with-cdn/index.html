@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>webpack的chunk id和cdn缓存之间的爱恨情仇 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="webpack的chunk id和cdn缓存之间的爱恨情仇"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="webpack的chunk id和cdn缓存之间的爱恨情仇">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -144,13 +144,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><h3 id="webpack-chunk"><a href="#webpack-chunk" class="headerlink" title="webpack chunk"></a>webpack chunk</h3><p>先说说webpack的chunk是怎么一回事，如下图：</p>
 <p><img src="https://img.alicdn.com/tfs/TB1PQuNbgmTBuNjy1XbXXaMrVXa-343-390.png" alt=""></p>
 <p>有四个项目文件，分别为：file1.js, file2.js, file3.js, file4.js.</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js&#10;file2.js&#10;&#10;file3.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">file1.js</span><br><span class="line">file2.js</span><br><span class="line"></span><br><span class="line">file3.js</span><br><span class="line">file4.js</span><br></pre></td></tr></table></figure>
 <p>其中，<code>file1</code>依赖了<code>file2</code>，<code>file3</code>依赖了<code>file4</code>，在webpack里面，通常情况下一个文件就是一个module，有时候也有一个文件多个module的情况，不过不多见，webpack会给每一个module分配一个id，这个id是自增的：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">file1.js -&#62; module1, id: 1&#10;file2.js -&#62; module2, id: 2&#10;&#10;file3.js -&#62; module3, id: 3&#10;file4.js -&#62; module4, id: 4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">file1.js -&gt; module1, id: 1</span><br><span class="line">file2.js -&gt; module2, id: 2</span><br><span class="line"></span><br><span class="line">file3.js -&gt; module3, id: 3</span><br><span class="line">file4.js -&gt; module4, id: 4</span><br></pre></td></tr></table></figure>
 <p>因为<code>file1</code>和<code>file2</code>对于<code>file3</code>和<code>file4</code>都没有什么依赖关系，所以webpack把这四个文件分成了两个<code>chunk</code>，同时分别给了一个id，也是自增的:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chunkA: ChunkId1&#10;&#9;-&#62; module1&#10;&#9;-&#62; module2&#10;&#10;chunkB: ChunkId2&#10;&#9;-&#62; module3&#10;&#9;-&#62; module4</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">chunkA: ChunkId1</span><br><span class="line">	-&gt; module1</span><br><span class="line">	-&gt; module2</span><br><span class="line"></span><br><span class="line">chunkB: ChunkId2</span><br><span class="line">	-&gt; module3</span><br><span class="line">	-&gt; module4</span><br></pre></td></tr></table></figure>
 <p>一个chunk就对应于webpack打包之后的文件，于是，打包之后我们现在有两个文件：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;file1.js&#10;            filea.hash.js&#10;file2.js&#10;&#10;----------------------------------&#10;&#10;file3.js&#10;            fileb.hash.js&#10;file4.js</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">file1.js</span><br><span class="line">            filea.hash.js</span><br><span class="line">file2.js</span><br><span class="line"></span><br><span class="line">----------------------------------</span><br><span class="line"></span><br><span class="line">file3.js</span><br><span class="line">            fileb.hash.js</span><br><span class="line">file4.js</span><br></pre></td></tr></table></figure>
 <p>两个chunk所对应的打包后的文件名为: <code>${fileName}.${md5}.js</code>.</p>
 <h3 id="CDN缓存"><a href="#CDN缓存" class="headerlink" title="CDN缓存"></a>CDN缓存</h3><p>项目中使用了覆盖式的CDN缓存方式，也就是不同发布之间没有版本概念，而是直接覆盖原来的文件，因为文件名中有MD5值，所以只要文件内容改变，那么文件名也就改变。</p>
 <p>好处是如果新版本没有变更的文件，可以让浏览器复用之前的缓存，达到最小更新目的。</p>
@@ -160,22 +160,22 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h2 id="为何在CDN场景下发布新版本会导致找不到chunk呢？"><a href="#为何在CDN场景下发布新版本会导致找不到chunk呢？" class="headerlink" title="为何在CDN场景下发布新版本会导致找不到chunk呢？"></a>为何在CDN场景下发布新版本会导致找不到chunk呢？</h2><p>把chunk id用MD5值代替，看起来确实没有问题，在版本化的CDN场景下使用或者说在本地开发环境中使用确实是没有问题的，问题出在和覆盖式的CDN同时使用时候的问题。</p>
 <h3 id="问题根源"><a href="#问题根源" class="headerlink" title="问题根源"></a>问题根源</h3><p>首先我们看chunka和chunkb打包之后的代码：</p>
 <p>chunka:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;1&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">__webpack__require.e( &apos;1&apos; ).then( &apos;....&apos; );</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>chunkb:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([1],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([1],&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>chunka中代码，打包前的代码为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import( &#39;./file3&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import( &apos;./file3&apos; );</span><br></pre></td></tr></table></figure>
 <p>chunka中需要引用id为<code>1</code>的chunk，然后chunkb的代码中，首先用<code>webpackJsonp</code>方法定义了自己的chunk id为：<code>1</code>，这样，整个代码就联系起来了，也就能正常运行了。</p>
 <h3 id="MD5替代chunk-id"><a href="#MD5替代chunk-id" class="headerlink" title="MD5替代chunk id"></a>MD5替代chunk id</h3><p>如果使用MD5来替换原先的chunk id呢？</p>
 <p>chunka:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md51&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">__webpack__require.e( &apos;md51&apos; ).then( &apos;....&apos; );</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>chunkb:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md51&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&apos;md51&apos;],&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>看起来也没什么问题，反正只要引用的chunk id和声明的chunk id对应上就可以了。尝试修改了一些file3的内容，也就是chunkb的内容有了变更之后：</p>
 <p>chunka:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">...&#10;__webpack__require.e( &#39;md52&#39; ).then( &#39;....&#39; );&#10;...</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">__webpack__require.e( &apos;md52&apos; ).then( &apos;....&apos; );</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>chunkb:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&#39;md52&#39;],&#123;&#10;&#9;...&#10;&#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webpackJsonp([&apos;md52&apos;],&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>chunkb的chunk id变成了: md52，同时引用和声明的chunk id都能对应上，运行没问题，那么问题出在哪里呢？我们看看webpack生成文件的文件名：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;fileName&#125;.$&#123;md5&#125;.js</span><br></pre></td></tr></table></figure>
 <p>因为文件名中有MD5值，所以当修改了chunkb之后，那么chunkb对应的文件名肯定就变更了，这个没问题，而chunka其实内容并没有变更，所以chunka的md5没有变化，也就是说chunka的文件名不变。</p>
@@ -198,7 +198,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/cache/">cache</a>, <a href="/tags/cdn/">cdn</a>, <a href="/tags/chunkid/">chunkid</a>, <a href="/tags/webpack/">webpack</a>
+    <a href="/tags/webpack/">webpack</a>, <a href="/tags/chunkid/">chunkid</a>, <a href="/tags/cdn/">cdn</a>, <a href="/tags/cache/">cache</a>
   </div>
 
           <div class="share">
@@ -229,7 +229,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2018/06/20/protocol-in-typescript/" title="在typescript中使用delegate来进行解耦">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -239,7 +239,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2017/11/24/thinking-of-lazy-load/"  title="最近对于懒加载的一些思考">
+<a href="/2017/11/24/thinking-of-lazy-load/" title="最近对于懒加载的一些思考">
  <span>最近对于懒加载的一些思考
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -256,7 +256,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -285,22 +285,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -321,7 +321,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -334,7 +334,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -350,8 +350,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -366,7 +364,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -410,7 +408,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -420,13 +418,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -464,15 +458,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -480,17 +472,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -547,7 +535,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

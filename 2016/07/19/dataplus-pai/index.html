@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>数加Pai（机器学习平台）的上手体验 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="数加Pai（机器学习平台）的上手体验"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="数加Pai（机器学习平台）的上手体验">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -177,11 +177,11 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </tr>
 </tbody>
 </table>
-<h3 id="寻找合适算法"><a href="#寻找合适算法" class="headerlink" title="寻找合适算法"></a>寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="external">点击这里</a>查看算法详细介绍。</p>
+<h3 id="寻找合适算法"><a href="#寻找合适算法" class="headerlink" title="寻找合适算法"></a>寻找合适算法</h3><p>这里我采用了<code>kNN</code>算法，具体可以<a href="https://zh.wikipedia.org/wiki/%E6%9C%80%E8%BF%91%E9%84%B0%E5%B1%85%E6%B3%95" target="_blank" rel="noopener">点击这里</a>查看算法详细介绍。</p>
 <p>选择<code>kNN</code>是因为<code>kNN</code>算法比较好理解，对于我这种新手也比较容易看懂，缺点是<code>kNN</code>算法是惰性算法，计算时间会比较长。</p>
-<h3 id="开始解题"><a href="#开始解题" class="headerlink" title="开始解题"></a>开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="external">数加机器学习平台</a>。</p>
+<h3 id="开始解题"><a href="#开始解题" class="headerlink" title="开始解题"></a>开始解题</h3><p>一开始我使用python的<code>numpy</code>包来进行解题，在本机跑了将近一个半小时之后，终于输出了结果，这里有两个缺点，一个是我要自己处理CSV文件，提取成数组给<code>kNN</code>算法组件，二来是笔记本性能捉襟见肘，想要调试算法参数每次都要等这么久简直不能忍，于是我想到<a href="http://pai.base.shuju.aliyun.com" target="_blank" rel="noopener">数加机器学习平台</a>。</p>
 <h3 id="上传数据"><a href="#上传数据" class="headerlink" title="上传数据"></a>上传数据</h3><p>pai依赖于<code>MaxCompute</code>，所以要先开通<code>MaxCompute</code>，在数加里面可以开通，开通后建两张表<code>pai_test_train</code>和<code>pai_test_data</code>，分别对应训练数据和测试数据。</p>
-<p>首先下载<a href="https://help.aliyun.com/document_detail/27991.html?spm=5176.product27797.6.217.2hjJzR" target="_blank" rel="external">MaxCompute CMD</a>，这里点击<code>新版客户端下载</code>，下载完成后，配置AK以及运行CMD，关于如何建表，请查看帮助文档，注意要把所有字段也建了，和<code>CSV</code>文件相对应，这里字段有段多，可以用一个脚本生成sql. 然后使用 <code>MaxCompute CMD</code>的<code>tunnel</code>命令上传CSV文件建表<code>odps@ my_test_project&gt; tunnel upload train.csv pai_test_train;</code>，还有测试数据表<code>odps@ my_test_project&gt; tunnel upload test.csv pai_test_data;</code></p>
+<p>首先下载<a href="https://help.aliyun.com/document_detail/27991.html?spm=5176.product27797.6.217.2hjJzR" target="_blank" rel="noopener">MaxCompute CMD</a>，这里点击<code>新版客户端下载</code>，下载完成后，配置AK以及运行CMD，关于如何建表，请查看帮助文档，注意要把所有字段也建了，和<code>CSV</code>文件相对应，这里字段有段多，可以用一个脚本生成sql. 然后使用 <code>MaxCompute CMD</code>的<code>tunnel</code>命令上传CSV文件建表<code>odps@ my_test_project&gt; tunnel upload train.csv pai_test_train;</code>，还有测试数据表<code>odps@ my_test_project&gt; tunnel upload test.csv pai_test_data;</code></p>
 <h3 id="使用pai来解题"><a href="#使用pai来解题" class="headerlink" title="使用pai来解题"></a>使用pai来解题</h3><p>从数加的管理控制台进入pai，然后按照以下步骤操作。</p>
 <ol>
 <li>新建一个实验，取名pai_test，这时候我们会得到一个空的实验，接下来就是往实验上拖组件。</li>
@@ -214,7 +214,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/dataplus/">dataplus</a>, <a href="/tags/kaggle/">kaggle</a>, <a href="/tags/knn/">knn</a>, <a href="/tags/pai/">pai</a>
+    <a href="/tags/dataplus/">dataplus</a>, <a href="/tags/knn/">knn</a>, <a href="/tags/pai/">pai</a>, <a href="/tags/kaggle/">kaggle</a>
   </div>
 
           <div class="share">
@@ -245,7 +245,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2016/11/16/ios-basic/" title="iOS开发--1天从入门到放弃--基础">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -255,7 +255,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2016/05/11/tcp-package-stick/"  title="TCP的粘包和半包">
+<a href="/2016/05/11/tcp-package-stick/" title="TCP的粘包和半包">
  <span>TCP的粘包和半包
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -272,7 +272,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -301,22 +301,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -337,7 +337,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -350,7 +350,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -366,8 +366,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -382,7 +380,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -426,7 +424,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -436,13 +434,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -480,15 +474,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -496,17 +488,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -563,7 +551,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>零门槛学习https--(3)https的安全策略 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="零门槛学习https--(3)https的安全策略"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="零门槛学习https--(3)https的安全策略">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -153,7 +153,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>聪明的革命先烈们这时候就想到了，那我们用非对称加密来加密对称加密的密钥，然后用对称加密不就行了么？这样既避免了非对称加密的庞大的计算量，又能够避免对称加密的密钥被泄露，完美地解决了这个问题。</p>
 <h2 id="新的问题出现"><a href="#新的问题出现" class="headerlink" title="新的问题出现"></a>新的问题出现</h2><p>上面的解决方案看起来似乎很完美，很快大家都开始实装，代码跑起来没有问题，加密解密也成功得运行了，而且当有人尝试拿到密文，也无从下手解密，突然，人们意识到一个问题：</p>
 <h3 id="MIM-man-in-the-middle-中间人攻击"><a href="#MIM-man-in-the-middle-中间人攻击" class="headerlink" title="MIM(man in the middle)中间人攻击"></a>MIM(man in the middle)中间人攻击</h3><p>有个很常见的场景，假设用户A通过B的网关上网，那么A的所有流量都会经过B，也就是B能看到A的所有进出的流量，RSA在算法层面虽然没法破解，但是有人想到，RSA任然存在一个传递公钥的过程，并且这是明文的，那么就有如下场景：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. A&#21644;&#26381;&#21153;&#22120;S&#36827;&#34892;&#36890;&#20449;&#65292;&#24182;&#19988;&#30001;S&#29983;&#25104;&#20844;&#38053;&#21644;&#31169;&#38053;&#65292;&#24182;&#22312;&#36830;&#25509;&#24314;&#31435;&#21518;&#65292;S&#25226;&#20844;&#38053;&#32473;A&#12290;&#10;2. &#22240;&#20026;A&#32463;&#30001;B&#19978;&#32593;&#65292;&#20063;&#23601;&#26159;&#35828;S&#30340;&#20844;&#38053;&#26159;&#32463;&#30001;B&#20132;&#32473;A&#30340;&#12290;&#10;3. &#36825;&#20010;&#26102;&#20505;&#65292;B&#21487;&#20197;&#20266;&#35013;&#25104;&#26381;&#21153;&#31471;S1&#25509;&#21463;A&#30340;&#36830;&#25509;&#65292;&#24182;&#29983;&#25104;&#33258;&#24049;&#30340;&#20844;&#38053;&#21644;&#31169;&#38053;&#65292;&#20877;&#20266;&#35013;&#25104;&#23458;&#25143;&#31471;C&#21521;S&#21457;&#36865;&#35831;&#27714;&#12290;&#10;4. S&#25226;&#20844;&#38053;&#32473;&#20102;B&#65292;B&#20877;&#25226;&#33258;&#24049;&#30340;&#20844;&#38053;&#32473;A&#65292;&#25152;&#20197;&#23601;&#21464;&#25104;&#20102;:&#10;5. A&#21644;B&#36890;&#20449;&#65292;B&#20877;&#21644;S&#36890;&#20449;&#65292;A&#34429;&#28982;&#21152;&#23494;&#20102;&#65292;&#20294;&#26159;&#26159;&#29992;&#30340;B&#30340;&#20844;&#38053;&#65292;&#25152;&#20197;B&#26377;&#31169;&#38053;&#33021;&#22815;&#35299;&#23494;&#65292;&#28982;&#21518;&#20877;&#29992;S&#30340;&#20844;&#38053;&#21152;&#23494;&#65292;&#21457;&#36865;&#32473;S&#65292;S&#20219;&#28982;&#33021;&#35299;&#23494;&#12290;&#10;6. &#25972;&#20010;&#36807;&#31243;&#31070;&#19981;&#30693;&#39740;&#19981;&#35273;&#65292;B&#23601;&#24708;&#24708;&#26597;&#30475;&#20102;&#25152;&#26377;&#30340;&#36890;&#20449;&#20869;&#23481;&#10;7. &#29978;&#33267;&#26377;&#21487;&#33021;&#22312;A&#30003;&#35831;&#25226;&#33258;&#24049;&#32593;&#38134;&#37324;&#38754;&#30340;&#38065;&#36716;&#32473;D&#26102;&#65292;B&#20063;&#21487;&#20197;&#20599;&#20599;&#25913;&#25104;&#33258;&#24049;&#30340;&#65292;S&#35748;&#20026;&#36825;&#26159;A&#21457;&#20986;&#30340;&#65292;&#23601;&#25226;&#38065;&#36716;&#32473;&#20102;B&#12290;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. A和服务器S进行通信，并且由S生成公钥和私钥，并在连接建立后，S把公钥给A。</span><br><span class="line">2. 因为A经由B上网，也就是说S的公钥是经由B交给A的。</span><br><span class="line">3. 这个时候，B可以伪装成服务端S1接受A的连接，并生成自己的公钥和私钥，再伪装成客户端C向S发送请求。</span><br><span class="line">4. S把公钥给了B，B再把自己的公钥给A，所以就变成了:</span><br><span class="line">5. A和B通信，B再和S通信，A虽然加密了，但是是用的B的公钥，所以B有私钥能够解密，然后再用S的公钥加密，发送给S，S任然能解密。</span><br><span class="line">6. 整个过程神不知鬼不觉，B就悄悄查看了所有的通信内容</span><br><span class="line">7. 甚至有可能在A申请把自己网银里面的钱转给D时，B也可以偷偷改成自己的，S认为这是A发出的，就把钱转给了B。</span><br></pre></td></tr></table></figure>
 <h3 id="问题的原因"><a href="#问题的原因" class="headerlink" title="问题的原因"></a>问题的原因</h3><p>显然，人们深刻地认识到，因为数据的可复制性，无论是什么算法，都无法改变数据会被中间人窥探甚至修改的问题（以后量子加密的出现或许能解决这个问题，因为量子一旦被观测，叠加态就会坍缩，接收者就能够知道自己接收到的数据是否被窥探了）。</p>
 <p>问题源于生活，那么在生活中一定可以找到答案。你把钱给了银行，银行给你承诺，你想用钱的时候一定会还给你，银行在这里承担了一个被所有人信任的角色，在计算机里面其实也一样，于是，人们为计算机通信引入了一个第三方：CA(Certificate Authority)。</p>
 <h2 id="数字证书"><a href="#数字证书" class="headerlink" title="数字证书"></a>数字证书</h2><p>CA又称为证书颁发机构，主要用于颁发数字证书，用一个无法篡改的数字证书来表明身份，防止数据在通讯过程中被篡改和窥探，数字证书通常分为以下几种：</p>
@@ -198,7 +198,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li>证书链是有长度限制的，root颁发证书的时候会添加此字段，所以证书申请者无法再为别人签发证书。</li>
 </ol>
 <h3 id="CA的类型"><a href="#CA的类型" class="headerlink" title="CA的类型"></a>CA的类型</h3><p>上面提到intermediates和root都是CA证书，所以CA其实也就分为root CAs和intermediates CAs，root CAs可以认为是一个品牌，而intermediates CAs则是真正使用这个品牌生产产品的企业，举个例子：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#21703;&#21704;&#21704;&#27597;&#20844;&#21496;&#65292;&#25317;&#26377;&#21703;&#21704;&#21704;&#21697;&#29260;&#65292;&#20294;&#26159;&#24182;&#27809;&#26377;&#33258;&#24049;&#30340;&#20135;&#21697;&#65292;&#20570;&#30340;&#21482;&#26159;&#32473;&#23376;&#20844;&#21496;&#25480;&#26435;&#21697;&#29260;&#65292;&#20063;&#23601;&#26159;root.&#10;&#23376;&#20844;&#21496;A&#65292;&#29983;&#20135;&#30719;&#27849;&#27700;&#65292;&#26159;&#19968;&#20010;intermediates.&#10;&#23376;&#20844;&#21496;B&#65292;&#29983;&#20135;&#20843;&#23453;&#31909;&#65292;&#26159;&#19968;&#20010;intermediates.&#10;&#23376;&#20844;&#21496;C&#65292;&#29983;&#20135;&#27225;&#27713;&#65292;&#20063;&#26159;&#19968;&#20010;intermediates.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">哇哈哈母公司，拥有哇哈哈品牌，但是并没有自己的产品，做的只是给子公司授权品牌，也就是root.</span><br><span class="line">子公司A，生产矿泉水，是一个intermediates.</span><br><span class="line">子公司B，生产八宝粥，是一个intermediates.</span><br><span class="line">子公司C，生产橙汁，也是一个intermediates.</span><br></pre></td></tr></table></figure>
 <h3 id="为什么不能用root-CA的私钥直接签名？"><a href="#为什么不能用root-CA的私钥直接签名？" class="headerlink" title="为什么不能用root CA的私钥直接签名？"></a>为什么不能用root CA的私钥直接签名？</h3><p>主要还是从安全性上考虑，私钥是需要放到服务器上去做签名用的，所以不可避免可能服务器会被人攻破，导致私钥泄露，所以root的私钥隔离得越远越好，如果某个intermediates的私钥被窃取了，那么用root的私钥再签发一个intermediates证书即可，不会威胁到整个root证书下所有人的安全。root CA的私钥一般锁在大金库里面，完全得物理隔离，以下是godaddy对这个的解释：</p>
 <p><strong><em>intermediate certificates are used as a stand-in for our root certificate. We use intermediate certificates as a proxy because we must keep our root certificate behind numerous layers of security, ensuring its keys are absolutely inaccessible.</em></strong></p>
 <h3 id="root证书的获取"><a href="#root证书的获取" class="headerlink" title="root证书的获取"></a>root证书的获取</h3><p>回到我们最初的问题，获取证书的时候就已经被替换了怎么办？这里我们只需要保证root证书的获取没有问题，那么只要其他中间证书被替换，最后校验root证书这里还是没法通过，那么如果保证root证书的获取是安全的呢？</p>
@@ -219,7 +219,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>这里返回了三个证书：</p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2C3E3u.hnpuFjSZFEXXX0PFXa_!!99218453.png" alt=""></p>
 <p>证书链类似下面这样，可以自由配置:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE-----&#10;&#33258;&#24049;&#30340;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----&#10;-----BEGIN CERTIFICATE-----&#10;&#29238;&#32423;&#30340;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----&#10;-----BEGIN CERTIFICATE-----&#10;&#29238;&#32423;&#30340;&#29238;&#32423;crt&#35777;&#20070;&#10;-----END CERTIFICATE-----</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">自己的crt证书</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">父级的crt证书</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">父级的父级crt证书</span><br><span class="line">-----END CERTIFICATE-----</span><br></pre></td></tr></table></figure>
 <h2 id="end-user证书的类型"><a href="#end-user证书的类型" class="headerlink" title="end-user证书的类型"></a>end-user证书的类型</h2><p>申请者能够申请的证书种类非常多，价格相差也很大，主要有以下几种：</p>
 <ol>
 <li><p>OV（Organization Validation SSL），以某个组织为维度签发证书，通常这都是一个公司，域名采用通配符的方式来签发，以适应组织业务的灵活发展，例如：<code>*.tmall.com</code><br>，也就是任何<code>tmall.com</code>的三级域名都可以使用这个证书，避免重复申请。使用OV证书的网站访问时候类似下面这样：<br> <img src="https://img.alicdn.com/imgextra/i4/99218453/TB2y9fmtYBnpuFjSZFGXXX51pXa_!!99218453.png" alt=""></p>
@@ -277,7 +277,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/05/19/https-4/" title="零门槛学习https--(4)https协议详解">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -287,7 +287,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2017/05/19/https-2/"  title="零门槛学习https--(2)https中s的秘密">
+<a href="/2017/05/19/https-2/" title="零门槛学习https--(2)https中s的秘密">
  <span>零门槛学习https--(2)https中s的秘密
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -304,7 +304,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -333,22 +333,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -369,7 +369,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -382,7 +382,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -398,8 +398,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -414,7 +412,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -458,7 +456,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -468,13 +466,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -512,15 +506,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -528,17 +520,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -595,7 +583,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

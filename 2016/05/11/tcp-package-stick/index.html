@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>TCP的粘包和半包 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="TCP的粘包和半包"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="TCP的粘包和半包">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -141,13 +141,13 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           <h2 id="什么是粘包"><a href="#什么是粘包" class="headerlink" title="什么是粘包"></a>什么是粘包</h2><p>首先请执行以下以下<code>nodejs</code>代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &apos;net&apos; );</span><br><span class="line"></span><br><span class="line">const app = net.createServer( connect =&gt; &#123;</span><br><span class="line"></span><br><span class="line">  connect.on( &apos;data&apos;, function ( data ) &#123;</span><br><span class="line">    console.log( data.toString() ); </span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br><span class="line"></span><br><span class="line">app.on( &apos;error&apos;, error =&gt; &#123;&#125; );</span><br><span class="line"></span><br><span class="line">app.listen( 8080, &apos;0.0.0.0&apos;, function () &#123;</span><br><span class="line"></span><br><span class="line">  let client = net.connect( &#123; port: 8080, host: &apos;127.0.0.1&apos; &#125; );</span><br><span class="line"></span><br><span class="line">  client.write( &apos;Hi, server!&apos; );</span><br><span class="line"></span><br><span class="line">  client.write( &apos;Hi, server!&apos; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <p>你看到的输出一定是 <code>Hi, server!Hi, server!</code>，并且<code>data</code>事件的回调函数只执行了一次，WTF.</p>
 <p>将代码稍作修改, 客户端write的时候加一个间隔时间</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const app = net.createServer( connect =&#62; &#123;&#10;&#10;  connect.on( &#39;data&#39;, function ( data ) &#123;&#10;    console.log( data.toString() ); &#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( 8080, &#39;0.0.0.0&#39;, function () &#123;&#10;&#10;  let client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;  client.write( &#39;Hi, server!&#39; );&#10;&#10;  setTimeout( () =&#62; &#123;&#10;    client.write( &#39;Hi, server!&#39; );&#10;  &#125;, 1000 );&#10;&#10;&#125; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &apos;net&apos; );</span><br><span class="line"></span><br><span class="line">const app = net.createServer( connect =&gt; &#123;</span><br><span class="line"></span><br><span class="line">  connect.on( &apos;data&apos;, function ( data ) &#123;</span><br><span class="line">    console.log( data.toString() ); </span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br><span class="line"></span><br><span class="line">app.on( &apos;error&apos;, error =&gt; &#123;&#125; );</span><br><span class="line"></span><br><span class="line">app.listen( 8080, &apos;0.0.0.0&apos;, function () &#123;</span><br><span class="line"></span><br><span class="line">  let client = net.connect( &#123; port: 8080, host: &apos;127.0.0.1&apos; &#125; );</span><br><span class="line"></span><br><span class="line">  client.write( &apos;Hi, server!&apos; );</span><br><span class="line"></span><br><span class="line">  setTimeout( () =&gt; &#123;</span><br><span class="line">    client.write( &apos;Hi, server!&apos; );</span><br><span class="line">  &#125;, 1000 );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <p>你会看到输出分了两次执行，回调函数也执行了两次，符合了我们的预期，但是，总不能我们的所有代码都加一个延时吧？</p>
 <h2 id="为什么会出现粘包？"><a href="#为什么会出现粘包？" class="headerlink" title="为什么会出现粘包？"></a>为什么会出现粘包？</h2><p>网上的解释已经很明确，这里引用一段，出处已经无法考证了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TCP&#26159;&#20010;&#34;&#27969;&#34;&#21327;&#35758;,&#25152;&#35859;&#27969;,&#23601;&#26159;&#27809;&#26377;&#30028;&#38480;&#30340;&#19968;&#20018;&#25968;&#25454;.&#22823;&#23478;&#21487;&#20197;&#24819;&#24819;&#27827;&#37324;&#30340;&#27969;&#27700;,&#26159;&#36830;&#25104;&#19968;&#29255;&#30340;,&#20854;&#38388;&#26159;&#27809;&#26377;&#20998;&#30028;&#32447;&#30340;.&#20294;&#19968;&#33324;&#36890;&#35759;&#31243;&#24207;&#24320;&#21457;&#26159;&#38656;&#35201;&#23450;&#20041;&#19968;&#20010;&#20010;&#30456;&#20114;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;&#30340;,&#27604;&#22914;&#29992;&#20110;&#30331;&#38470;&#30340;&#25968;&#25454;&#21253;,&#29992;&#20110;&#27880;&#38144;&#30340;&#25968;&#25454;&#21253;.&#30001;&#20110;TCP&#34;&#27969;&#34;&#30340;&#29305;&#24615;&#20197;&#21450;&#32593;&#32476;&#29366;&#20917;,&#22312;&#36827;&#34892;&#25968;&#25454;&#20256;&#36755;&#26102;&#20250;&#20986;&#29616;&#20197;&#19979;&#20960;&#31181;&#24773;&#20917;.&#10;&#20551;&#35774;&#25105;&#20204;&#36830;&#32493;&#35843;&#29992;&#20004;&#27425;send&#20998;&#21035;&#21457;&#36865;&#20004;&#27573;&#25968;&#25454;data1&#21644;data2,&#22312;&#25509;&#25910;&#31471;&#26377;&#20197;&#19979;&#20960;&#31181;&#25509;&#25910;&#24773;&#20917;(&#24403;&#28982;&#19981;&#27490;&#36825;&#20960;&#31181;&#24773;&#20917;,&#36825;&#37324;&#21482;&#21015;&#20986;&#20102;&#26377;&#20195;&#34920;&#24615;&#30340;&#24773;&#20917;).&#10;A.&#20808;&#25509;&#25910;&#21040;data1,&#28982;&#21518;&#25509;&#25910;&#21040;data2.&#10;B.&#20808;&#25509;&#25910;&#21040;data1&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;data1&#20313;&#19979;&#30340;&#37096;&#20998;&#20197;&#21450;data2&#30340;&#20840;&#37096;.&#10;C.&#20808;&#25509;&#25910;&#21040;&#20102;data1&#30340;&#20840;&#37096;&#25968;&#25454;&#21644;data2&#30340;&#37096;&#20998;&#25968;&#25454;,&#28982;&#21518;&#25509;&#25910;&#21040;&#20102;data2&#30340;&#20313;&#19979;&#30340;&#25968;&#25454;.&#10;D.&#19968;&#27425;&#24615;&#25509;&#25910;&#21040;&#20102;data1&#21644;data2&#30340;&#20840;&#37096;&#25968;&#25454;.&#10;&#10;&#23545;&#20110;A&#36825;&#31181;&#24773;&#20917;&#27491;&#26159;&#25105;&#20204;&#38656;&#35201;&#30340;,&#19981;&#20877;&#20570;&#35752;&#35770;.&#23545;&#20110;B,C,D&#30340;&#24773;&#20917;&#23601;&#26159;&#22823;&#23478;&#32463;&#24120;&#35828;&#30340;&#34;&#31896;&#21253;&#34;,&#23601;&#38656;&#35201;&#25105;&#20204;&#25226;&#25509;&#25910;&#21040;&#30340;&#25968;&#25454;&#36827;&#34892;&#25286;&#21253;,&#25286;&#25104;&#19968;&#20010;&#20010;&#29420;&#31435;&#30340;&#25968;&#25454;&#21253;.&#20026;&#20102;&#25286;&#21253;&#23601;&#24517;&#39035;&#22312;&#21457;&#36865;&#31471;&#36827;&#34892;&#23553;&#21253;.&#10;&#10;&#21478;:&#23545;&#20110;UDP&#26469;&#35828;&#23601;&#19981;&#23384;&#22312;&#25286;&#21253;&#30340;&#38382;&#39064;,&#22240;&#20026;UDP&#26159;&#20010;&#34;&#25968;&#25454;&#21253;&#34;&#21327;&#35758;,&#20063;&#23601;&#26159;&#20004;&#27573;&#25968;&#25454;&#38388;&#26159;&#26377;&#30028;&#38480;&#30340;,&#22312;&#25509;&#25910;&#31471;&#35201;&#20040;&#25509;&#25910;&#19981;&#21040;&#25968;&#25454;&#35201;&#20040;&#23601;&#26159;&#25509;&#25910;&#19968;&#20010;&#23436;&#25972;&#30340;&#19968;&#27573;&#25968;&#25454;,&#19981;&#20250;&#23569;&#25509;&#25910;&#20063;&#19981;&#20250;&#22810;&#25509;&#25910;.</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">TCP是个&quot;流&quot;协议,所谓流,就是没有界限的一串数据.大家可以想想河里的流水,是连成一片的,其间是没有分界线的.但一般通讯程序开发是需要定义一个个相互独立的数据包的,比如用于登陆的数据包,用于注销的数据包.由于TCP&quot;流&quot;的特性以及网络状况,在进行数据传输时会出现以下几种情况.</span><br><span class="line">假设我们连续调用两次send分别发送两段数据data1和data2,在接收端有以下几种接收情况(当然不止这几种情况,这里只列出了有代表性的情况).</span><br><span class="line">A.先接收到data1,然后接收到data2.</span><br><span class="line">B.先接收到data1的部分数据,然后接收到data1余下的部分以及data2的全部.</span><br><span class="line">C.先接收到了data1的全部数据和data2的部分数据,然后接收到了data2的余下的数据.</span><br><span class="line">D.一次性接收到了data1和data2的全部数据.</span><br><span class="line"></span><br><span class="line">对于A这种情况正是我们需要的,不再做讨论.对于B,C,D的情况就是大家经常说的&quot;粘包&quot;,就需要我们把接收到的数据进行拆包,拆成一个个独立的数据包.为了拆包就必须在发送端进行封包.</span><br><span class="line"></span><br><span class="line">另:对于UDP来说就不存在拆包的问题,因为UDP是个&quot;数据包&quot;协议,也就是两段数据间是有界限的,在接收端要么接收不到数据要么就是接收一个完整的一段数据,不会少接收也不会多接收.</span><br></pre></td></tr></table></figure>
 <h2 id="如何处理粘包或者半包的情况？"><a href="#如何处理粘包或者半包的情况？" class="headerlink" title="如何处理粘包或者半包的情况？"></a>如何处理粘包或者半包的情况？</h2><p>这里采用了一个类似HTTP的方法，定义一个HTTP头:<code>Content-Length: 100</code>，然后这个数据包的大小就是100，我只需要在读到头数据之后，再读100，就是我这个数据包的带下了，如果数据还有剩下，那么就是下一个包的内容，如果数据不足100，那就说明这里只传了半个包，等待下次<code>data</code>事件触发，后半部分的数据就是这个包里面。</p>
 <h3 id="举个例子"><a href="#举个例子" class="headerlink" title="举个例子"></a>举个例子</h3><p>假设我要传送一个数据: <code>hello world!</code>，首先我需要进行封包，一个数据包由头部和身体组成，其中，头部组成如下: </p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">||||00000012</span><br></pre></td></tr></table></figure>
@@ -155,9 +155,9 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p>所以我们的头部其实固定为12位，那么接下来的就都是数据体，<code>hello world!</code>组成一个数据包之后的样子就是: <code>||||00000012hello world!</code>，服务端的解包就不说了，就是自己维护一个缓冲区，从头开始解就行了。</p>
 <h2 id="better-packet"><a href="#better-packet" class="headerlink" title="better-packet"></a>better-packet</h2><p><code>better-packet</code>，提供了一个封包的解包的方法，专门为了用来解决粘包问题，看看使用了<code>better-package</code>之后会怎么样.</p>
 <p>server.js</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const app = net.createServer( ( connect ) =&#62; &#123;&#10;  &#10;  let unpackager = new betterPacket.UnPackager();&#10;&#10;  connect.on( &#39;data&#39;, unpackager.addBuffer.bind( unpackager ) );&#10;&#10;  connect.on( &#39;error&#39;, () =&#62; &#123;&#125; );&#10;&#10;  unpackager.on( &#39;package&#39;, function ( data ) &#123;&#10;&#10;    // Hi, server!&#10;    // Hi, server!&#10;    console.log( data.toString() );&#10;&#10;  &#125; );&#10;&#10;&#125; );&#10;&#10;app.on( &#39;error&#39;, error =&#62; &#123;&#125; );&#10;&#10;app.listen( &#39;8080&#39;, &#39;0.0.0.0&#39; );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &apos;net&apos; );</span><br><span class="line"></span><br><span class="line">const betterPacket = require( &apos;./index&apos; );</span><br><span class="line"></span><br><span class="line">const app = net.createServer( ( connect ) =&gt; &#123;</span><br><span class="line">  </span><br><span class="line">  let unpackager = new betterPacket.UnPackager();</span><br><span class="line"></span><br><span class="line">  connect.on( &apos;data&apos;, unpackager.addBuffer.bind( unpackager ) );</span><br><span class="line"></span><br><span class="line">  connect.on( &apos;error&apos;, () =&gt; &#123;&#125; );</span><br><span class="line"></span><br><span class="line">  unpackager.on( &apos;package&apos;, function ( data ) &#123;</span><br><span class="line"></span><br><span class="line">    // Hi, server!</span><br><span class="line">    // Hi, server!</span><br><span class="line">    console.log( data.toString() );</span><br><span class="line"></span><br><span class="line">  &#125; );</span><br><span class="line"></span><br><span class="line">&#125; );</span><br><span class="line"></span><br><span class="line">app.on( &apos;error&apos;, error =&gt; &#123;&#125; );</span><br><span class="line"></span><br><span class="line">app.listen( &apos;8080&apos;, &apos;0.0.0.0&apos; );</span><br></pre></td></tr></table></figure>
 <p>client.js</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &#39;net&#39; );&#10;&#10;const betterPacket = require( &#39;./index&#39; );&#10;&#10;const client = net.connect( &#123; port: 8080, host: &#39;127.0.0.1&#39; &#125; );&#10;&#10;const packager = new betterPacket.Packager();&#10;&#10;let sendData = packager.packageData( &#39;Hi, server!&#39; );&#10;&#10;client.write( sendData );&#10;&#10;client.write( sendData );</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">const net = require( &apos;net&apos; );</span><br><span class="line"></span><br><span class="line">const betterPacket = require( &apos;./index&apos; );</span><br><span class="line"></span><br><span class="line">const client = net.connect( &#123; port: 8080, host: &apos;127.0.0.1&apos; &#125; );</span><br><span class="line"></span><br><span class="line">const packager = new betterPacket.Packager();</span><br><span class="line"></span><br><span class="line">let sendData = packager.packageData( &apos;Hi, server!&apos; );</span><br><span class="line"></span><br><span class="line">client.write( sendData );</span><br><span class="line"></span><br><span class="line">client.write( sendData );</span><br></pre></td></tr></table></figure>
 <p>这里服务端的数据就变得正常了，而且<code>data</code>事件的回调函数也被调了两次。</p>
 
         
@@ -173,7 +173,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/better-package/">better package</a>, <a href="/tags/package/">package</a>, <a href="/tags/tcp/">tcp</a>
+    <a href="/tags/tcp/">tcp</a>, <a href="/tags/package/">package</a>, <a href="/tags/better-package/">better package</a>
   </div>
 
           <div class="share">
@@ -204,7 +204,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2016/07/19/dataplus-pai/" title="数加Pai（机器学习平台）的上手体验">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -214,7 +214,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2016/04/13/the-crazy-adblock/"  title="丧心病狂的adblock">
+<a href="/2016/04/13/the-crazy-adblock/" title="丧心病狂的adblock">
  <span>丧心病狂的adblock
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -231,7 +231,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -260,22 +260,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -296,7 +296,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -309,7 +309,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -325,8 +325,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -341,7 +339,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -385,7 +383,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -395,13 +393,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -439,15 +433,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -455,17 +447,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -522,7 +510,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

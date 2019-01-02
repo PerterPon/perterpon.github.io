@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>什么是MTU？为什么MTU值普遍都是1500？ | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="什么是MTU？为什么MTU值普遍都是1500？"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="什么是MTU？为什么MTU值普遍都是1500？">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -190,21 +190,21 @@ body{ -webkit-animation: bugfix infinite 1s; }
 </tbody>
 </table>
 <h2 id="MTU有什么用？"><a href="#MTU有什么用？" class="headerlink" title="MTU有什么用？"></a>MTU有什么用？</h2><p>举一个最简单的场景，你在家用自己的笔记本上网，用的是路由器，路由器连接电信网络，然后访问了<code>www.baidu.com</code>，从你的笔记本出发的一个以太网数据帧总共经过了以下路径：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
 <p>其中，每个节点都有一个MTU值，如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151;  -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1500     1500                 1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房  -&gt; 服务器</span><br></pre></td></tr></table></figure>
 <p>假设现在我把笔记本的MTU最大值设置成了1700，然后发送了一个超大的ip数据包（2000），这时候在以外网传输的时候会被拆成2个包，一个1700，一个300，然后加上头信息进行传输。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500&#10;&#31508;&#35760;&#26412; -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;&#26426;&#25151; -&#62; &#26381;&#21153;&#22120;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1700     1500                1500</span><br><span class="line">笔记本 -&gt; 路由器 -&gt; 电信机房 -&gt; 服务器</span><br></pre></td></tr></table></figure>
 <p>路由器接收到了一个1700的帧，发现大于自己设置的最大值：1500，如果IP包DF标志位为1，也就是不允许分包，那么路由器直接就把这个包丢弃了，根本就不会到达电信机房，也就到不了服务器了，所以，到这里我们就会发现，MTU其实就是在每一个节点的管控值，只要是大于这个值的数据帧，要么选择分片，要么直接丢弃。</p>
 <h2 id="为什么是1500？"><a href="#为什么是1500？" class="headerlink" title="为什么是1500？"></a>为什么是1500？</h2><p>其实一个标准的以太网数据帧大小是：<code>1518</code>，头信息有14字节，尾部校验和FCS占了4字节，所以真正留给上层协议传输数据的大小就是：1518 - 14 - 4 = 1500，那么，1518这个值又是从哪里来的呢？</p>
 <h2 id="假设取一个更大的值"><a href="#假设取一个更大的值" class="headerlink" title="假设取一个更大的值"></a>假设取一个更大的值</h2><p>假设MTU值和IP数据包大小一致，一个IP数据包的大小是：65535，那么加上以太网帧头和为，一个以太网帧的大小就是：<code>65535 + 14 + 4 = 65553</code>，看起来似乎很完美，发送方也不需要拆包，接收方也不需要重组。</p>
 <p>那么假设我们现在的带宽是：<code>100Mbps</code>，因为以太网帧是传输中的最小可识别单元，再往下就是0101所对应的光信号了，所以我们的一条带宽同时只能发送一个以太网帧。如果同时发送多个，那么对端就无法重组成一个以太网帧了，在<code>100Mbps</code>的带宽中（假设中间没有损耗），我们计算一下发送这一帧需要的时间：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 100 * 1024 * 1024 ) &#8776; 0.005(s)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 100 * 1024 * 1024 ) ≈ 0.005(s)</span><br></pre></td></tr></table></figure>
 <p>在100M网络下传输一帧就需要5ms，也就是说这5ms其他进程发送不了任何数据。如果是早先的电话拨号，网速只有2M的情况下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 2 * 1024 * 1024 ) &#8776; 0.100(s)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 65553 * 8 ) / ( 2 * 1024 * 1024 ) ≈ 0.100(s)</span><br></pre></td></tr></table></figure>
 <p>100ms，这简直是噩梦。其实这就像红绿灯，时间要设置合理，交替通行，不然同一个方向如果一直是绿灯，那么另一个方向就要堵成翔了。</p>
 <h2 id="既然大了不行，那设置小一点可以么？"><a href="#既然大了不行，那设置小一点可以么？" class="headerlink" title="既然大了不行，那设置小一点可以么？"></a>既然大了不行，那设置小一点可以么？</h2><p>假设MTU值设置为100，那么单个帧传输的时间，在2Mbps带宽下需要：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 &#8776; 5(ms)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 * 8 ) / ( 2 * 1024 * 1024 ) * 1000 ≈ 5(ms)</span><br></pre></td></tr></table></figure>
 <p>时间上已经能接受了，问题在于，不管MTU设置为多少，以太网头帧尾大小是固定的，都是14 + 4，所以在MTU为100的时候，一个以太网帧的传输效率为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">( 100 - 14 - 4 ) / 100 = 82%</span><br></pre></td></tr></table></figure>
 <p>写成公式就是：<code>( T - 14 - 4 ) / T</code>，当T趋于无穷大的时候，效率接近<code>100%</code>，也就是MTU的值越大，传输效率最高，但是基于上一点传输时间的问题，来个折中的选择吧，既然头加尾是18，那就凑个整来个1500，总大小就是1518，传输效率：</p>
@@ -221,7 +221,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| VER(4bit) | TYPE(4bit) | CODE(8bit) | SESSION-ID(16bit) | LENGTH(16bit) |</span><br></pre></td></tr></table></figure>
 <p>这里总共是48位，也就是6个字节，那么另外2个字节是什么呢？答案是PPP协议的ID号，占用两个字节，所以在PPPoE环境下，最佳MTU值应该是：1500 - 4 - 2 = 1492。</p>
 <h3 id="我的上网方式"><a href="#我的上网方式" class="headerlink" title="我的上网方式"></a>我的上网方式</h3><p>当时我的上网路径如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PC -&#62; &#36335;&#30001;&#22120; -&#62; &#30005;&#20449;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PC -&gt; 路由器 -&gt; 电信</span><br></pre></td></tr></table></figure>
 <p>我在路由器进行拨号，然后PC连接路由器进行上网。</p>
 <h3 id="最根本原因"><a href="#最根本原因" class="headerlink" title="最根本原因"></a>最根本原因</h3><p>问题就出在路由器拨号，如果是PC拨号，那么PC会进行PPPoE的封装，会按照MTU:1492来进行以太网帧的封装，即使通过路由器，路由器这时候也只是转发而已，不会进行拆包。</p>
 <p>而当用路由器拨号时，PC并不知道路由器的通信方式，会以网卡的设置，默认1500的MTU来进行以太网帧的封装，到达路由器时，由于路由器需要进行PPPoE协议的封装，加上8字节的头信息，这样一来，就必须进行拆包，路由器把这一帧的内容拆成两帧发送，一帧是1492，一帧是8，然后分别加上PPPoE的头进行发送。</p>
@@ -242,7 +242,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/mtu/">mtu</a>, <a href="/tags/tcp-ip/">tcp/ip</a>, <a href="/tags/计算机网络/">计算机网络</a>
+    <a href="/tags/计算机网络/">计算机网络</a>, <a href="/tags/tcp-ip/">tcp/ip</a>, <a href="/tags/mtu/">mtu</a>
   </div>
 
           <div class="share">
@@ -273,7 +273,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/11/24/thinking-of-lazy-load/" title="最近对于懒加载的一些思考">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -283,7 +283,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2017/09/04/main-host/"  title="前端如何获取主域名(根域名)">
+<a href="/2017/09/04/main-host/" title="前端如何获取主域名(根域名)">
  <span>前端如何获取主域名(根域名)
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -300,7 +300,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -329,22 +329,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -365,7 +365,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -378,7 +378,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -394,8 +394,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -410,7 +408,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -454,7 +452,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -464,13 +462,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -508,15 +502,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -524,17 +516,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -591,7 +579,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

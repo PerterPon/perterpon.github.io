@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>iOS中实现高精度定时器的方法 | PerterPon</title>
@@ -11,20 +11,20 @@
   <meta name="description" content="背景最近自己业余时间在开发一个录音软件，要画一个声音的音频图，大概类似下面的样子：
 
 在一秒钟内要取大概20次当前声音的大小，用以绘制成一幅图，那么首先，想当然的当然是用NSTimer了，写了代码如下：
-1// &amp;#24403;&amp;#28982;&amp;#36825;&amp;#37324;&amp;#25226;&amp;#27">
+123456// 当然这里把每秒钟需要的次数设置成一个变量会更好。[NSTimer schedu">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="iOS中实现高精度定时器的方法"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="iOS中实现高精度定时器的方法">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -71,16 +71,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -88,8 +88,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -146,16 +146,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
           <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>最近自己业余时间在开发一个录音软件，要画一个声音的音频图，大概类似下面的样子：</p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2L1EsgrJmpuFjSZFwXXaE4VXa_!!99218453.png" alt=""></p>
 <p>在一秒钟内要取大概20次当前声音的大小，用以绘制成一幅图，那么首先，想当然的当然是用<code>NSTimer</code>了，写了代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// &#24403;&#28982;&#36825;&#37324;&#25226;&#27599;&#31186;&#38047;&#38656;&#35201;&#30340;&#27425;&#25968;&#35774;&#32622;&#25104;&#19968;&#20010;&#21464;&#37327;&#20250;&#26356;&#22909;&#12290;&#10;[NSTimer scheduledTimerWithTimeInterval:1 / 20&#10;                                repeats:YES&#10;                                  block:^(NSTimer * _Nonnull timer) &#123;&#10;                                    // do somting.&#10;                                  &#125;];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 当然这里把每秒钟需要的次数设置成一个变量会更好。</span><br><span class="line">[NSTimer scheduledTimerWithTimeInterval:1 / 20</span><br><span class="line">                                repeats:YES</span><br><span class="line">                                  block:^(NSTimer * _Nonnull timer) &#123;</span><br><span class="line">                                    // do somting.</span><br><span class="line">                                  &#125;];</span><br></pre></td></tr></table></figure>
 <p>在<code>block</code>里面去取了一下当前音量，绘制成了一个图，代码运行起来没问题，音量正确得取到了，并且也绘制在了图上面，乍一看发现没什么问题，等了十几秒再回头看，发现貌似时间过得很慢，明明感觉已经起码过了十秒，但是录音图上停留在6秒7秒的样子，很疑惑，在block中，加了一个Log，就看出缘由了。</p>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2rZUVgC8mpuFjSZFMXXaxpVXa_!!99218453.png" alt=""></p>
 <p>设置的明明是0.05秒执行一次，但是从图中来看，基本都是隔了0.1秒才执行一次，很少有0.5秒才执行一次，<code>NSTimer</code>在<code>runloop</code>运行的时候执行，<code>runloop</code>中有其他任务时势必会影响到<code>NSTimer</code>，但是没想到影响会那么大，查阅了官方文档后发现，<code>iOS</code>设备中，<code>NSTimer</code>的精度在0.1秒左右，看来是需要另寻他法了。</p>
 <h3 id="平均误差：18-11"><a href="#平均误差：18-11" class="headerlink" title="平均误差：18.11"></a>平均误差：18.11</h3><h2 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h2><p>具体思路就是新开一个线程，然后跑一个while循环去检测，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t timerQueue = dispatch_queue_create(&#34;timer&#34;, DISPATCH_QUEUE_SERIAL);&#10;    &#10;    dispatch_async(timerQueue, ^&#123;&#10;        while (YES) &#123;&#10;            usleep( 50000 );&#10;            NSLog(@&#34;timer&#34;);&#10;        &#125;;&#10;    &#125;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dispatch_queue_t timerQueue = dispatch_queue_create(&quot;timer&quot;, DISPATCH_QUEUE_SERIAL);</span><br><span class="line">    </span><br><span class="line">    dispatch_async(timerQueue, ^&#123;</span><br><span class="line">        while (YES) &#123;</span><br><span class="line">            usleep( 50000 );</span><br><span class="line">            NSLog(@&quot;timer&quot;);</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2yKjjfwxlpuFjy0FoXXa.lXXa_!!99218453.png" alt=""></p>
 <h3 id="平均误差：65-33毫秒"><a href="#平均误差：65-33毫秒" class="headerlink" title="平均误差：65.33毫秒"></a>平均误差：65.33毫秒</h3><p>貌似比<code>NSTimer</code>还不靠谱，经过测试，发现精度基本上在200MS左右。</p>
 <h2 id="CADisplayLink"><a href="#CADisplayLink" class="headerlink" title="CADisplayLink"></a>CADisplayLink</h2><p><code>CADisplayLink</code>的调用是根据屏幕刷新率来的，通常<code>iOS</code>设备的刷新率在60HZ，那么一秒钟就能够被调60次。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(testDisplayLink)];&#10;link.paused = NO;&#10;[link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CADisplayLink *link = [CADisplayLink displayLinkWithTarget:self selector:@selector(testDisplayLink)];</span><br><span class="line">link.paused = NO;</span><br><span class="line">[link addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];</span><br></pre></td></tr></table></figure>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2.uaRfB4lpuFjy1zjXXcAKpXa_!!99218453.png" alt=""></p>
 <h3 id="平均误差：0-002（在每秒60次调用的情况下）"><a href="#平均误差：0-002（在每秒60次调用的情况下）" class="headerlink" title="平均误差：0.002（在每秒60次调用的情况下）"></a>平均误差：0.002（在每秒60次调用的情况下）</h3><p>相当精确，在固定刷新率下，精度基本在0.001毫秒的样子，但是测试发现<code>CADisplayLink</code>有以下问题：</p>
 <ol>
@@ -164,10 +164,10 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <li>全局只能有一个<code>CADisplayLink</code>实例在运行。</li>
 <li>屏幕在熄灭状态下无法调用此方法。</li>
 </ol>
-<h2 id="dispatch-after"><a href="#dispatch-after" class="headerlink" title="dispatch_after"></a>dispatch_after</h2><p>通过递归得调用这个函数来实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dispatch_after(&#10;                   dispatch_time(&#10;                                 DISPATCH_TIME_NOW,&#10;                                 (int)(0.05 * (double)NSEC_PER_SEC)&#10;                                 ),&#10;                   dispatch_get_main_queue(), ^&#123;&#10;                       NSLog(@&#34;dispatch after&#34;);&#10;                       [self after];&#10;                   &#125;);</span><br></pre></td></tr></table></figure></p>
+<h2 id="dispatch-after"><a href="#dispatch-after" class="headerlink" title="dispatch_after"></a>dispatch_after</h2><p>通过递归得调用这个函数来实现<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dispatch_after(</span><br><span class="line">                   dispatch_time(</span><br><span class="line">                                 DISPATCH_TIME_NOW,</span><br><span class="line">                                 (int)(0.05 * (double)NSEC_PER_SEC)</span><br><span class="line">                                 ),</span><br><span class="line">                   dispatch_get_main_queue(), ^&#123;</span><br><span class="line">                       NSLog(@&quot;dispatch after&quot;);</span><br><span class="line">                       [self after];</span><br><span class="line">                   &#125;);</span><br></pre></td></tr></table></figure></p>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2nhOWfuJ8puFjy1XbXXagqVXa_!!99218453.png" alt=""></p>
 <h3 id="平均误差：12-17毫秒。"><a href="#平均误差：12-17毫秒。" class="headerlink" title="平均误差：12.17毫秒。"></a>平均误差：12.17毫秒。</h3><p>目前看来是误差最小的了，如果不算<code>CADisplayLink</code>的话。</p>
-<h2 id="官方提供的高精度解决方案"><a href="#官方提供的高精度解决方案" class="headerlink" title="官方提供的高精度解决方案"></a>官方提供的高精度解决方案</h2><p>官网地址：<a href="https://developer.apple.com/library/content/technotes/tn2169/_index.html" target="_blank" rel="external">https://developer.apple.com/library/content/technotes/tn2169/_index.html</a></p>
+<h2 id="官方提供的高精度解决方案"><a href="#官方提供的高精度解决方案" class="headerlink" title="官方提供的高精度解决方案"></a>官方提供的高精度解决方案</h2><p>官网地址：<a href="https://developer.apple.com/library/content/technotes/tn2169/_index.html" target="_blank" rel="noopener">https://developer.apple.com/library/content/technotes/tn2169/_index.html</a></p>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2NMnCfwxlpuFjy0FoXXa.lXXa_!!99218453.png" alt=""></p>
 <h3 id="平均误差：0-34毫秒"><a href="#平均误差：0-34毫秒" class="headerlink" title="平均误差：0.34毫秒"></a>平均误差：0.34毫秒</h3><p>大概测试了一下，间隔在1毫秒的时候，误差在0.7毫秒，间隔在5毫秒的时候误差0.36，间隔在2毫秒的时候误差在0.7毫秒，间隔在4毫秒的时候误差为0.3毫秒，间隔在3毫秒的时候误差在0.49</p>
 <table>
@@ -215,7 +215,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/high-precision/">high-precision</a>, <a href="/tags/iOS/">iOS</a>, <a href="/tags/objective-c/">objective-c</a>, <a href="/tags/timer/">timer</a>
+    <a href="/tags/objective-c/">objective-c</a>, <a href="/tags/iOS/">iOS</a>, <a href="/tags/timer/">timer</a>, <a href="/tags/high-precision/">high-precision</a>
   </div>
 
           <div class="share">
@@ -246,7 +246,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/02/28/the-great-unittest/" title="伟大的单元测试">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -256,7 +256,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2016/12/07/effective-pixel/"  title="获取最小有效像素区域">
+<a href="/2016/12/07/effective-pixel/" title="获取最小有效像素区域">
  <span>获取最小有效像素区域
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -273,7 +273,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -302,22 +302,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -338,7 +338,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -351,7 +351,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -367,8 +367,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -383,7 +381,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -427,7 +425,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -437,13 +435,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -481,15 +475,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -497,17 +489,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -564,7 +552,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

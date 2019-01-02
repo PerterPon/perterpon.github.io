@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>在typescript中使用delegate来进行解耦 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="在typescript中使用delegate来进行解耦"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="在typescript中使用delegate来进行解耦">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -141,27 +141,27 @@ body{ -webkit-animation: bugfix infinite 1s; }
       <div class="entry">
         
           <h2 id="无处不在的耦合"><a href="#无处不在的耦合" class="headerlink" title="无处不在的耦合"></a>无处不在的耦合</h2><p>通常你写的一个React组件，如果需要和别的组件发生交互，那么你会怎么做？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public componentDidMount(): void &#123;&#10;&#9;this.refs.mycom.test();&#10;&#125;&#10;&#10;public render() &#123;&#10;&#9;return (&#10;&#9;&#9;&#60;MyCom ref=&#34;mycom&#34; /&#62;&#10;&#9;);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public componentDidMount(): void &#123;</span><br><span class="line">	this.refs.mycom.test();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public render() &#123;</span><br><span class="line">	return (</span><br><span class="line">		&lt;MyCom ref=&quot;mycom&quot; /&gt;</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这种做法相对来说比较普遍，也比较合情合理，那么如果<code>MyCom</code>组件执行了什么操作之后需要通知到父组件呢？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public onNotify(): void &#123;&#10;&#10;&#125;&#10;&#10;public render() &#123;&#10;&#9;return (&#10;&#9;&#9;&#60;MyCom notify=&#123; this.onNotify.bind( this ) &#125; ref=&#34;mycom&#34; /&#62;&#10;&#9;);&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public onNotify(): void &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public render() &#123;</span><br><span class="line">	return (</span><br><span class="line">		&lt;MyCom notify=&#123; this.onNotify.bind( this ) &#125; ref=&quot;mycom&quot; /&gt;</span><br><span class="line">	);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>很多时候我们会选择传进去一个回调函数，当<code>MyCom</code>需要发送通知的时候再调用<code>props.notify</code>。</p>
 <p>虽然这种方式能实现我们的需求，但也仅仅是实现而已，你会发现这种方式并不是很优雅，而且当你的回调函数多了之后，那简直就是噩梦，后来来使用这个组件的人完全不知道需要传哪些回调函数进去，也不知道哪些回调是可选的，哪些是必选的。</p>
 <h2 id="protocol"><a href="#protocol" class="headerlink" title="protocol"></a>protocol</h2><p><code>Protocol</code>是<code>Oc</code>里面的概念，类似<code>Java</code>里面的<code>Interface</code>，和<code>TypeScript</code>中的<code>Interface</code>也比较类似，其中有一个用处就是用于两个类之间的通信解耦，而<code>delegate</code>更多的是一种约定俗成的规则，看看具体怎么用:</p>
 <p>首先我有一个A类，用</p>
 <p>A.h</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@protocol ADelegate&#10;&#9;- (void) methodFromA;&#10;@end&#10;&#10;@interface A : NSObject&#10;// &#22768;&#26126;&#22996;&#25176;&#21464;&#37327;&#10;@property (assign, nonatomic) id&#60;ADelegate&#62; delegate;&#10;    - (void) test;&#10;@end</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@protocol ADelegate</span><br><span class="line">	- (void) methodFromA;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@interface A : NSObject</span><br><span class="line">// 声明委托变量</span><br><span class="line">@property (assign, nonatomic) id&lt;ADelegate&gt; delegate;</span><br><span class="line">    - (void) test;</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
 <p>A.m</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;// &#22312;A&#31867;&#30340;&#23454;&#29616;&#25991;&#20214;&#37324;&#38754;&#65292;&#22312;&#38656;&#35201;&#36827;&#34892;&#22238;&#35843;&#30340;&#26102;&#20505;&#65292;&#21482;&#38656;&#35201;&#35843;&#29992;&#24403;&#21069;&#23454;&#20363;&#30340;delegate&#23545;&#35937;&#65292;&#32780;&#19981;&#29992;&#29702;&#20250;&#21040;&#24213;&#26159;&#35841;&#35843;&#29992;&#20102;&#33258;&#24049;&#65292;&#32780;&#19988;&#23545;&#26041;&#32943;&#23450;&#23454;&#29616;&#20102;delegate&#25351;&#21521;&#30340;protocol&#10;// &#38656;&#35201;&#30340;&#26102;&#20505;&#35843;&#29992;&#10;[self.delegate methodFromA];</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// 在A类的实现文件里面，在需要进行回调的时候，只需要调用当前实例的delegate对象，而不用理会到底是谁调用了自己，而且对方肯定实现了delegate指向的protocol</span><br><span class="line">// 需要的时候调用</span><br><span class="line">[self.delegate methodFromA];</span><br></pre></td></tr></table></figure>
 <p>此时，我有一个B类，需要调用A类，同时需要监听回调函数：</p>
 <p>B.h</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#import &#34;A.h&#34;&#10;&#10;// &#36825;&#37324;&#23454;&#29616;&#20102;Adelegate Protocol&#10;@interface B : NSObject &#60;ADelegate&#62;&#10;...&#10;@end</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#import &quot;A.h&quot;</span><br><span class="line"></span><br><span class="line">// 这里实现了Adelegate Protocol</span><br><span class="line">@interface B : NSObject &lt;ADelegate&gt;</span><br><span class="line">...</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
 <p>B.m </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void) someMethod &#123;&#10;&#9;A *aInstance = [[A alloc] init];&#10;&#9;// &#36825;&#37324;&#25226;&#24403;&#21069;&#23454;&#20363;&#36171;&#20540;&#32473;A&#31867;&#23454;&#20363;&#30340;delegate&#23646;&#24615;&#10;&#9;aInstance.delegate = self;&#9;&#10;&#125;&#10;&#10;// &#23454;&#29616;&#20102;ADelegate&#10;- (void) methodFromA &#123;&#10;&#9;&#24403;A&#31867;&#35843;&#29992;self.delegate.methodFromA&#26102;&#65292;&#23601;&#21487;&#20197;&#22312;&#36825;&#37324;&#25191;&#34892;&#20320;&#33258;&#24049;&#30340;&#20195;&#30721;&#20102;&#10;&#9;// ...&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- (void) someMethod &#123;</span><br><span class="line">	A *aInstance = [[A alloc] init];</span><br><span class="line">	// 这里把当前实例赋值给A类实例的delegate属性</span><br><span class="line">	aInstance.delegate = self;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 实现了ADelegate</span><br><span class="line">- (void) methodFromA &#123;</span><br><span class="line">	当A类调用self.delegate.methodFromA时，就可以在这里执行你自己的代码了</span><br><span class="line">	// ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="TypeScript中的delegate"><a href="#TypeScript中的delegate" class="headerlink" title="TypeScript中的delegate"></a>TypeScript中的delegate</h2><p>上面可以看到其实<code>delegate</code>的使用非常简单，只是一种约定的规则，同时<code>delegate</code>其实也是一种设计模式，在JS中其实也可以使用，只是JS是弱类型语言，无法通过编译器来约束一些行为，所以依赖于<code>TypeScript</code>的强类型，我们也可以来使用一下<code>delegate</code>：</p>
 <p>组件A</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export interface ADelegate &#123;&#10;&#9;methodFromA();&#10;&#125;&#10;&#10;export class A extends React.Component&#60;any, any&#62; &#123;&#10;&#9;public delegate: ADelegate;&#10;&#10;&#9;public render() &#123;&#10;&#10;&#9;&#9;// &#35843;&#29992;delegate&#30340;&#26041;&#27861;&#10;&#9;&#9;this.delegate.methodFromA();&#10;&#10;&#9;&#9;return (&#10;&#9;&#9;&#9;&#60;div&#62;&#60;/div&#62;&#10;&#9;&#9;);&#10;&#10;&#9;&#125;&#10;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">export interface ADelegate &#123;</span><br><span class="line">	methodFromA();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export class A extends React.Component&lt;any, any&gt; &#123;</span><br><span class="line">	public delegate: ADelegate;</span><br><span class="line"></span><br><span class="line">	public render() &#123;</span><br><span class="line"></span><br><span class="line">		// 调用delegate的方法</span><br><span class="line">		this.delegate.methodFromA();</span><br><span class="line"></span><br><span class="line">		return (</span><br><span class="line">			&lt;div&gt;&lt;/div&gt;</span><br><span class="line">		);</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>组件B</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">import &#123; A, ADelegate &#125; from &#39;A&#39;;&#10;&#10;// &#36825;&#37324;&#23454;&#29616;&#20102;Interface: ADelegate&#10;export class B extends React.Component&#60;any, any&#62; implements ADelegate &#123;&#10;&#9;// &#20174;A&#23454;&#29616;&#30340;&#22238;&#35843;&#12290;&#10;&#9;public methodFromA(): void &#123;&#10;&#10;&#9;&#125;&#10;&#10;&#9;public componentDidMount(): void &#123;&#10;&#9;&#9;const aCom: A = &#60;A&#62;this.refs.acom;&#10;&#9;&#9;aCom.delegate = this;&#10;&#9;&#125;&#10;&#10;&#9;public render() &#123;&#10;&#9;&#9;return (&#10;&#9;&#9;&#9;&#60;A ref=&#34;acom&#34; /&#62;&#10;&#9;&#9;);&#10;&#9;&#125;&#10;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import &#123; A, ADelegate &#125; from &apos;A&apos;;</span><br><span class="line"></span><br><span class="line">// 这里实现了Interface: ADelegate</span><br><span class="line">export class B extends React.Component&lt;any, any&gt; implements ADelegate &#123;</span><br><span class="line">	// 从A实现的回调。</span><br><span class="line">	public methodFromA(): void &#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public componentDidMount(): void &#123;</span><br><span class="line">		const aCom: A = &lt;A&gt;this.refs.acom;</span><br><span class="line">		aCom.delegate = this;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public render() &#123;</span><br><span class="line">		return (</span><br><span class="line">			&lt;A ref=&quot;acom&quot; /&gt;</span><br><span class="line">		);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>上面的代码可以看到，A组件面向的不是调用他的组件，而是他自己声明的<code>delegate</code>，完全无需关心是谁在调用自己，在什么场景下调用自己</p>
 <p>而B组件也完全不用关心A组件的具体实现，只要实现A组件提供的<code>Interface</code>:<code>ADelegate</code>，从中选择自己需要的方法即可，两者实现解耦，面向delegate编程。</p>
 
@@ -178,7 +178,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
   
   <div class="tags">
-    <a href="/tags/coupling/">coupling</a>, <a href="/tags/protocol/">protocol</a>, <a href="/tags/typescript/">typescript</a>
+    <a href="/tags/typescript/">typescript</a>, <a href="/tags/protocol/">protocol</a>, <a href="/tags/coupling/">coupling</a>
   </div>
 
           <div class="share">
@@ -209,7 +209,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2018/06/23/strong-type-weak-type/" title="强类型？弱类型？强类型！">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -219,7 +219,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2018/02/28/webpack-chunk-id-with-cdn/"  title="webpack的chunk id和cdn缓存之间的爱恨情仇">
+<a href="/2018/02/28/webpack-chunk-id-with-cdn/" title="webpack的chunk id和cdn缓存之间的爱恨情仇">
  <span>webpack的chunk id和cdn缓存之间的爱恨情仇
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -236,7 +236,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -265,22 +265,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -301,7 +301,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -314,7 +314,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -330,8 +330,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -346,7 +344,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -390,7 +388,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -400,13 +398,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -444,15 +438,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -460,17 +452,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -527,7 +515,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

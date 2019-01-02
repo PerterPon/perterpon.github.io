@@ -2,7 +2,7 @@
 
     <html lang="zh-Hans">
   
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
   <title>零门槛学习https--(4)https协议详解 | PerterPon</title>
@@ -13,15 +13,15 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="零门槛学习https--(4)https协议详解"/>
-  <meta property="og:site_name" content="PerterPon"/>
+  <meta property="og:title" content="零门槛学习https--(4)https协议详解">
+  <meta property="og:site_name" content="PerterPon">
 
   
-    <meta property="og:image" content="undefined"/>
+    <meta property="og:image" content="undefined">
   
 
   
-    <meta http-equiv="Content-Language" content="zh-Hans"/>
+    <meta http-equiv="Content-Language" content="zh-Hans">
   
 
   <link href="/img/favicon.png" rel="icon">
@@ -68,16 +68,16 @@ body{ -webkit-animation: bugfix infinite 1s; }
   
     <!-- 360 Font and Baidu CDN in China -->
     
-      <link href='http://fonts.useso.com/css?family=Open+Sans:300,400|Playball' rel='stylesheet' type='text/css'>
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
     
-  <link href='http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
   <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
   
 
 
 
 </head>
-
+</html>
 
 <body>
   <header id="header" class="inner"><div class="padding">
@@ -85,8 +85,8 @@ body{ -webkit-animation: bugfix infinite 1s; }
 	  <h1><a href="/">PerterPon</a></h1>
 	</div>
 	<nav id="main-nav" class="alignright">
-		<input type="checkbox" id="toggle" />
-		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick><i class="fa fa-bars"></i></label>
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
 	  <ul class="menu">
 	    
 	      <li><a href="/">Home</a></li>
@@ -142,24 +142,24 @@ body{ -webkit-animation: bugfix infinite 1s; }
         
           <p>上一篇：<a href="/2017/05/19/https-3/">零门槛学习https–(3)https的安全策略</a></p>
 <p>https其实就是在TLS之上的http协议，所以各种头信息以及数据格式和http其实都一样，主要区别就在TLS，下面我们来看看TLS是如何工作的。</p>
-<p>本章咱们讨论一下TLS的一个整体思路，和一些重要的细节，所有的细节请参看<a href="https://tools.ietf.org/html/rfc5246" target="_blank" rel="external">RFC文档</a>。</p>
+<p>本章咱们讨论一下TLS的一个整体思路，和一些重要的细节，所有的细节请参看<a href="https://tools.ietf.org/html/rfc5246" target="_blank" rel="noopener">RFC文档</a>。</p>
 <h2 id="TLS握手"><a href="#TLS握手" class="headerlink" title="TLS握手"></a>TLS握手</h2><p>和TCP的握手一样，TLS在工作之前也需要握手，保证客户端和服务端的正确运行，下面的图片里面包含了TLS握手的整个过程。</p>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2BiP6o4RDOuFjSZFzXXcIipXa_!!99218453.png" alt=""></p>
 <p>下面是一次对<code>https://www.baidu.com</code>请求的TLS握手过程，我们结合上面的图一起来看看整个过程在实际连接中是什么样子的。</p>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB2E90LvC0mpuFjSZPiXXbssVXa_!!99218453.png" alt=""></p>
 <h3 id="Client-Hello"><a href="#Client-Hello" class="headerlink" title="Client Hello"></a>Client Hello</h3><p>和TCP握手一样，客户端首先要告知服务端自己的来意，总共会传递以下信息：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. &#23458;&#25143;&#31471;&#25903;&#25345;&#30340;TLS&#21327;&#35758;&#29256;&#26412;&#65292;&#36825;&#37324;&#20250;&#26377;&#19968;&#20010;list&#65292;&#30446;&#21069;&#20027;&#27969;&#30340;&#26159;TLS1.2&#12290;&#10;2. &#19968;&#20010;&#38543;&#26426;&#25968;&#65292;&#25105;&#20204;&#35760;&#20026;CR&#65292;&#20855;&#20307;&#30340;&#20316;&#29992;&#26159;&#29992;&#26469;&#29983;&#25104;&#23545;&#35805;&#23494;&#38053;&#65292;&#25105;&#20204;&#31245;&#21518;&#20250;&#29992;&#21040;&#12290;&#10;3. &#25903;&#25345;&#30340;&#21152;&#23494;&#26041;&#27861;&#22871;&#20214;&#12290;&#20363;&#22914;&#65306;TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA&#65292;&#30001;&#22235;&#20010;&#37096;&#20998;&#32452;&#25104;&#65306;&#10;    1. &#23494;&#38053;&#20132;&#25442;&#31639;&#27861;&#12290;&#29992;&#26469;&#20132;&#25442;&#23545;&#31216;&#21152;&#23494;&#23494;&#38053;&#30340;&#31639;&#27861;&#12290;&#10;    2. &#21152;&#23494;&#31639;&#27861;&#12290;&#23545;&#31216;&#21152;&#23494;&#31639;&#27861;&#65292;&#30495;&#27491;&#30340;&#21152;&#23494;&#36890;&#35759;&#20869;&#23481;&#30340;&#21152;&#23494;&#31639;&#27861;&#12290;&#10;    3. &#25253;&#25991;&#35748;&#35777;&#20449;&#24687;&#30721;&#65288;MAC&#65289;&#31639;&#27861;&#12290;&#23545;&#36890;&#35759;&#20869;&#23481;&#20570;&#19968;&#20010;&#25688;&#35201;&#65292;&#28982;&#21518;&#38468;&#21152;&#21040;&#27599;&#19968;&#27573;&#28040;&#24687;&#23614;&#37096;&#65292;&#10;       &#36825;&#26679;&#26381;&#21153;&#31471;&#23601;&#30693;&#36947;&#28040;&#24687;&#26159;&#21542;&#34987;&#26356;&#25913;&#12290;&#36825;&#19968;&#27493;&#35201;&#38450;&#27490;&#30340;&#26159;&#65306;&#34429;&#28982;&#21152;&#23494;&#20102;&#65292;&#20294;&#26159;&#22914;&#26524;&#20013;&#38388;&#20154;&#38543;&#20415;&#26356;&#25913;&#19968;&#20010;&#23383;&#33410;&#65292;&#10;       &#20063;&#35768;&#35201;&#34920;&#36798;&#30340;&#20869;&#23481;&#23601;&#19981;&#19968;&#26679;&#20102;&#12290;&#10;    4. PRF&#65288;&#20266;&#38543;&#26426;&#20989;&#25968;&#65289;&#12290;&#10;4. &#25903;&#25345;&#30340;&#21387;&#32553;&#26041;&#27861;&#12290;&#10;5. &#25193;&#23637;&#20449;&#24687;&#12290;&#25193;&#23637;&#20449;&#24687;&#20250;&#26377;&#38750;&#24120;&#22810;&#65292;&#31867;&#20284;&#26102;&#38388;&#25139;&#65292;&#22495;&#21517;&#31561;&#31561;&#20449;&#24687;&#65292;&#20855;&#20307;&#30340;&#21487;&#20197;&#21442;&#30475;RFC&#25991;&#26723;&#12290;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1. 客户端支持的TLS协议版本，这里会有一个list，目前主流的是TLS1.2。</span><br><span class="line">2. 一个随机数，我们记为CR，具体的作用是用来生成对话密钥，我们稍后会用到。</span><br><span class="line">3. 支持的加密方法套件。例如：TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA，由四个部分组成：</span><br><span class="line">    1. 密钥交换算法。用来交换对称加密密钥的算法。</span><br><span class="line">    2. 加密算法。对称加密算法，真正的加密通讯内容的加密算法。</span><br><span class="line">    3. 报文认证信息码（MAC）算法。对通讯内容做一个摘要，然后附加到每一段消息尾部，</span><br><span class="line">       这样服务端就知道消息是否被更改。这一步要防止的是：虽然加密了，但是如果中间人随便更改一个字节，</span><br><span class="line">       也许要表达的内容就不一样了。</span><br><span class="line">    4. PRF（伪随机函数）。</span><br><span class="line">4. 支持的压缩方法。</span><br><span class="line">5. 扩展信息。扩展信息会有非常多，类似时间戳，域名等等信息，具体的可以参看RFC文档。</span><br></pre></td></tr></table></figure>
 <p>有一个扩展信息可以提一下，早先的TLS协议是没有域名信息的，造成一个问题就是，如果服务端采用一些虚拟化技术虚拟了很多主机，每个主机服务不同的域名，这时候有客户端向服务端发出TLS请求，服务端这时候并不知道应该把哪个证书返回，所以为了解决这个问题，在2006年TLS协议加入了域名扩展信息。</p>
 <p>所以说，如果你在公司上网，即使你使用了HTTPS，公司依然能够知道你访问是t66y还是115，或者是taobao。有人也向官方指出这会泄露隐私，但是官方认为这是一个低安全级别问题，并且现在还没有什么好的解法，所以这个问题就搁置了。</p>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2QKg2rHXlpuFjSszfXXcSGXXa_!!99218453.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#32418;&#26694;&#20013;&#20998;&#21035;&#26159;&#65306;&#10;&#10;1. &#23458;&#25143;&#31471;&#38543;&#26426;&#25968;&#65306;CR&#12290;&#10;2. &#26412;&#27425;&#35831;&#27714;&#30340;&#22495;&#21517;&#12290;&#10;3. &#25193;&#23637;&#20449;&#24687;&#65292;&#35201;&#27714;&#26381;&#21153;&#31471;&#30452;&#25509;&#36820;&#22238;&#35777;&#20070;&#30340;&#26657;&#39564;&#32467;&#26524;&#65292;&#26657;&#39564;&#26041;&#24335;&#26159;&#65306;OCSP&#12290;</span><br></pre></td></tr></table></figure>
-<h3 id="Server-Hello"><a href="#Server-Hello" class="headerlink" title="Server Hello"></a>Server Hello</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. &#30830;&#35748;TLS&#21327;&#35758;&#30340;&#29256;&#26412;&#65292;&#22914;&#26524;&#23458;&#25143;&#31471;&#30340;&#21327;&#35758;&#26381;&#21153;&#31471;&#19981;&#25903;&#25345;&#30340;&#35805;&#65292;&#26381;&#21153;&#31471;&#20250;&#36873;&#25321;&#20851;&#38381;&#36825;&#20010;&#36830;&#25509;&#12290;&#10;2. &#20174;&#23458;&#25143;&#31471;&#25903;&#25345;&#30340;&#21152;&#23494;&#26041;&#27861;&#20013;&#65292;&#36873;&#25321;&#19968;&#20010;&#21152;&#23494;&#26041;&#24335;&#65292;&#24182;&#21578;&#30693;&#23458;&#25143;&#31471;&#12290;&#10;3. &#29983;&#25104;&#19968;&#20010;&#38543;&#26426;&#25968;&#65292;&#25105;&#20204;&#35760;&#20026;SR&#65292;&#21518;&#32493;&#25105;&#20204;&#20250;&#32467;&#21512;CR&#29983;&#25104;&#23545;&#35805;&#23494;&#38053;&#65292;&#31245;&#21518;&#20250;&#29992;&#21040;&#12290;&#10;4. &#20174;&#23458;&#25143;&#31471;&#25903;&#25345;&#30340;&#21387;&#32553;&#31639;&#27861;&#20013;&#65292;&#36873;&#25321;&#19968;&#20010;&#21387;&#32553;&#31639;&#27861;&#12290;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">红框中分别是：</span><br><span class="line"></span><br><span class="line">1. 客户端随机数：CR。</span><br><span class="line">2. 本次请求的域名。</span><br><span class="line">3. 扩展信息，要求服务端直接返回证书的校验结果，校验方式是：OCSP。</span><br></pre></td></tr></table></figure>
+<h3 id="Server-Hello"><a href="#Server-Hello" class="headerlink" title="Server Hello"></a>Server Hello</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 确认TLS协议的版本，如果客户端的协议服务端不支持的话，服务端会选择关闭这个连接。</span><br><span class="line">2. 从客户端支持的加密方法中，选择一个加密方式，并告知客户端。</span><br><span class="line">3. 生成一个随机数，我们记为SR，后续我们会结合CR生成对话密钥，稍后会用到。</span><br><span class="line">4. 从客户端支持的压缩算法中，选择一个压缩算法。</span><br></pre></td></tr></table></figure>
 <p><img src="https://img.alicdn.com/imgextra/i4/99218453/TB20FhBvEdnpuFjSZPhXXbChpXa_!!99218453.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#32418;&#26694;&#20013;&#20869;&#23481;&#20998;&#21035;&#26159;&#65306;&#10;&#10;1. &#26381;&#21153;&#31471;&#38543;&#26426;&#25968;&#65306;SR&#12290;&#10;2. Session Id&#12290;&#36319;SSO&#30340;cookie&#30340;&#27010;&#24565;&#26377;&#28857;&#31867;&#20284;&#65292;&#23601;&#26159;&#24403;&#20320;&#36825;&#27425;&#25569;&#25163;&#25104;&#21151;&#20043;&#21518;&#65292;&#10;   &#19979;&#27425;&#30452;&#25509;&#24102;&#19978;&#36825;&#20010;session Id&#65292;&#22914;&#26524;&#26381;&#21153;&#31471;&#35748;&#20026;&#21512;&#27861;&#65292;&#37027;&#20040;&#23601;&#19981;&#29992;&#20877;&#36827;&#34892;&#25569;&#25163;&#65292;&#10;   &#30452;&#25509;&#21487;&#20197;&#24320;&#22987;&#29992;&#20043;&#21069;&#24050;&#32463;&#21830;&#37327;&#22909;&#30340;&#23545;&#31216;&#21152;&#23494;&#23494;&#38053;&#24320;&#22987;&#36890;&#20449;&#20102;&#12290;&#10;3. &#26381;&#21153;&#31471;&#36873;&#25321;&#30340;&#21152;&#23494;&#22871;&#20214;&#12290;&#10;4. &#26381;&#21153;&#31471;&#35774;&#32622;&#20102;`status_request`&#30340;&#24212;&#31572;&#26631;&#24535;&#20301;&#65292;&#31572;&#24212;&#23458;&#25143;&#31471;&#20250;&#30452;&#25509;&#36820;&#22238;&#26381;&#21153;&#31471;&#35777;&#20070;&#30340;OCSP&#26657;&#39564;&#32467;&#26524;&#12290;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">红框中内容分别是：</span><br><span class="line"></span><br><span class="line">1. 服务端随机数：SR。</span><br><span class="line">2. Session Id。跟SSO的cookie的概念有点类似，就是当你这次握手成功之后，</span><br><span class="line">   下次直接带上这个session Id，如果服务端认为合法，那么就不用再进行握手，</span><br><span class="line">   直接可以开始用之前已经商量好的对称加密密钥开始通信了。</span><br><span class="line">3. 服务端选择的加密套件。</span><br><span class="line">4. 服务端设置了`status_request`的应答标志位，答应客户端会直接返回服务端证书的OCSP校验结果。</span><br></pre></td></tr></table></figure>
 <h3 id="Server-Certificate"><a href="#Server-Certificate" class="headerlink" title="Server Certificate"></a>Server Certificate</h3><p>这一步主要是返回证书链供客户端验证。</p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2axozrM0kpuFjSspdXXX4YXXa_!!99218453.png" alt=""></p>
 <p>服务端返回了证书链，里面包含三张证书。</p>
-<h3 id="Certificate-Status"><a href="#Certificate-Status" class="headerlink" title="[Certificate Status]"></a>[Certificate Status]</h3><p>这一步也是可选的，当<code>Client Hello</code>的时候，客户端会在<code>extension</code>里面要求服务端直接返回证书的校验结果，以加快访问速度，这是TLS的一个扩展，在<a href="https://tools.ietf.org/html/rfc6066#section-8" target="_blank" rel="external">RFC6066</a>中规定了这一个扩展。当然即使客户端要求了，服务端在<code>Server Hello</code>的时候应答了，服务端也可以不返回，这样客户端就要自己去校验了。</p>
+<h3 id="Certificate-Status"><a href="#Certificate-Status" class="headerlink" title="[Certificate Status]"></a>[Certificate Status]</h3><p>这一步也是可选的，当<code>Client Hello</code>的时候，客户端会在<code>extension</code>里面要求服务端直接返回证书的校验结果，以加快访问速度，这是TLS的一个扩展，在<a href="https://tools.ietf.org/html/rfc6066#section-8" target="_blank" rel="noopener">RFC6066</a>中规定了这一个扩展。当然即使客户端要求了，服务端在<code>Server Hello</code>的时候应答了，服务端也可以不返回，这样客户端就要自己去校验了。</p>
 <p>服务端会返回OCSP验证的结果，这样，服务端可以缓存OCSP的结果，服务端就无需再次访问OCSP获取证书验证结果，提高客户端的访问速度。</p>
 <p>说的直白一点，这一步的作用就是：服务端返回证书给客户端，然后再告诉客户端说，这个证书我已经验证过了，你放心用吧。客户端会选择信任中间证书，直接校验根证书，所以，这里即使被中间人攻击直接返回验证成功，但是因为客户端任然会通过操作系统内置的根证书来进行验证，这一步任然是安全的。</p>
 <p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB28GVmrYtlpuFjSspoXXbcDpXa_!!99218453.png" alt=""></p>
@@ -167,12 +167,12 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="Server-Key-Exchange"><a href="#Server-Key-Exchange" class="headerlink" title="[Server Key Exchange]"></a>[Server Key Exchange]</h3><p>这一步也是可选的，取决于双方的加密方法，这里就不得不提到TLS的两种密钥协商方式：</p>
 <ol>
 <li>TLS_RSA_XXXX。这类算法里面，RSA的作用是<code>Key Transmission</code>，也就是说对称加密的密钥是由客户端生成，然后通过证书里面的公钥加密发送给服务端。如果采用的是RSA算法，那么这一步就不需要了。</li>
-<li>TLS_DHE_XXXX。这类算法里面，使用<a href="https://zh.wikipedia.org/wiki/%E8%BF%AA%E8%8F%B2-%E8%B5%AB%E7%88%BE%E6%9B%BC%E5%AF%86%E9%91%B0%E4%BA%A4%E6%8F%9B" target="_blank" rel="external">DH算法</a>进行密钥协商，DH的作用就是<code>Key Exchange</code>，密钥是由客户端和服务端共同生成的。</li>
+<li>TLS_DHE_XXXX。这类算法里面，使用<a href="https://zh.wikipedia.org/wiki/%E8%BF%AA%E8%8F%B2-%E8%B5%AB%E7%88%BE%E6%9B%BC%E5%AF%86%E9%91%B0%E4%BA%A4%E6%8F%9B" target="_blank" rel="noopener">DH算法</a>进行密钥协商，DH的作用就是<code>Key Exchange</code>，密钥是由客户端和服务端共同生成的。</li>
 </ol>
 <p>DH密钥协商可以总结如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. &#36890;&#35759;&#21452;&#26041;&#65288;&#24352;&#19977;&#12289;&#26446;&#22235;&#65289;&#38656;&#35201;&#20808;&#32422;&#23450;&#22909;&#31639;&#27861;&#21442;&#25968;&#65288;algorithm parameters&#65289;&#65306;&#19968;&#20010;&#32032;&#25968; p &#20316;&#20026;&#27169;&#25968;&#65292;&#19968;&#20010;&#32032;&#25968; g &#20316;&#20026;&#22522;&#25968;&#65288;g &#20063;&#31216;&#20026;&#8220;&#29983;&#25104;&#20803;&#8221;&#65289;&#12290;&#36825;&#20004;&#20010;&#31639;&#27861;&#21442;&#25968;&#26159;&#21487;&#20197;&#23545;&#22806;&#20844;&#24320;&#28404;&#12290;&#10;2. &#23545;&#20110;&#24352;&#19977;&#32780;&#35328;&#65292;&#38656;&#35201;&#20808;&#24819;&#22909;&#19968;&#20010;&#31192;&#23494;&#30340;&#33258;&#28982;&#25968; a &#20316;&#20026;&#31169;&#38053;&#65288;&#19981;&#33021;&#20844;&#24320;&#65289;&#65292;&#28982;&#21518;&#35745;&#31639; A = ga mod p &#20316;&#20026;&#33258;&#24049;&#30340;&#20844;&#38053;&#65288;&#21487;&#20197;&#20844;&#24320;&#65289;&#12290;&#10;3. &#23545;&#26446;&#22235;&#32780;&#35328;&#20063;&#31867;&#20284;&#65292;&#20808;&#24819;&#22909;&#19968;&#20010;&#31192;&#23494;&#30340;&#33258;&#28982;&#25968; b &#20316;&#20026;&#31169;&#38053;&#65288;&#19981;&#33021;&#20844;&#24320;&#65289;&#65292;&#28982;&#21518;&#35745;&#31639; B = gb mod p &#20316;&#20026;&#33258;&#24049;&#30340;&#20844;&#38053;&#65288;&#21487;&#20197;&#20844;&#24320;&#65289;&#12290;&#10;4. &#24352;&#19977;&#21644;&#26446;&#22235;&#20114;&#30456;&#20132;&#25442;&#21508;&#33258;&#30340;&#20844;&#38053;&#12290;&#10;5. &#28982;&#21518;&#24352;&#19977;&#35745;&#31639;&#20986; k = Ba mod p&#65292;&#26446;&#22235;&#35745;&#31639;&#20986; k = Ab mod p</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 通讯双方（张三、李四）需要先约定好算法参数（algorithm parameters）：一个素数 p 作为模数，一个素数 g 作为基数（g 也称为“生成元”）。这两个算法参数是可以对外公开滴。</span><br><span class="line">2. 对于张三而言，需要先想好一个秘密的自然数 a 作为私钥（不能公开），然后计算 A = ga mod p 作为自己的公钥（可以公开）。</span><br><span class="line">3. 对李四而言也类似，先想好一个秘密的自然数 b 作为私钥（不能公开），然后计算 B = gb mod p 作为自己的公钥（可以公开）。</span><br><span class="line">4. 张三和李四互相交换各自的公钥。</span><br><span class="line">5. 然后张三计算出 k = Ba mod p，李四计算出 k = Ab mod p</span><br></pre></td></tr></table></figure>
 <p><img src="https://img.alicdn.com/imgextra/i1/99218453/TB2M7uCrYtlpuFjSspoXXbcDpXa_!!99218453.jpg" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#19978;&#22270;&#20013;&#65292;&#26381;&#21153;&#22120;&#31471;&#25226;p&#12289;g&#36824;&#26377;&#26381;&#21153;&#31471;&#31639;&#20986;&#30340;DH&#20844;&#38053;&#65292;&#32452;&#21512;&#25104;Pubkey&#65292;&#10;&#29992;SHA512&#27714;&#24471;hash&#20043;&#21518;&#65292;&#29992;&#26381;&#21153;&#31471;&#31169;&#38053;&#20570;RSA&#31614;&#21517;&#38450;&#20266;&#12290;&#10;&#10;&#23458;&#25143;&#31471;&#25910;&#21040;&#21518;&#65292;&#20250;&#29992;&#35777;&#20070;&#37324;&#38754;&#30340;&#20844;&#38053;&#35299;&#23494;&#65292;&#39564;&#35777;&#31614;&#21517;&#27491;&#30830;&#24615;&#65292;&#28982;&#21518;&#25343;&#20986;&#26381;&#21153;&#31471;DH&#20844;&#38053;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">上图中，服务器端把p、g还有服务端算出的DH公钥，组合成Pubkey，</span><br><span class="line">用SHA512求得hash之后，用服务端私钥做RSA签名防伪。</span><br><span class="line"></span><br><span class="line">客户端收到后，会用证书里面的公钥解密，验证签名正确性，然后拿出服务端DH公钥</span><br></pre></td></tr></table></figure>
 <h3 id="Client-Certificate-Request"><a href="#Client-Certificate-Request" class="headerlink" title="[Client Certificate Request]"></a>[Client Certificate Request]</h3><p>这一步也是可选的，要求客户端出示自己的证书，默认服务端不会向客户端索取证书。主要用于银行等金融领域，只有持有相应的证书（各类U盾）才允许客户端访问自己的网络，这里的客户端证书和CA证书类似，不过签发的一方通常是银行自己。</p>
 <h3 id="Server-Done"><a href="#Server-Done" class="headerlink" title="Server Done"></a>Server Done</h3><p>这一步就是个标志位，告诉客户端，整个Server Hello阶段已经结束，轮到你回消息了。</p>
 <p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB2lVzdvEhnpuFjSZFEXXX0PFXa_!!99218453.png" alt=""></p>
@@ -186,7 +186,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <p><img src="https://img.alicdn.com/imgextra/i2/99218453/TB25GYpaRU4h1JjSZFLXXaFMpXa_!!99218453.png" alt=""></p>
 <p><code>这里把DH算法的客户端公钥发送给服务端。</code></p>
 <p>至于为什么不能全部都由客户端或者都由服务端生成呢？这里引用别的地方看到的一段话，解释得非常清楚：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#19981;&#31649;&#26159;&#23458;&#25143;&#31471;&#36824;&#26159;&#26381;&#21153;&#22120;&#65292;&#37117;&#38656;&#35201;&#38543;&#26426;&#25968;&#65292;&#36825;&#26679;&#29983;&#25104;&#30340;&#23494;&#38053;&#25165;&#19981;&#20250;&#27599;&#27425;&#37117;&#19968;&#26679;&#12290;&#10;&#30001;&#20110;SSL&#21327;&#35758;&#20013;&#35777;&#20070;&#26159;&#38745;&#24577;&#30340;&#65292;&#22240;&#27492;&#21313;&#20998;&#26377;&#24517;&#35201;&#24341;&#20837;&#19968;&#31181;&#38543;&#26426;&#22240;&#32032;&#26469;&#20445;&#35777;&#21327;&#21830;&#20986;&#26469;&#30340;&#23494;&#38053;&#30340;&#38543;&#26426;&#24615;&#12290;&#10;&#23545;&#20110;RSA&#23494;&#38053;&#20132;&#25442;&#31639;&#27861;&#26469;&#35828;&#65292;pre-master-key&#26412;&#36523;&#23601;&#26159;&#19968;&#20010;&#38543;&#26426;&#25968;&#65292;&#20877;&#21152;&#19978;hello&#28040;&#24687;&#20013;&#30340;&#38543;&#26426;&#65292;&#10;&#19977;&#20010;&#38543;&#26426;&#25968;&#36890;&#36807;&#19968;&#20010;&#23494;&#38053;&#23548;&#20986;&#22120;&#26368;&#32456;&#23548;&#20986;&#19968;&#20010;&#23545;&#31216;&#23494;&#38053;&#12290;&#10;&#10;pre master&#30340;&#23384;&#22312;&#22312;&#20110;SSL&#21327;&#35758;&#19981;&#20449;&#20219;&#27599;&#20010;&#20027;&#26426;&#37117;&#33021;&#20135;&#29983;&#23436;&#20840;&#38543;&#26426;&#30340;&#38543;&#26426;&#25968;&#65292;&#10;&#22914;&#26524;&#38543;&#26426;&#25968;&#19981;&#38543;&#26426;&#65292;&#37027;&#20040;pre master secret&#23601;&#26377;&#21487;&#33021;&#34987;&#29468;&#20986;&#26469;&#65292;&#10;&#37027;&#20040;&#20165;&#36866;&#29992;pre master secret&#20316;&#20026;&#23494;&#38053;&#23601;&#19981;&#21512;&#36866;&#20102;&#65292;&#22240;&#27492;&#24517;&#39035;&#24341;&#20837;&#26032;&#30340;&#38543;&#26426;&#22240;&#32032;&#65292;&#10;&#37027;&#20040;&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#21152;&#19978;pre master secret&#19977;&#20010;&#38543;&#26426;&#25968;&#19968;&#21516;&#29983;&#25104;&#30340;&#23494;&#38053;&#23601;&#19981;&#23481;&#26131;&#34987;&#29468;&#20986;&#20102;&#65292;&#10;&#19968;&#20010;&#20266;&#38543;&#26426;&#21487;&#33021;&#23436;&#20840;&#19981;&#38543;&#26426;&#65292;&#21487;&#26159;&#26159;&#19977;&#20010;&#20266;&#38543;&#26426;&#23601;&#21313;&#20998;&#25509;&#36817;&#38543;&#26426;&#20102;&#65292;&#10;&#27599;&#22686;&#21152;&#19968;&#20010;&#33258;&#30001;&#24230;&#65292;&#38543;&#26426;&#24615;&#22686;&#21152;&#30340;&#21487;&#19981;&#26159;&#19968;&#12290;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">不管是客户端还是服务器，都需要随机数，这样生成的密钥才不会每次都一样。</span><br><span class="line">由于SSL协议中证书是静态的，因此十分有必要引入一种随机因素来保证协商出来的密钥的随机性。</span><br><span class="line">对于RSA密钥交换算法来说，pre-master-key本身就是一个随机数，再加上hello消息中的随机，</span><br><span class="line">三个随机数通过一个密钥导出器最终导出一个对称密钥。</span><br><span class="line"></span><br><span class="line">pre master的存在在于SSL协议不信任每个主机都能产生完全随机的随机数，</span><br><span class="line">如果随机数不随机，那么pre master secret就有可能被猜出来，</span><br><span class="line">那么仅适用pre master secret作为密钥就不合适了，因此必须引入新的随机因素，</span><br><span class="line">那么客户端和服务器加上pre master secret三个随机数一同生成的密钥就不容易被猜出了，</span><br><span class="line">一个伪随机可能完全不随机，可是是三个伪随机就十分接近随机了，</span><br><span class="line">每增加一个自由度，随机性增加的可不是一。</span><br></pre></td></tr></table></figure>
 <p>总得来说即使客户端或者服务器端被人做了手脚，采用的随机数生成函数变成了可控的随机，那么只要另外一方不是被同一人做手脚，整体通信任然是安全的。</p>
 <h3 id="Change-Cipher-Spec（客户端）"><a href="#Change-Cipher-Spec（客户端）" class="headerlink" title="Change Cipher Spec（客户端）"></a>Change Cipher Spec（客户端）</h3><p>这一步就是个标志位，告诉服务端：客户端之后通信就开始使用之前约定好的加密方式来加密传输了。</p>
 <p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2B_4ZvOpnpuFjSZFIXXXh2VXa_!!99218453.png" alt=""></p>
@@ -203,7 +203,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 <h3 id="TLS-session-id"><a href="#TLS-session-id" class="headerlink" title="TLS session id"></a>TLS session id</h3><p>这个其实和SSO 登陆的cookie类似，有了cookie，第二次访问的时候服务端会去校验cookie是否有效，如果有效那就不用重新登陆了，如果cookie无效，那么就要重新登陆了。</p>
 <p>session id也是如此，整个TLS握手过程还是比较复杂的，如果每个连接都这么握手一次，那体验也真是太差了，所以TLS设计了session id的概念，如果session id没有过期，那么就可以跳过握手阶段，直接开始加密传输。</p>
 <p>所以有时候我们会发现，第一次访问某个HTTPS网站的时候很慢，但是第一次打开之后，第二次刷新，速度就很快了。</p>
-<p>好了，到这里我们的TLS协议就介绍得差不多了，其实TLS协议还有非常多的细节，大家可以仔细参看<a href="https://tools.ietf.org/html/rfc5246" target="_blank" rel="external">RFC文档</a>。TLS协议看起来似乎很完美，无法破解，但是现实中还是有很多基于TLS的攻击方式，下一篇就给大家来分享一下：</p>
+<p>好了，到这里我们的TLS协议就介绍得差不多了，其实TLS协议还有非常多的细节，大家可以仔细参看<a href="https://tools.ietf.org/html/rfc5246" target="_blank" rel="noopener">RFC文档</a>。TLS协议看起来似乎很完美，无法破解，但是现实中还是有很多基于TLS的攻击方式，下一篇就给大家来分享一下：</p>
 <p><a href="">零门槛学习https–(5)常见的https攻击原理</a></p>
 
         
@@ -250,7 +250,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
           
 <nav class="article-nav clearfix">
  
- <div class="article-prev" >
+ <div class="article-prev">
  <a href="/2017/05/21/https-5/" title="零门槛学习https--(5)常见的https攻击原理">
   <i class="fa fa-long-arrow-left"></i>
   <span>
@@ -260,7 +260,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <div class="article-next">
-<a href="/2017/05/19/https-3/"  title="零门槛学习https--(3)https的安全策略">
+<a href="/2017/05/19/https-3/" title="零门槛学习https--(3)https的安全策略">
  <span>零门槛学习https--(3)https的安全策略
 </span>
 <i class="fa fa-long-arrow-right"></i>
@@ -277,7 +277,7 @@ body{ -webkit-animation: bugfix infinite 1s; }
 
 
 <section id="comment">
-  <h2 class="title">留言</h2>
+  <h2 class="title">Comments</h2>
 
   
 
@@ -306,22 +306,22 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜尋">
+    <input type="search" name="q" results="0" placeholder="Search">
     <input type="hidden" name="q" value="site:yoursite.com">
   </form>
 </div>
 	
 	  
 <div class="widget recent-post">
-  <h3 class="title">最新文章</h3>
+  <h3 class="title">Recent Posts</h3>
   <ul class="entry">
     
       <li>
-        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
       </li>
     
       <li>
-        <a href="/2018/09/21/hello-world/">Hello World</a>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
       </li>
     
       <li>
@@ -342,7 +342,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget category">
-  <h3 class="title">分類</h3>
+  <h3 class="title">Categories</h3>
   <ul class="entry">
   
     <li><a href="/categories/Go/">Go</a><small>1</small></li>
@@ -355,7 +355,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
   
-    <li><a href="/categories/basis/">basis</a><small>1</small></li>
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
   
     <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
   
@@ -371,8 +371,6 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <li><a href="/categories/node/">node</a><small>1</small></li>
   
-    <li><a href="/categories/physical/">physical</a><small>0</small></li>
-  
     <li><a href="/categories/spider/">spider</a><small>1</small></li>
   
     <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
@@ -387,7 +385,7 @@ var duoshuoQuery = {short_name:"perterpon"};
 	
 	  
 <div class="widget tag">
-  <h3 class="title">標籤</h3>
+  <h3 class="title">Tags</h3>
   
     <a href="/tags/Go/">Go<small>1</small></a>
   
@@ -431,7 +429,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/complicating/">complicating<small>1</small></a>
   
-    <a href="/tags/computer/">computer<small>1</small></a>
+    <a href="/tags/computer/">computer<small>2</small></a>
   
     <a href="/tags/coupling/">coupling<small>1</small></a>
   
@@ -441,13 +439,9 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/ddd/">ddd<small>1</small></a>
   
-    <a href="/tags/decimal/">decimal<small>1</small></a>
+    <a href="/tags/decimal/">decimal<small>2</small></a>
   
-    <a href="/tags/drive/">drive<small>0</small></a>
-  
-    <a href="/tags/emDrive/">emDrive<small>0</small></a>
-  
-    <a href="/tags/float/">float<small>1</small></a>
+    <a href="/tags/float/">float<small>2</small></a>
   
     <a href="/tags/freak/">freak<small>1</small></a>
   
@@ -485,15 +479,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/members/">members<small>1</small></a>
   
-    <a href="/tags/microwave/">microwave<small>0</small></a>
-  
     <a href="/tags/mtu/">mtu<small>1</small></a>
   
     <a href="/tags/mysql/">mysql<small>1</small></a>
   
     <a href="/tags/node/">node<small>3</small></a>
   
-    <a href="/tags/number/">number<small>1</small></a>
+    <a href="/tags/number/">number<small>2</small></a>
   
     <a href="/tags/objective-c/">objective-c<small>2</small></a>
   
@@ -501,17 +493,13 @@ var duoshuoQuery = {short_name:"perterpon"};
   
     <a href="/tags/pai/">pai<small>1</small></a>
   
-    <a href="/tags/physical/">physical<small>0</small></a>
-  
     <a href="/tags/pixel/">pixel<small>1</small></a>
   
     <a href="/tags/poodle/">poodle<small>1</small></a>
   
-    <a href="/tags/precision/">precision<small>1</small></a>
+    <a href="/tags/precision/">precision<small>2</small></a>
   
     <a href="/tags/protocol/">protocol<small>1</small></a>
-  
-    <a href="/tags/quantum/">quantum<small>0</small></a>
   
     <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
   
@@ -568,7 +556,7 @@ var duoshuoQuery = {short_name:"perterpon"};
   <footer id="footer" class="inner"><div class="padding">
 	<div class="alignleft">
 	  
-	  &copy; 2018 PerterPon
+	  &copy; 2019 PerterPon
 	  
 	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
 	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>

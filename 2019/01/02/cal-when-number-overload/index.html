@@ -1,0 +1,627 @@
+<!DOCTYPE HTML>
+
+    <html lang="zh-Hans">
+  
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+  <title>double值失精之后的表现 | PerterPon</title>
+  <meta name="author" content="PerterPon">
+  
+  <meta name="description" content="double值失精之后的表现">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="double值失精之后的表现">
+  <meta property="og:site_name" content="PerterPon">
+
+  
+    <meta property="og:image" content="undefined">
+  
+
+  
+    <meta http-equiv="Content-Language" content="zh-Hans">
+  
+
+  <link href="/img/favicon.png" rel="icon">
+  
+    <link rel="apple-touch-icon" href="/img/apple-icon.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/apple-icon.png">
+    
+
+  <link rel="alternate" href="/atom.xml" title="PerterPon" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  
+  <style type="text/css">
+  /* Tim Pietrusky advanced checkbox hack (Android <= 4.1.2) */
+body{ -webkit-animation: bugfix infinite 1s; }
+@-webkit-keyframes bugfix { from {padding:0;} to {padding:0;} }
+
+  
+  <!-- Chinese readability improvements -->
+    article {font-weight: 400;letter-spacing: .01rem;}
+    article .entry{line-height:2;}
+  
+
+  
+    article .post-content-index .entry{max-height: 550px; overflow:hidden;}
+  
+</style>
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-56202861-1', 'auto');
+  ga('send', 'pageview');
+ 
+</script>
+
+
+
+
+  
+    <!-- 360 Font and Baidu CDN in China -->
+    
+      <link href="http://fonts.useso.com/css?family=Open+Sans:300,400|Playball" rel="stylesheet" type="text/css">
+    
+  <link href="http://apps.bdimg.com/libs/fontawesome/4.1.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+  <script src="http://libs.baidu.com/jquery/1.11.1/jquery.min.js"></script>
+  
+
+
+
+</head>
+</html>
+
+<body>
+  <header id="header" class="inner"><div class="padding">
+	<div class="alignleft logo">
+	  <h1><a href="/">PerterPon</a></h1>
+	</div>
+	<nav id="main-nav" class="alignright">
+		<input type="checkbox" id="toggle">
+		<label for="toggle" class="toggle" data-open="Main Menu" data-close="Close Menu" onclick=""><i class="fa fa-bars"></i></label>
+	  <ul class="menu">
+	    
+	      <li><a href="/">Home</a></li>
+	    
+	      <li><a href="/archives">Archives</a></li>
+	    
+	    
+	  </ul>
+	</nav>
+	<div class="clearfix"></div>
+</div>
+</header>
+  <div id="page-heading-wrap">
+  	<div class="inner">
+      <div class="padding">
+    		
+          <h1>double值失精之后的表现</h1>
+          <ul>
+            <li>
+              <span class="heading-span">Posted on: </span>
+              <time datetime="2019-01-02T12:35:00.000Z">2019-01-02</time>
+            </li>
+            
+              <li>
+                <span class="heading-span">By: </span>
+
+                
+                  <a href="/">PerterPon</a>
+                
+
+              </li>
+            
+            <li>
+              <span class="heading-span">With: </span>
+              
+
+                <a href="#ds-thread"><span class="ds-thread-count" data-thread-key="2019/01/02/cal-when-number-overload/" data-count-type="comments"></span></a>
+              
+            </li>
+          </ul>
+        
+      </div>
+  	</div>
+  </div>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper" class="padding"><article class="post">
+  
+  
+    <div class="post-content">
+  
+      
+      <div class="entry">
+        
+          <p>之前在<a href="/2016/11/23/computer-number/">这篇文章</a>中解释了<code>0.1+0.2</code>为什么不等于<code>0.3</code>而等于<code>0.30000000000000004</code>的原因，根源问题还在于存储精度的问题，当时只是简单觉得丢失精度后的行为是理所当然的，并没有丢失精度后是如何处理的，下面就来分析一下：</p>
+<h2 id="精度丢失加法"><a href="#精度丢失加法" class="headerlink" title="精度丢失加法"></a>精度丢失加法</h2><p>首先，JS，或者说double类型能精确表达的最大的数是<code>Math.pow(2, 53)</code>，那么下面表达式的值你肯定也知道了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(2, 53) + 1 === 9007199254740992</span><br><span class="line">Math.pow(2, 53) + 2 === 9007199254740994</span><br></pre></td></tr></table></figure>
+<p>那么下面表达式的值呢：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(2, 53) + 3 ?</span><br></pre></td></tr></table></figure>
+<p>可能一开始你会想当然得认为上面的值是：<code>9007199254740994</code>，因为精度不到，所以就把这位丢弃，然而，确切的结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">9007199254740996</span><br></pre></td></tr></table></figure>
+<h2 id="精度丢失算法"><a href="#精度丢失算法" class="headerlink" title="精度丢失算法"></a>精度丢失算法</h2><p>显然上面的运算都是在精度丢失的场景下进行的，那么，如何保证精度尽量正确就是必须要做的事，</p>
+<h3 id="0舍1进"><a href="#0舍1进" class="headerlink" title="0舍1进"></a>0舍1进</h3><p>舍0进1类似4舍5入，0就舍弃，1就向前进一位，举个例子</p>
+<p><strong><code>Math.pow(2, 53) - 1</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110011|1111111111111111111111111111111111111111111111111111</span><br></pre></td></tr></table></figure>
+<p>之前我们说到有这么一个公式（注意，这里是二进制运算，那个2的N次方可以理解为十进制的10的N次方）：</p>
+<p><img src="https://img.alicdn.com/imgextra/i3/99218453/TB2253xdUlnpuFjSZFjXXXTaVXa_!!99218453.png" alt=""></p>
+<p>带入上述计算公式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 52</span><br><span class="line">整数位 M = 1.1111111111111111111111111111111111111111111111111111</span><br></pre></td></tr></table></figure>
+<p>所以最终结果就是<code>M</code>的小数点往右移动52位的结果。</p>
+<p><strong><code>Math.pow(2, 53)</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000000</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 1023 + 52 + 1 = 1077</span><br><span class="line">整数位 M = `1.0000000000000000000000000000000000000000000000000000`</span><br></pre></td></tr></table></figure>
+<p>最终结果为<code>M</code>往右移动53位</p>
+<p><strong><code>Math.pow(2, 53) + 1</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000000</span><br></pre></td></tr></table></figure>
+<p>可以看到和<code>Math.pow(2, 53)</code>一致</p>
+<p><strong><code>Math.pow(2, 53) + 2</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000001</span><br></pre></td></tr></table></figure>
+<p>可以看到最后一位多了一个1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 53</span><br><span class="line">整数位 M = 1.0000000000000000000000000000000000000000000000000001</span><br></pre></td></tr></table></figure>
+<p>最终结果也就是<code>M</code>往右移动53位，变成了<code>10000000000000000000000000000000000000000000000000001|0</code></p>
+<p>因为右边只有52位，而我们的指数位有53位，那么最后一位就变成0了，也就是竖线后面的那一位，所以这也是精度丢失的根本原因。</p>
+<p><strong><code>Math.pow(2, 53) + 3</code>在内存中存储方式为：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0|10000110100|0000000000000000000000000000000000000000000000000010</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">符号位 s = 0</span><br><span class="line">指数位 E = 53</span><br><span class="line">整数位 M = 1.0000000000000000000000000000000000000000000000000010</span><br></pre></td></tr></table></figure>
+<p>最终结果：<code>10000000000000000000000000000000000000000000000000010|0</code></p>
+<p><strong>结论</strong></p>
+<p>Math.pow(2, 53)的整数位：<code>0000000000000000000000000000000000000000000000000000|0</code></p>
+<p>后面那个<code>|</code>符号我们可以认为是小数点，来理解0舍1进</p>
+<ol>
+<li><p>[a]当<code>Math.pow(2, 53) + 1</code>时，变成<code>..000|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[b]当<code>Math.pow(2, 53) + 2</code>时，变成<code>..001|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[c]当<code>Math.pow(2, 53) + 3</code>时，变成<code>..001|1</code>，1的前值为1，舍0进1，变成，<code>..010|0</code></p>
+</li>
+<li>[c]当<code>Math.pow(2, 53) + 4</code>时，变成<code>..010|0</code>，舍弃尾部，值精确</li>
+<li><p>[c]当<code>Math.pow(2, 53) + 5</code>时，变成<code>..010|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[d]当<code>Math.pow(2, 53) + 6</code>时，变成<code>..011|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[e]当<code>Math.pow(2, 53) + 7</code>时，变成<code>..011|1</code>，1的前值为1，舍0进1，变成, <code>..100|0</code></p>
+</li>
+<li>[e]当<code>Math.pow(2, 53) + 8</code>时，变成<code>..100|0</code>，舍弃尾部，值精确</li>
+<li><p>[e]当<code>Math.pow(2, 53) + 9</code>时，变成<code>..100|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[f]当<code>Math.pow(2, 53) + 10</code>时，变成<code>..101|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[g]当<code>Math.pow(2, 53) + 11</code>时，变成<code>..101|1</code>，1的前值为1，舍0进1，变成, <code>..110|0</code></p>
+</li>
+<li>[g]当<code>Math.pow(2, 53) + 12</code>时，变成<code>..110|0</code>，舍弃尾部，值精确</li>
+<li><p>[g]当<code>Math.pow(2, 53) + 13</code>时，变成<code>..110|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[h]当<code>Math.pow(2, 53) + 14</code>时，变成<code>..111|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[h]当<code>Math.pow(2, 53) + 15</code>时，变成<code>..111|1</code>，1的前值为1，舍0进1，变成, <code>.1000|0</code></p>
+</li>
+<li>[h]当<code>Math.pow(2, 53) + 16</code>时，变成<code>..1000|0</code>，舍弃尾部，值精确</li>
+<li><p>[h]当<code>Math.pow(2, 53) + 17</code>时，变成<code>..1000|1</code>，1的前值为0，舍弃</p>
+</li>
+<li><p>[i]当<code>Math.pow(2, 53) + 18</code>时，变成<code>..1001|0</code>，舍弃尾部，值精确</p>
+</li>
+<li><p>[j]当<code>Math.pow(2, 53) + 19</code>时，变成<code>..1001|1</code>，1的前值为1，舍0进1，变成, <code>.1010|0</code></p>
+</li>
+<li>[j]当<code>Math.pow(2, 53) + 20</code>时，变成<code>..1010|0</code>，舍弃尾部，值精确</li>
+</ol>
+<p>好了，列举了20个，你大概也看出规律了，也看明白了，就不多列了。</p>
+<h3 id="恒1"><a href="#恒1" class="headerlink" title="恒1"></a>恒1</h3><p>恒1法总得来说就是在舍去的尾部总是置位1，计算方法比较简单，可以自行上网搜索。</p>
+
+        
+      </div>
+      <footer>
+        
+          
+  
+  <div class="categories">
+    <a href="/categories/basis/">basis</a>
+  </div>
+
+          
+  
+  <div class="tags">
+    <a href="/tags/number/">number</a>, <a href="/tags/computer/">computer</a>, <a href="/tags/decimal/">decimal</a>, <a href="/tags/float/">float</a>, <a href="/tags/precision/">precision</a>
+  </div>
+
+          <div class="share">
+  
+
+    
+
+    
+      <div class="g-plusone"></div>
+
+      <script type="text/javascript">
+        window.___gcfg = {lang: 'en-GB'};
+
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/platform.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+      </script>
+    
+
+    
+      <a href="https://twitter.com/share" class="twitter-share-button" data-via="halfer53">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    
+  
+</div>
+          
+<nav class="article-nav clearfix">
+ 
+
+<div class="article-next">
+<a href="/2018/11/04/node-vs-go/" title="记一次Node和Go的性能测试">
+ <span>记一次Node和Go的性能测试
+</span>
+<i class="fa fa-long-arrow-right"></i>
+</a>
+</div>
+
+</nav>
+
+        
+        <div class="clearfix"></div>
+      </footer>
+    </div>
+</article>
+
+
+<section id="comment">
+  <h2 class="title">Comments</h2>
+
+  
+
+     <!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="2019/01/02/cal-when-number-overload/" data-title="double值失精之后的表现" data-url="http://yoursite.com2019/01/02/cal-when-number-overload/"></div>
+<!-- 多说评论框 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+<!-- 多说公共JS代码 end -->
+
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright"><div class="padding">
+	
+	  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+	
+	  
+<div class="widget recent-post">
+  <h3 class="title">Recent Posts</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2019/01/02/cal-when-number-overload/">double值失精之后的表现</a>
+      </li>
+    
+      <li>
+        <a href="/2018/11/04/node-vs-go/">记一次Node和Go的性能测试</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/24/node-event-loop/">一段有意思的Nodejs异步处理代码</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/23/strong-type-weak-type/">强类型？弱类型？强类型！</a>
+      </li>
+    
+      <li>
+        <a href="/2018/06/20/protocol-in-typescript/">在typescript中使用delegate来进行解耦</a>
+      </li>
+    
+  </ul>
+</div>
+
+	
+	  
+<div class="widget category">
+  <h3 class="title">Categories</h3>
+  <ul class="entry">
+  
+    <li><a href="/categories/Go/">Go</a><small>1</small></li>
+  
+    <li><a href="/categories/JavaScript/">JavaScript</a><small>2</small></li>
+  
+    <li><a href="/categories/Node/">Node</a><small>1</small></li>
+  
+    <li><a href="/categories/Objective-C/">Objective-C</a><small>2</small></li>
+  
+    <li><a href="/categories/TypeScript/">TypeScript</a><small>1</small></li>
+  
+    <li><a href="/categories/basis/">basis</a><small>2</small></li>
+  
+    <li><a href="/categories/canvas/">canvas</a><small>1</small></li>
+  
+    <li><a href="/categories/coffee-script/">coffee-script</a><small>1</small></li>
+  
+    <li><a href="/categories/https/">https</a><small>5</small></li>
+  
+    <li><a href="/categories/iOS/">iOS</a><small>4</small></li>
+  
+    <li><a href="/categories/id2/">id2</a><small>7</small></li>
+  
+    <li><a href="/categories/mysql/">mysql</a><small>1</small></li>
+  
+    <li><a href="/categories/node/">node</a><small>1</small></li>
+  
+    <li><a href="/categories/spider/">spider</a><small>1</small></li>
+  
+    <li><a href="/categories/typescript/">typescript</a><small>1</small></li>
+  
+    <li><a href="/categories/前端/">前端</a><small>1</small></li>
+  
+    <li><a href="/categories/计算机网络/">计算机网络</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+	
+	  
+<div class="widget tag">
+  <h3 class="title">Tags</h3>
+  
+    <a href="/tags/Go/">Go<small>1</small></a>
+  
+    <a href="/tags/Google/">Google<small>1</small></a>
+  
+    <a href="/tags/JavaScript/">JavaScript<small>2</small></a>
+  
+    <a href="/tags/Javascript/">Javascript<small>1</small></a>
+  
+    <a href="/tags/Node/">Node<small>2</small></a>
+  
+    <a href="/tags/OSX/">OSX<small>1</small></a>
+  
+    <a href="/tags/TypeScript/">TypeScript<small>1</small></a>
+  
+    <a href="/tags/adblock/">adblock<small>1</small></a>
+  
+    <a href="/tags/basic/">basic<small>1</small></a>
+  
+    <a href="/tags/bdd/">bdd<small>1</small></a>
+  
+    <a href="/tags/better-package/">better package<small>1</small></a>
+  
+    <a href="/tags/blog/">blog<small>1</small></a>
+  
+    <a href="/tags/browser/">browser<small>1</small></a>
+  
+    <a href="/tags/cache/">cache<small>1</small></a>
+  
+    <a href="/tags/canvas/">canvas<small>1</small></a>
+  
+    <a href="/tags/cdn/">cdn<small>1</small></a>
+  
+    <a href="/tags/chunkid/">chunkid<small>1</small></a>
+  
+    <a href="/tags/co/">co<small>1</small></a>
+  
+    <a href="/tags/cocoaTouch/">cocoaTouch<small>1</small></a>
+  
+    <a href="/tags/coffee-script/">coffee-script<small>1</small></a>
+  
+    <a href="/tags/complicating/">complicating<small>1</small></a>
+  
+    <a href="/tags/computer/">computer<small>2</small></a>
+  
+    <a href="/tags/coupling/">coupling<small>1</small></a>
+  
+    <a href="/tags/cover/">cover<small>1</small></a>
+  
+    <a href="/tags/dataplus/">dataplus<small>1</small></a>
+  
+    <a href="/tags/ddd/">ddd<small>1</small></a>
+  
+    <a href="/tags/decimal/">decimal<small>2</small></a>
+  
+    <a href="/tags/float/">float<small>2</small></a>
+  
+    <a href="/tags/freak/">freak<small>1</small></a>
+  
+    <a href="/tags/hexo/">hexo<small>2</small></a>
+  
+    <a href="/tags/high-precision/">high-precision<small>1</small></a>
+  
+    <a href="/tags/host/">host<small>1</small></a>
+  
+    <a href="/tags/http/">http<small>5</small></a>
+  
+    <a href="/tags/https/">https<small>5</small></a>
+  
+    <a href="/tags/iOS/">iOS<small>5</small></a>
+  
+    <a href="/tags/id2/">id2<small>1</small></a>
+  
+    <a href="/tags/javascript/">javascript<small>2</small></a>
+  
+    <a href="/tags/js/">js<small>1</small></a>
+  
+    <a href="/tags/json/">json<small>1</small></a>
+  
+    <a href="/tags/kaggle/">kaggle<small>1</small></a>
+  
+    <a href="/tags/knn/">knn<small>1</small></a>
+  
+    <a href="/tags/launchscreen/">launchscreen<small>1</small></a>
+  
+    <a href="/tags/lazyload/">lazyload<small>1</small></a>
+  
+    <a href="/tags/lock/">lock<small>1</small></a>
+  
+    <a href="/tags/mainHost/">mainHost<small>1</small></a>
+  
+    <a href="/tags/members/">members<small>1</small></a>
+  
+    <a href="/tags/mtu/">mtu<small>1</small></a>
+  
+    <a href="/tags/mysql/">mysql<small>1</small></a>
+  
+    <a href="/tags/node/">node<small>3</small></a>
+  
+    <a href="/tags/number/">number<small>2</small></a>
+  
+    <a href="/tags/objective-c/">objective-c<small>2</small></a>
+  
+    <a href="/tags/package/">package<small>1</small></a>
+  
+    <a href="/tags/pai/">pai<small>1</small></a>
+  
+    <a href="/tags/pixel/">pixel<small>1</small></a>
+  
+    <a href="/tags/poodle/">poodle<small>1</small></a>
+  
+    <a href="/tags/precision/">precision<small>2</small></a>
+  
+    <a href="/tags/protocol/">protocol<small>1</small></a>
+  
+    <a href="/tags/reCAPTCHA/">reCAPTCHA<small>1</small></a>
+  
+    <a href="/tags/rsa/">rsa<small>4</small></a>
+  
+    <a href="/tags/setRootViewController/">setRootViewController<small>1</small></a>
+  
+    <a href="/tags/spider/">spider<small>1</small></a>
+  
+    <a href="/tags/tcp/">tcp<small>1</small></a>
+  
+    <a href="/tags/tcp-ip/">tcp/ip<small>1</small></a>
+  
+    <a href="/tags/tdd/">tdd<small>1</small></a>
+  
+    <a href="/tags/timer/">timer<small>1</small></a>
+  
+    <a href="/tags/tls/">tls<small>1</small></a>
+  
+    <a href="/tags/typescript/">typescript<small>1</small></a>
+  
+    <a href="/tags/unittest/">unittest<small>1</small></a>
+  
+    <a href="/tags/upload/">upload<small>1</small></a>
+  
+    <a href="/tags/uploadify/">uploadify<small>1</small></a>
+  
+    <a href="/tags/url/">url<small>1</small></a>
+  
+    <a href="/tags/web/">web<small>1</small></a>
+  
+    <a href="/tags/webpack/">webpack<small>1</small></a>
+  
+    <a href="/tags/yosemite/">yosemite<small>1</small></a>
+  
+    <a href="/tags/对称加密/">对称加密<small>4</small></a>
+  
+    <a href="/tags/扩展欧几里德/">扩展欧几里德<small>1</small></a>
+  
+    <a href="/tags/数字证书/">数字证书<small>3</small></a>
+  
+    <a href="/tags/欧拉函数/">欧拉函数<small>1</small></a>
+  
+    <a href="/tags/计算机网络/">计算机网络<small>1</small></a>
+  
+    <a href="/tags/踩过的iOS/">踩过的iOS<small>1</small></a>
+  
+</div>
+
+	
+</div></aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="padding">
+	<div class="alignleft">
+	  
+	  &copy; 2019 PerterPon
+	  
+	  Powerd by <a href="http://hexo.io/" target="_blank">hexo</a>
+	  and Theme by <a href="https://github.com/halfer53/metro-light" target="_blank">metro-light</a>
+	</div>
+
+	<div class="alignright">
+		
+		
+			<a href="https://github.com/PerterPon" target="_blank" title="PerterPon Github"><i class="fa fa-github-square"></i></a>	
+		
+		
+		
+		
+		
+		
+	</div>
+
+	<div class="clearfix"></div>
+</div>
+
+<div class="scroll-top"><i class="fa fa-arrow-circle-up"></i></div>
+<div>&nbsp;</div>
+<div class="record">ICP证: 浙ICP备14031346号-1</div></footer>
+  
+
+ <script type="text/javascript">
+var duoshuoQuery = {short_name:"perterpon"};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/3.0.4/jquery.imagesloaded.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+<script type="text/javascript">
+$(window).scroll(function() {
+
+    if($(this).scrollTop() > 400) {
+        $('.scroll-top').fadeIn(200);
+    } else {
+        $('.scroll-top').fadeOut(200);
+    }
+});
+
+$('.scroll-top').bind('click', function(e) {
+    e.preventDefault();
+    $('body,html').animate({scrollTop:0},200);
+});
+</script>
+
+
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F843c2a3226de23e0cfbb9668a390e06f' type='text/javascript'%3E%3C/script%3E"));
+</script>
+</body>
+</html>
